@@ -76,7 +76,7 @@ export default function QRScanner() {
         .select(
           `
           *,
-          alumnos (
+          alumno:alumnos (
             id,
             nombres,
             apellidos,
@@ -423,19 +423,21 @@ export default function QRScanner() {
               Últimos registros
             </h3>
             <div className="space-y-2">
-              {lastRegistrations.map((registro) => (
-                <div
-                  key={registro.id}
-                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-                >
-                  <div>
-                    <p className="font-medium text-sm">
-                      {registro.alumno.nombres} {registro.alumno.apellidos}
-                    </p>
-                    <p className="text-xs text-gray-600">
-                      {registro.alumno.grado}° - {registro.alumno.seccion}
-                    </p>
-                  </div>
+              {lastRegistrations
+                .filter((registro) => registro.alumno) // Filtrar registros sin alumno
+                .map((registro) => (
+                  <div
+                    key={registro.id}
+                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                  >
+                    <div>
+                      <p className="font-medium text-sm">
+                        {registro.alumno.nombres} {registro.alumno.apellidos}
+                      </p>
+                      <p className="text-xs text-gray-600">
+                        {registro.alumno.grado}° - {registro.alumno.seccion}
+                      </p>
+                    </div>
                   <div className="text-right">
                     <div
                       className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
