@@ -31,7 +31,7 @@ export default function DashboardLayout({
   children,
   title,
 }: DashboardLayoutProps) {
-  const [session, setSession] = useState(null);
+  const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(false);

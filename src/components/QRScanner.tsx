@@ -57,7 +57,11 @@ export default function QRScanner() {
     // Cleanup al desmontar el componente
     return () => {
       if (scanner) {
-        scanner.clear().catch(console.error);
+        try {
+          scanner.clear();
+        } catch (error) {
+          console.error("Error clearing scanner:", error);
+        }
       }
     };
   }, []);

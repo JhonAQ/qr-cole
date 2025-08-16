@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 
 export default function Home() {
-  const [session, setSession] = useState(null);
+  const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -86,7 +86,7 @@ export default function Home() {
     return isValid;
   };
 
-  const handleLogin = async (e) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
     setAuthLoading(true);
@@ -393,9 +393,9 @@ export default function Home() {
             </div>
             <div className="space-y-3 text-gray-600">
               <p>
-                <strong>Fe y Ciencia Check</strong> es un prototipo de sistema de control de
-                acceso desarrollado para la feria de ciencias del Colegio Fe y
-                Ciencia.
+                <strong>Fe y Ciencia Check</strong> es un prototipo de sistema
+                de control de acceso desarrollado para la feria de ciencias del
+                Colegio Fe y Ciencia.
               </p>
               <div className="bg-gray-50 rounded-lg p-3">
                 <p className="text-sm">

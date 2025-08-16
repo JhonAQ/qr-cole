@@ -17,7 +17,7 @@ import {
 import { Calendar, RefreshCw } from "lucide-react";
 
 export default function AttendanceChart() {
-  const [chartData, setChartData] = useState([]);
+  const [chartData, setChartData] = useState<any[]>([]);
   const [chartType, setChartType] = useState("line");
   const [dateRange, setDateRange] = useState("week");
   const [loading, setLoading] = useState(true);
@@ -67,7 +67,12 @@ export default function AttendanceChart() {
   };
 
   // Procesar datos para el gráfico
-  const processAttendanceData = (data, startDate, endDate, range) => {
+  const processAttendanceData = (
+    data: any[],
+    startDate: Date,
+    endDate: Date,
+    range: string
+  ) => {
     const dateFormat = new Intl.DateTimeFormat("es", {
       month: "short",
       day: "numeric",
@@ -75,7 +80,7 @@ export default function AttendanceChart() {
     });
 
     // Crear un mapa de fechas para el rango completo
-    const datesMap = {};
+    const datesMap: any = {};
     const currentDate = new Date(startDate);
 
     while (currentDate <= endDate) {

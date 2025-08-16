@@ -94,7 +94,7 @@ export default function StatisticsWidget() {
       const totalStudents = alumnosData.length || 0;
 
       // Calcular presentes/ausentes (último registro = entrada)
-      const ultimosRegistros = {};
+      const ultimosRegistros: any = {};
       asistenciasHoy?.forEach((registro) => {
         const alumnoId = registro.id_alumno;
         if (
@@ -106,7 +106,7 @@ export default function StatisticsWidget() {
       });
 
       const presentesToday = Object.values(ultimosRegistros).filter(
-        (registro) => registro.tipo === "entrada"
+        (registro: any) => registro.tipo === "entrada"
       ).length;
 
       const absentToday = totalStudents - presentesToday;

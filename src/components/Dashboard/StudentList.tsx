@@ -14,16 +14,16 @@ import {
 import Link from "next/link";
 
 export default function StudentList() {
-  const [alumnos, setAlumnos] = useState([]);
-  const [filteredAlumnos, setFilteredAlumnos] = useState([]);
+  const [alumnos, setAlumnos] = useState<any[]>([]);
+  const [filteredAlumnos, setFilteredAlumnos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [presentesHoy, setPresentesHoy] = useState([]);
+  const [presentesHoy, setPresentesHoy] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
   const [filterGrado, setFilterGrado] = useState("all");
   const [filterSeccion, setFilterSeccion] = useState("all");
-  const [grados, setGrados] = useState([]);
-  const [secciones, setSecciones] = useState([]);
+  const [grados, setGrados] = useState<any[]>([]);
+  const [secciones, setSecciones] = useState<any[]>([]);
 
   useEffect(() => {
     fetchAlumnos();
@@ -115,7 +115,7 @@ export default function StudentList() {
       if (error) throw error;
 
       // Filtrar para obtener el último registro de cada alumno
-      const ultimosRegistros = {};
+      const ultimosRegistros: any = {};
       data.forEach((registro) => {
         const alumnoId = registro.id_alumno;
         if (
@@ -128,8 +128,8 @@ export default function StudentList() {
 
       // Filtrar solo aquellos cuyo último registro es "entrada"
       const presentes = Object.values(ultimosRegistros)
-        .filter((registro) => registro.tipo === "entrada")
-        .map((registro) => registro.id_alumno);
+        .filter((registro: any) => registro.tipo === "entrada")
+        .map((registro: any) => registro.id_alumno);
 
       setPresentesHoy(presentes);
     } catch (error) {
