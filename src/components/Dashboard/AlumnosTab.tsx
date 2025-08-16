@@ -20,6 +20,8 @@ import {
   Eye,
   Download,
   X,
+  Grid,
+  List,
 } from "lucide-react";
 import { useDashboard } from "@/contexts/DashboardContext";
 import { Alumno } from "@/types";
@@ -34,12 +36,18 @@ import {
   calcularEstadoAsistencia,
   debounce,
 } from "@/utils/helpers";
+import StudentDetailModal from "./StudentDetailModal";
 
-export default function AlumnosTab() {
-  const { alumnos, asistencias, loading } = useDashboard();
+interface AlumnosTabProps {
+  selectedGrade?: number | null;
+  selectedSection?: string | null;
+}
+
+export default function AlumnosTab({ selectedGrade, selectedSection }: AlumnosTabProps) {
+  const { alumnos, asistencias, loading, refreshData } = useDashboard();
   const [busqueda, setBusqueda] = useState("");
-  const [gradoFiltro, setGradoFiltro] = useState<number | null>(null);
-  const [seccionFiltro, setSeccionFiltro] = useState<string | null>(null);
+  const [gradoFiltro, setGradoFiltro] = useState<number | null>(selectedGrade || null);
+  const [seccionFiltro, setSeccionFiltro] = useState<string | null>(selectedSection || null);
   const [mostrarFiltros, setMostrarFiltros] = useState(false);
   const [alumnoSeleccionado, setAlumnoSeleccionado] = useState<Alumno | null>(
     null
@@ -49,6 +57,17 @@ export default function AlumnosTab() {
     "nombre"
   );
   const [ordenAsc, setOrdenAsc] = useState(true);
+  const [viewMode, setViewMode] = useState<"grid" | "list">("list");
+
+  // Actualizar filtros cuando se seleccione desde la navegación
+  React.useEffect(() => {
+    if (selectedGrade !== undefined) {
+      setGradoFiltro(selectedGrade === 0 ? null : selectedGrade);
+    }
+    if (selectedSection !== undefined) {
+      setSeccionFiltro(selectedSection);
+    }
+  }, [selectedGrade, selectedSection]);
 
   // Filtrar y ordenar alumnos
   const alumnosFiltrados = useMemo(() => {
@@ -119,6 +138,19 @@ export default function AlumnosTab() {
     setSeccionFiltro(null);
   };
 
+  const handleUpdateStudent = (updatedStudent: Alumno) => {
+    refreshData(); // Refrescar datos del dashboard
+  };
+
+  const handleDeleteStudent = (studentId: string) => {
+    refreshData(); // Refrescar datos del dashboard
+  };
+
+  const handleViewStudent = (alumno: Alumno) => {
+    setAlumnoSeleccionado(alumno);
+    setMostrarModal(true);
+  };
+
   const gradosDisponibles = obtenerGradosUnicos(alumnos);
   const seccionesDisponibles = gradoFiltro
     ? obtenerSeccionesPorGrado(alumnos, gradoFiltro)
@@ -131,6 +163,18 @@ export default function AlumnosTab() {
       setOrdenPor(tipo);
       setOrdenAsc(true);
     }
+  };
+
+  // Obtener título dinámico basado en los filtros
+  const getTitulo = () => {
+    if (gradoFiltro && seccionFiltro) {
+      return `${gradoFiltro}° Grado - Sección ${seccionFiltro}`;
+    } else if (gradoFiltro) {
+      return `${gradoFiltro}° Grado`;
+    } else if (busqueda) {
+      return `Resultados para: "${busqueda}"`;
+    }
+    return "Todos los Alumnos";
   };
 
   if (loading) {
@@ -155,19 +199,47 @@ export default function AlumnosTab() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">
-            Gestión de Alumnos
+            {getTitulo()}
           </h2>
           <p className="text-gray-600">
             {alumnosFiltrados.length} de {alumnos.length} alumnos
+            {gradoFiltro && ` • ${gradoFiltro}° Grado`}
+            {seccionFiltro && ` • Sección ${seccionFiltro}`}
           </p>
         </div>
-        <button
-          onClick={() => window.open("/register", "_blank")}
-          className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          Nuevo Alumno
-        </button>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center bg-gray-100 rounded-lg p-1">
+            <button
+              onClick={() => setViewMode("list")}
+              className={`p-2 rounded-md transition-colors ${
+                viewMode === "list" 
+                  ? "bg-white shadow text-primary" 
+                  : "text-gray-500 hover:text-gray-700"
+              }`}
+              title="Vista de lista"
+            >
+              <List className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => setViewMode("grid")}
+              className={`p-2 rounded-md transition-colors ${
+                viewMode === "grid" 
+                  ? "bg-white shadow text-primary" 
+                  : "text-gray-500 hover:text-gray-700"
+              }`}
+              title="Vista de cuadrícula"
+            >
+              <Grid className="w-4 h-4" />
+            </button>
+          </div>
+          <button
+            onClick={() => window.open("/register", "_blank")}
+            className="flex items-center px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Nuevo Alumno
+          </button>
+        </div>
       </div>
 
       {/* Barra de búsqueda y filtros */}
@@ -292,109 +364,38 @@ export default function AlumnosTab() {
         </div>
       </div>
 
-      {/* Lista de alumnos */}
-      <div className=" bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-        {alumnosFiltrados.length > 0 ? (
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    <button
-                      onClick={() => handleOrdenar("nombre")}
-                      className="flex items-center space-x-1 hover:text-gray-700"
-                    >
-                      <span>Alumno</span>
-                      {ordenPor === "nombre" &&
-                        (ordenAsc ? (
-                          <ChevronUp className="w-4 h-4" />
-                        ) : (
-                          <ChevronDown className="w-4 h-4" />
-                        ))}
-                    </button>
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    <button
-                      onClick={() => handleOrdenar("grado")}
-                      className="flex items-center space-x-1 hover:text-gray-700"
-                    >
-                      <span>Grado/Sección</span>
-                      {ordenPor === "grado" &&
-                        (ordenAsc ? (
-                          <ChevronUp className="w-4 h-4" />
-                        ) : (
-                          <ChevronDown className="w-4 h-4" />
-                        ))}
-                    </button>
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Contacto
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    <button
-                      onClick={() => handleOrdenar("asistencia")}
-                      className="flex items-center space-x-1 hover:text-gray-700"
-                    >
-                      <span>Estado Hoy</span>
-                      {ordenPor === "asistencia" &&
-                        (ordenAsc ? (
-                          <ChevronUp className="w-4 h-4" />
-                        ) : (
-                          <ChevronDown className="w-4 h-4" />
-                        ))}
-                    </button>
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Acciones
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {alumnosFiltrados.map((alumno, index) => (
-                  <AlumnoRow
-                    key={alumno.id}
-                    alumno={alumno}
-                    asistencias={asistencias.filter(
-                      (a) => a.id_alumno === alumno.id
-                    )}
-                    index={index}
-                    onVerDetalle={setAlumnoSeleccionado}
-                  />
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          <div className="text-center py-12">
-            <Users className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
-              No se encontraron alumnos
-            </h3>
-            <p className="text-gray-500 mb-6">
-              {busqueda || gradoFiltro || seccionFiltro
-                ? "Intenta ajustar los filtros de búsqueda"
-                : "No hay alumnos registrados en el sistema"}
-            </p>
-            <button
-              onClick={() => window.open("/register", "_blank")}
-              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Registrar Primer Alumno
-            </button>
-          </div>
-        )}
-      </div>
+      {/* Vista de alumnos */}
+      {viewMode === "list" ? (
+        <StudentsListView
+          alumnosFiltrados={alumnosFiltrados}
+          asistencias={asistencias}
+          ordenPor={ordenPor}
+          ordenAsc={ordenAsc}
+          handleOrdenar={handleOrdenar}
+          onViewStudent={handleViewStudent}
+        />
+      ) : (
+        <StudentsGridView
+          alumnosFiltrados={alumnosFiltrados}
+          asistencias={asistencias}
+          onViewStudent={handleViewStudent}
+        />
+      )}
 
       {/* Modal de detalle */}
       <AnimatePresence>
-        {alumnoSeleccionado && (
-          <DetalleAlumnoModal
+        {alumnoSeleccionado && mostrarModal && (
+          <StudentDetailModal
             alumno={alumnoSeleccionado}
             asistencias={asistencias.filter(
               (a) => a.id_alumno === alumnoSeleccionado.id
             )}
-            onClose={() => setAlumnoSeleccionado(null)}
+            onClose={() => {
+              setAlumnoSeleccionado(null);
+              setMostrarModal(false);
+            }}
+            onUpdate={handleUpdateStudent}
+            onDelete={handleDeleteStudent}
           />
         )}
       </AnimatePresence>
@@ -402,17 +403,259 @@ export default function AlumnosTab() {
   );
 }
 
-// Componente para cada fila de alumno
-function AlumnoRow({
+// Vista de lista de estudiantes
+function StudentsListView({
+  alumnosFiltrados,
+  asistencias,
+  ordenPor,
+  ordenAsc,
+  handleOrdenar,
+  onViewStudent,
+}: {
+  alumnosFiltrados: Alumno[];
+  asistencias: any[];
+  ordenPor: string;
+  ordenAsc: boolean;
+  handleOrdenar: (tipo: "nombre" | "grado" | "asistencia") => void;
+  onViewStudent: (alumno: Alumno) => void;
+}) {
+  if (alumnosFiltrados.length === 0) {
+    return (
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div className="text-center py-12">
+          <Users className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            No se encontraron alumnos
+          </h3>
+          <p className="text-gray-500 mb-6">
+            Intenta ajustar los filtros de búsqueda o registra nuevos estudiantes
+          </p>
+          <button
+            onClick={() => window.open("/register", "_blank")}
+            className="inline-flex items-center px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Registrar Alumno
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+      <div className="overflow-x-auto">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <button
+                  onClick={() => handleOrdenar("nombre")}
+                  className="flex items-center space-x-1 hover:text-gray-700"
+                >
+                  <span>Alumno</span>
+                  {ordenPor === "nombre" &&
+                    (ordenAsc ? (
+                      <ChevronUp className="w-4 h-4" />
+                    ) : (
+                      <ChevronDown className="w-4 h-4" />
+                    ))}
+                </button>
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <button
+                  onClick={() => handleOrdenar("grado")}
+                  className="flex items-center space-x-1 hover:text-gray-700"
+                >
+                  <span>Grado/Sección</span>
+                  {ordenPor === "grado" &&
+                    (ordenAsc ? (
+                      <ChevronUp className="w-4 h-4" />
+                    ) : (
+                      <ChevronDown className="w-4 h-4" />
+                    ))}
+                </button>
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Contacto
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <button
+                  onClick={() => handleOrdenar("asistencia")}
+                  className="flex items-center space-x-1 hover:text-gray-700"
+                >
+                  <span>Estado Hoy</span>
+                  {ordenPor === "asistencia" &&
+                    (ordenAsc ? (
+                      <ChevronUp className="w-4 h-4" />
+                    ) : (
+                      <ChevronDown className="w-4 h-4" />
+                    ))}
+                </button>
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Acciones
+              </th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {alumnosFiltrados.map((alumno, index) => (
+              <AlumnoRow
+                key={alumno.id}
+                alumno={alumno}
+                asistencias={asistencias.filter(
+                  (a) => a.id_alumno === alumno.id
+                )}
+                index={index}
+                onViewStudent={onViewStudent}
+              />
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+// Vista de cuadrícula de estudiantes
+function StudentsGridView({
+  alumnosFiltrados,
+  asistencias,
+  onViewStudent,
+}: {
+  alumnosFiltrados: Alumno[];
+  asistencias: any[];
+  onViewStudent: (alumno: Alumno) => void;
+}) {
+  if (alumnosFiltrados.length === 0) {
+    return (
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div className="text-center py-12">
+          <Users className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            No se encontraron alumnos
+          </h3>
+          <p className="text-gray-500 mb-6">
+            Intenta ajustar los filtros de búsqueda o registra nuevos estudiantes
+          </p>
+          <button
+            onClick={() => window.open("/register", "_blank")}
+            className="inline-flex items-center px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Registrar Alumno
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      {alumnosFiltrados.map((alumno, index) => (
+        <StudentCard
+          key={alumno.id}
+          alumno={alumno}
+          asistencias={asistencias.filter((a) => a.id_alumno === alumno.id)}
+          index={index}
+          onViewStudent={onViewStudent}
+        />
+      ))}
+    </div>
+  );
+}
+
+// Tarjeta de estudiante para vista de cuadrícula
+function StudentCard({
   alumno,
   asistencias,
   index,
-  onVerDetalle,
+  onViewStudent,
 }: {
   alumno: Alumno;
   asistencias: any[];
   index: number;
-  onVerDetalle: (alumno: Alumno) => void;
+  onViewStudent: (alumno: Alumno) => void;
+}) {
+  const estado = calcularEstadoAsistencia(asistencias);
+  const colores = obtenerColorEstado(estado);
+  const entradas = asistencias.filter((a) => a.tipo === "entrada").length;
+  const salidas = asistencias.filter((a) => a.tipo === "salida").length;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.05 }}
+      className="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow cursor-pointer"
+      onClick={() => onViewStudent(alumno)}
+    >
+      <div className="p-4">
+        <div className="flex items-start justify-between mb-3">
+          <div className="flex items-center space-x-3">
+            <div className="h-12 w-12 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
+              <span className="text-sm font-bold text-white">
+                {alumno.nombres.charAt(0)}
+                {alumno.apellidos.charAt(0)}
+              </span>
+            </div>
+            <div className="flex-1 min-w-0">
+              <h3 className="text-sm font-medium text-gray-900 truncate">
+                {normalizarNombre(alumno.nombres, alumno.apellidos)}
+              </h3>
+              <p className="text-xs text-gray-500 font-mono">
+                {alumno.codigo_qr}
+              </p>
+            </div>
+          </div>
+          <span
+            className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${colores.bg} ${colores.text} border ${colores.border}`}
+          >
+            <div className={`w-1.5 h-1.5 ${colores.dot} rounded-full mr-1`} />
+            {obtenerTextoEstado(estado)}
+          </span>
+        </div>
+
+        <div className="space-y-2">
+          <div className="flex items-center text-xs text-gray-600">
+            <BookOpen className="w-3 h-3 mr-1" />
+            {alumno.grado}° - Sección {alumno.seccion}
+          </div>
+
+          {alumno.contacto_padres && (
+            <div className="flex items-center text-xs text-gray-600">
+              <Phone className="w-3 h-3 mr-1" />
+              {alumno.contacto_padres}
+            </div>
+          )}
+
+          <div className="flex justify-between text-xs pt-2 border-t">
+            <div className="flex items-center text-green-600">
+              <UserCheck className="w-3 h-3 mr-1" />
+              {entradas} entradas
+            </div>
+            <div className="flex items-center text-blue-600">
+              <UserX className="w-3 h-3 mr-1" />
+              {salidas} salidas
+            </div>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+// Componente para cada fila de alumno en la vista de lista
+function AlumnoRow({
+  alumno,
+  asistencias,
+  index,
+  onViewStudent,
+}: {
+  alumno: Alumno;
+  asistencias: any[];
+  index: number;
+  onViewStudent: (alumno: Alumno) => void;
 }) {
   const estado = calcularEstadoAsistencia(asistencias);
   const colores = obtenerColorEstado(estado);
@@ -475,173 +718,17 @@ function AlumnoRow({
       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
         <div className="flex items-center space-x-2">
           <button
-            onClick={() => onVerDetalle(alumno)}
-            className="text-blue-600 hover:text-blue-900 p-1 rounded"
-            title="Ver detalle"
+            onClick={(e) => {
+              e.stopPropagation();
+              onViewStudent(alumno);
+            }}
+            className="text-primary hover:text-primary-dark p-1 rounded transition-colors"
+            title="Ver detalle completo"
           >
             <Eye className="w-4 h-4" />
-          </button>
-          <button
-            className="text-gray-600 hover:text-gray-900 p-1 rounded"
-            title="Mostrar QR"
-          >
-            <QrCode className="w-4 h-4" />
-          </button>
-          <button
-            className="text-gray-600 hover:text-gray-900 p-1 rounded"
-            title="Más opciones"
-          >
-            <MoreVertical className="w-4 h-4" />
           </button>
         </div>
       </td>
     </motion.tr>
-  );
-}
-
-// Modal de detalle del alumno
-function DetalleAlumnoModal({
-  alumno,
-  asistencias,
-  onClose,
-}: {
-  alumno: Alumno;
-  asistencias: any[];
-  onClose: () => void;
-}) {
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
-      onClick={onClose}
-    >
-      <motion.div
-        initial={{ scale: 0.95, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.95, opacity: 0 }}
-        className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="p-6">
-          {/* Header del modal */}
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h3 className="text-xl font-bold text-gray-900">
-                Detalle del Alumno
-              </h3>
-              <p className="text-gray-600">
-                Información completa y historial de asistencia
-              </p>
-            </div>
-            <button
-              onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 p-2 rounded-full hover:bg-gray-100"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          </div>
-
-          {/* Información del alumno */}
-          <div className="space-y-6">
-            <div className="bg-gray-50 rounded-lg p-4">
-              <div className="flex items-center space-x-4">
-                <div className="h-16 w-16 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
-                  <span className="text-xl font-bold text-white">
-                    {alumno.nombres.charAt(0)}
-                    {alumno.apellidos.charAt(0)}
-                  </span>
-                </div>
-                <div className="flex-1">
-                  <h4 className="text-lg font-semibold text-gray-900">
-                    {normalizarNombre(alumno.nombres, alumno.apellidos)}
-                  </h4>
-                  <p className="text-gray-600">
-                    {alumno.grado}° Grado - Sección {alumno.seccion}
-                  </p>
-                  <p className="text-sm text-gray-500 font-mono">
-                    ID: {alumno.codigo_qr}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <h5 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2">
-                  Información Personal
-                </h5>
-                <div className="space-y-2">
-                  <div>
-                    <span className="text-sm text-gray-600">Nombres:</span>
-                    <p className="font-medium">{alumno.nombres}</p>
-                  </div>
-                  <div>
-                    <span className="text-sm text-gray-600">Apellidos:</span>
-                    <p className="font-medium">{alumno.apellidos}</p>
-                  </div>
-                  <div>
-                    <span className="text-sm text-gray-600">
-                      Contacto Padres:
-                    </span>
-                    <p className="font-medium">
-                      {alumno.contacto_padres || "No registrado"}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <h5 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2">
-                  Asistencia Hoy
-                </h5>
-                <div className="space-y-2">
-                  {asistencias.length > 0 ? (
-                    asistencias.map((asistencia, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center justify-between p-2 bg-gray-50 rounded"
-                      >
-                        <div className="flex items-center space-x-2">
-                          {asistencia.tipo === "entrada" ? (
-                            <UserCheck className="w-4 h-4 text-green-600" />
-                          ) : (
-                            <UserX className="w-4 h-4 text-blue-600" />
-                          )}
-                          <span className="text-sm font-medium">
-                            {asistencia.tipo === "entrada"
-                              ? "Entrada"
-                              : "Salida"}
-                          </span>
-                        </div>
-                        <span className="text-sm text-gray-600">
-                          {new Date(asistencia.hora).toLocaleTimeString()}
-                        </span>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-gray-500 text-sm">Sin registros hoy</p>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* Acciones */}
-            <div className="flex justify-end space-x-3 pt-6 border-t">
-              <button
-                onClick={onClose}
-                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
-              >
-                Cerrar
-              </button>
-              <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                Editar Alumno
-              </button>
-            </div>
-          </div>
-        </div>
-      </motion.div>
-    </motion.div>
   );
 }

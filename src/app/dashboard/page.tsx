@@ -4,12 +4,19 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/utils/supabase";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { BarChart3, Users, ClipboardList, Home, QrCode } from "lucide-react";
+import {
+  BarChart3,
+  Users,
+  ClipboardList,
+  Home,
+  QrCode,
+  Loader2,
+} from "lucide-react";
 import { Toaster } from "react-hot-toast";
 
 // Context y Layout
 import { DashboardProvider } from "@/contexts/DashboardContext";
-import NewDashboardLayout from "@/components/Dashboard/NewDashboardLayout";
+import EnhancedDashboardLayout from "@/components/Dashboard/EnhancedDashboardLayout";
 
 // Componentes de tabs
 import OverviewTab from "@/components/Dashboard/OverviewTab";
@@ -22,25 +29,21 @@ const tabs = [
     id: "overview",
     label: "Resumen",
     icon: <Home className="w-5 h-5" />,
-    content: <OverviewTab />,
   },
   {
     id: "alumnos",
     label: "Alumnos",
     icon: <Users className="w-5 h-5" />,
-    content: <AlumnosTab />,
   },
   {
     id: "asistencia",
     label: "Asistencia",
     icon: <ClipboardList className="w-5 h-5" />,
-    content: <AsistenciaTab />,
   },
   {
     id: "estadisticas",
     label: "Estadísticas",
     icon: <BarChart3 className="w-5 h-5" />,
-    content: <EstadisticasTab />,
   },
 ];
 
@@ -48,6 +51,8 @@ export default function DashboardPage() {
   const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
+  const [selectedGrade, setSelectedGrade] = useState<number | null>(null);
+  const [selectedSection, setSelectedSection] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -69,17 +74,38 @@ export default function DashboardPage() {
     return () => subscription.unsubscribe();
   }, [router]);
 
+  const handleGradeSelect = (grado: number, seccion?: string) => {
+    setSelectedGrade(grado === 0 ? null : grado);
+    setSelectedSection(seccion || null);
+  };
+
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case "overview":
+        return <OverviewTab />;
+      case "alumnos":
+        return (
+          <AlumnosTab
+            selectedGrade={selectedGrade}
+            selectedSection={selectedSection}
+          />
+        );
+      case "asistencia":
+        return <AsistenciaTab />;
+      case "estadisticas":
+        return <EstadisticasTab />;
+      default:
+        return <OverviewTab />;
+    }
+  };
+
   // Pantalla de carga
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-            className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full mb-4 mx-auto"
-          />
-          <p className="text-gray-600 text-lg">Cargando dashboard...</p>
+        <div className="flex items-center gap-3">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          <span className="text-lg text-gray-600">Cargando dashboard...</span>
         </div>
       </div>
     );
@@ -115,24 +141,24 @@ export default function DashboardPage() {
         }}
       />
 
-      <NewDashboardLayout
+      <EnhancedDashboardLayout
         activeTab={activeTab}
         onTabChange={setActiveTab}
         tabs={tabs}
+        selectedGrade={selectedGrade}
+        selectedSection={selectedSection}
+        onGradeSelect={handleGradeSelect}
       >
-        <div className="min-h-screen">
-          <motion.div
-            key={activeTab}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3 }}
-            className="h-full"
-          >
-            {tabs.find((tab) => tab.id === activeTab)?.content}
-          </motion.div>
-        </div>
-      </NewDashboardLayout>
+        <motion.div
+          key={`${activeTab}-${selectedGrade}-${selectedSection}`}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.3 }}
+        >
+          {renderTabContent()}
+        </motion.div>
+      </EnhancedDashboardLayout>
     </DashboardProvider>
   );
 }
