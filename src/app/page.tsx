@@ -151,8 +151,8 @@ export default function Home() {
             <Image
               src="/LOGO-FC.png"
               alt="Colegio Fe y Ciencia"
-              width={40}
-              height={40}
+              width={75}
+              height={80}
               className="rounded"
             />
             <div>
@@ -393,7 +393,7 @@ export default function Home() {
             </div>
             <div className="space-y-3 text-gray-600">
               <p>
-                <strong>Fe y Ciencia Check</strong> es un sistema de control de
+                <strong>Fe y Ciencia Check</strong> es un prototipo de sistema de control de
                 acceso desarrollado para la feria de ciencias del Colegio Fe y
                 Ciencia.
               </p>
@@ -425,12 +425,21 @@ export default function Home() {
                 <h4 className="font-medium text-gray-900">Email</h4>
                 <p className="text-gray-600">contacto@colegiofeciencia.edu</p>
               </div>
-              <div className="bg-gray-50 rounded-lg p-3">
+              <div className="bg-cyan-50 rounded-lg p-3">
+                <h4 className="font-medium text-gray-900 mb-1">
+                  Investigadora
+                </h4>
+                <p className="text-gray-600">
+                  Maricielo Arias - Investigadora principal
+                </p>
+              </div>
+              <div className="bg-cyan-50 rounded-lg p-3">
+
                 <h4 className="font-medium text-gray-900 mb-1">
                   Desarrollador
                 </h4>
                 <p className="text-gray-600">
-                  Jhon Quispe - Estudiante de Ingeniería de Sistemas
+                  Jhonatan Arias - Estudiante de Ingeniería de Sistemas
                 </p>
               </div>
             </div>
