@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import React, { useState, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
+import React, { useState, useMemo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
   Search,
   Filter,
   Plus,
@@ -19,31 +19,35 @@ import {
   UserX,
   Eye,
   Download,
-  X
-} from 'lucide-react';
-import { useDashboard } from '@/contexts/DashboardContext';
-import { Alumno } from '@/types';
-import { 
-  filtrarAlumnos, 
-  obtenerGradosUnicos, 
-  obtenerSeccionesUnicas, 
-  obtenerSeccionesPorGrado, 
+  X,
+} from "lucide-react";
+import { useDashboard } from "@/contexts/DashboardContext";
+import { Alumno } from "@/types";
+import {
+  filtrarAlumnos,
+  obtenerGradosUnicos,
+  obtenerSeccionesUnicas,
+  obtenerSeccionesPorGrado,
   normalizarNombre,
   obtenerColorEstado,
   obtenerTextoEstado,
   calcularEstadoAsistencia,
-  debounce
-} from '@/utils/helpers';
+  debounce,
+} from "@/utils/helpers";
 
 export default function AlumnosTab() {
   const { alumnos, asistencias, loading } = useDashboard();
-  const [busqueda, setBusqueda] = useState('');
+  const [busqueda, setBusqueda] = useState("");
   const [gradoFiltro, setGradoFiltro] = useState<number | null>(null);
   const [seccionFiltro, setSeccionFiltro] = useState<string | null>(null);
   const [mostrarFiltros, setMostrarFiltros] = useState(false);
-  const [alumnoSeleccionado, setAlumnoSeleccionado] = useState<Alumno | null>(null);
+  const [alumnoSeleccionado, setAlumnoSeleccionado] = useState<Alumno | null>(
+    null
+  );
   const [mostrarModal, setMostrarModal] = useState(false);
-  const [ordenPor, setOrdenPor] = useState<'nombre' | 'grado' | 'asistencia'>('nombre');
+  const [ordenPor, setOrdenPor] = useState<"nombre" | "grado" | "asistencia">(
+    "nombre"
+  );
   const [ordenAsc, setOrdenAsc] = useState(true);
 
   // Filtrar y ordenar alumnos
@@ -51,7 +55,7 @@ export default function AlumnosTab() {
     let resultado = filtrarAlumnos(alumnos, {
       busqueda,
       grado: gradoFiltro || undefined,
-      seccion: seccionFiltro || undefined
+      seccion: seccionFiltro || undefined,
     });
 
     // Ordenar
@@ -60,17 +64,21 @@ export default function AlumnosTab() {
       let valorB: string | number;
 
       switch (ordenPor) {
-        case 'nombre':
+        case "nombre":
           valorA = normalizarNombre(a.nombres, a.apellidos);
           valorB = normalizarNombre(b.nombres, b.apellidos);
           break;
-        case 'grado':
+        case "grado":
           valorA = `${a.grado}-${a.seccion}`;
           valorB = `${b.grado}-${b.seccion}`;
           break;
-        case 'asistencia':
-          const asistenciasA = asistencias.filter(as => as.id_alumno === a.id);
-          const asistenciasB = asistencias.filter(as => as.id_alumno === b.id);
+        case "asistencia":
+          const asistenciasA = asistencias.filter(
+            (as) => as.id_alumno === a.id
+          );
+          const asistenciasB = asistencias.filter(
+            (as) => as.id_alumno === b.id
+          );
           valorA = calcularEstadoAsistencia(asistenciasA);
           valorB = calcularEstadoAsistencia(asistenciasB);
           break;
@@ -85,7 +93,15 @@ export default function AlumnosTab() {
     });
 
     return resultado;
-  }, [alumnos, busqueda, gradoFiltro, seccionFiltro, ordenPor, ordenAsc, asistencias]);
+  }, [
+    alumnos,
+    busqueda,
+    gradoFiltro,
+    seccionFiltro,
+    ordenPor,
+    ordenAsc,
+    asistencias,
+  ]);
 
   // Búsqueda con debounce
   const debouncedSetBusqueda = useMemo(
@@ -98,17 +114,17 @@ export default function AlumnosTab() {
   };
 
   const limpiarFiltros = () => {
-    setBusqueda('');
+    setBusqueda("");
     setGradoFiltro(null);
     setSeccionFiltro(null);
   };
 
   const gradosDisponibles = obtenerGradosUnicos(alumnos);
-  const seccionesDisponibles = gradoFiltro 
+  const seccionesDisponibles = gradoFiltro
     ? obtenerSeccionesPorGrado(alumnos, gradoFiltro)
     : obtenerSeccionesUnicas(alumnos);
 
-  const handleOrdenar = (tipo: 'nombre' | 'grado' | 'asistencia') => {
+  const handleOrdenar = (tipo: "nombre" | "grado" | "asistencia") => {
     if (ordenPor === tipo) {
       setOrdenAsc(!ordenAsc);
     } else {
@@ -124,7 +140,7 @@ export default function AlumnosTab() {
           <div className="h-10 bg-gray-200 rounded w-1/3" />
           <div className="h-12 bg-gray-200 rounded" />
           <div className="space-y-3">
-            {[1, 2, 3, 4, 5].map(i => (
+            {[1, 2, 3, 4, 5].map((i) => (
               <div key={i} className="h-16 bg-gray-200 rounded" />
             ))}
           </div>
@@ -138,13 +154,15 @@ export default function AlumnosTab() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Gestión de Alumnos</h2>
+          <h2 className="text-2xl font-bold text-gray-900">
+            Gestión de Alumnos
+          </h2>
           <p className="text-gray-600">
             {alumnosFiltrados.length} de {alumnos.length} alumnos
           </p>
         </div>
         <button
-          onClick={() => window.open('/alumnos/create', '_blank')}
+          onClick={() => window.open("/alumnos/create", "_blank")}
           className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
         >
           <Plus className="w-4 h-4 mr-2" />
@@ -175,9 +193,13 @@ export default function AlumnosTab() {
               >
                 <Filter className="w-4 h-4 mr-2" />
                 Filtros
-                {mostrarFiltros ? <ChevronUp className="w-4 h-4 ml-2" /> : <ChevronDown className="w-4 h-4 ml-2" />}
+                {mostrarFiltros ? (
+                  <ChevronUp className="w-4 h-4 ml-2" />
+                ) : (
+                  <ChevronDown className="w-4 h-4 ml-2" />
+                )}
               </button>
-              
+
               {(gradoFiltro || seccionFiltro || busqueda) && (
                 <button
                   onClick={limpiarFiltros}
@@ -191,11 +213,11 @@ export default function AlumnosTab() {
             <div className="flex items-center space-x-2">
               <span className="text-sm text-gray-500">Ordenar por:</span>
               <select
-                value={`${ordenPor}-${ordenAsc ? 'asc' : 'desc'}`}
+                value={`${ordenPor}-${ordenAsc ? "asc" : "desc"}`}
                 onChange={(e) => {
-                  const [tipo, direccion] = e.target.value.split('-');
-                  setOrdenPor(tipo as 'nombre' | 'grado' | 'asistencia');
-                  setOrdenAsc(direccion === 'asc');
+                  const [tipo, direccion] = e.target.value.split("-");
+                  setOrdenPor(tipo as "nombre" | "grado" | "asistencia");
+                  setOrdenAsc(direccion === "asc");
                 }}
                 className="text-sm border border-gray-300 rounded px-2 py-1"
               >
@@ -214,7 +236,7 @@ export default function AlumnosTab() {
             {mostrarFiltros && (
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
+                animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
                 className="border-t pt-4 space-y-4"
               >
@@ -224,9 +246,11 @@ export default function AlumnosTab() {
                       Grado
                     </label>
                     <select
-                      value={gradoFiltro || ''}
+                      value={gradoFiltro || ""}
                       onChange={(e) => {
-                        const grado = e.target.value ? Number(e.target.value) : null;
+                        const grado = e.target.value
+                          ? Number(e.target.value)
+                          : null;
                         setGradoFiltro(grado);
                         setSeccionFiltro(null); // Reset sección al cambiar grado
                       }}
@@ -240,16 +264,18 @@ export default function AlumnosTab() {
                       ))}
                     </select>
                   </div>
-                  
+
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Sección
                     </label>
                     <select
-                      value={seccionFiltro || ''}
+                      value={seccionFiltro || ""}
                       onChange={(e) => setSeccionFiltro(e.target.value || null)}
                       className="w-full border border-gray-300 rounded-lg px-3 py-2"
-                      disabled={!gradoFiltro && seccionesDisponibles.length === 0}
+                      disabled={
+                        !gradoFiltro && seccionesDisponibles.length === 0
+                      }
                     >
                       <option value="">Todas las secciones</option>
                       {seccionesDisponibles.map((seccion) => (
@@ -274,39 +300,48 @@ export default function AlumnosTab() {
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    <button 
-                      onClick={() => handleOrdenar('nombre')}
+                    <button
+                      onClick={() => handleOrdenar("nombre")}
                       className="flex items-center space-x-1 hover:text-gray-700"
                     >
                       <span>Alumno</span>
-                      {ordenPor === 'nombre' && (
-                        ordenAsc ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />
-                      )}
+                      {ordenPor === "nombre" &&
+                        (ordenAsc ? (
+                          <ChevronUp className="w-4 h-4" />
+                        ) : (
+                          <ChevronDown className="w-4 h-4" />
+                        ))}
                     </button>
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    <button 
-                      onClick={() => handleOrdenar('grado')}
+                    <button
+                      onClick={() => handleOrdenar("grado")}
                       className="flex items-center space-x-1 hover:text-gray-700"
                     >
                       <span>Grado/Sección</span>
-                      {ordenPor === 'grado' && (
-                        ordenAsc ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />
-                      )}
+                      {ordenPor === "grado" &&
+                        (ordenAsc ? (
+                          <ChevronUp className="w-4 h-4" />
+                        ) : (
+                          <ChevronDown className="w-4 h-4" />
+                        ))}
                     </button>
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Contacto
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    <button 
-                      onClick={() => handleOrdenar('asistencia')}
+                    <button
+                      onClick={() => handleOrdenar("asistencia")}
                       className="flex items-center space-x-1 hover:text-gray-700"
                     >
                       <span>Estado Hoy</span>
-                      {ordenPor === 'asistencia' && (
-                        ordenAsc ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />
-                      )}
+                      {ordenPor === "asistencia" &&
+                        (ordenAsc ? (
+                          <ChevronUp className="w-4 h-4" />
+                        ) : (
+                          <ChevronDown className="w-4 h-4" />
+                        ))}
                     </button>
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -316,10 +351,12 @@ export default function AlumnosTab() {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {alumnosFiltrados.map((alumno, index) => (
-                  <AlumnoRow 
-                    key={alumno.id} 
-                    alumno={alumno} 
-                    asistencias={asistencias.filter(a => a.id_alumno === alumno.id)}
+                  <AlumnoRow
+                    key={alumno.id}
+                    alumno={alumno}
+                    asistencias={asistencias.filter(
+                      (a) => a.id_alumno === alumno.id
+                    )}
                     index={index}
                     onVerDetalle={setAlumnoSeleccionado}
                   />
@@ -334,13 +371,12 @@ export default function AlumnosTab() {
               No se encontraron alumnos
             </h3>
             <p className="text-gray-500 mb-6">
-              {busqueda || gradoFiltro || seccionFiltro 
-                ? 'Intenta ajustar los filtros de búsqueda'
-                : 'No hay alumnos registrados en el sistema'
-              }
+              {busqueda || gradoFiltro || seccionFiltro
+                ? "Intenta ajustar los filtros de búsqueda"
+                : "No hay alumnos registrados en el sistema"}
             </p>
             <button
-              onClick={() => window.open('/alumnos/create', '_blank')}
+              onClick={() => window.open("/alumnos/create", "_blank")}
               className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
               <Plus className="w-4 h-4 mr-2" />
@@ -355,7 +391,9 @@ export default function AlumnosTab() {
         {alumnoSeleccionado && (
           <DetalleAlumnoModal
             alumno={alumnoSeleccionado}
-            asistencias={asistencias.filter(a => a.id_alumno === alumnoSeleccionado.id)}
+            asistencias={asistencias.filter(
+              (a) => a.id_alumno === alumnoSeleccionado.id
+            )}
             onClose={() => setAlumnoSeleccionado(null)}
           />
         )}
@@ -365,11 +403,11 @@ export default function AlumnosTab() {
 }
 
 // Componente para cada fila de alumno
-function AlumnoRow({ 
-  alumno, 
-  asistencias, 
-  index, 
-  onVerDetalle 
+function AlumnoRow({
+  alumno,
+  asistencias,
+  index,
+  onVerDetalle,
 }: {
   alumno: Alumno;
   asistencias: any[];
@@ -391,7 +429,8 @@ function AlumnoRow({
           <div className="flex-shrink-0 h-10 w-10">
             <div className="h-10 w-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
               <span className="text-sm font-medium text-white">
-                {alumno.nombres.charAt(0)}{alumno.apellidos.charAt(0)}
+                {alumno.nombres.charAt(0)}
+                {alumno.apellidos.charAt(0)}
               </span>
             </div>
           </div>
@@ -405,7 +444,7 @@ function AlumnoRow({
           </div>
         </div>
       </td>
-      
+
       <td className="px-6 py-4 whitespace-nowrap">
         <div className="flex items-center">
           <BookOpen className="w-4 h-4 text-gray-400 mr-2" />
@@ -414,23 +453,25 @@ function AlumnoRow({
           </span>
         </div>
       </td>
-      
+
       <td className="px-6 py-4 whitespace-nowrap">
         <div className="flex items-center">
           <Phone className="w-4 h-4 text-gray-400 mr-2" />
           <span className="text-sm text-gray-900">
-            {alumno.contacto_padres || 'No registrado'}
+            {alumno.contacto_padres || "No registrado"}
           </span>
         </div>
       </td>
-      
+
       <td className="px-6 py-4 whitespace-nowrap">
-        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${colores.bg} ${colores.text} border ${colores.border}`}>
+        <span
+          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${colores.bg} ${colores.text} border ${colores.border}`}
+        >
           <div className={`w-2 h-2 ${colores.dot} rounded-full mr-2`} />
           {obtenerTextoEstado(estado)}
         </span>
       </td>
-      
+
       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
         <div className="flex items-center space-x-2">
           <button
@@ -459,10 +500,10 @@ function AlumnoRow({
 }
 
 // Modal de detalle del alumno
-function DetalleAlumnoModal({ 
-  alumno, 
-  asistencias, 
-  onClose 
+function DetalleAlumnoModal({
+  alumno,
+  asistencias,
+  onClose,
 }: {
   alumno: Alumno;
   asistencias: any[];
@@ -508,7 +549,8 @@ function DetalleAlumnoModal({
               <div className="flex items-center space-x-4">
                 <div className="h-16 w-16 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
                   <span className="text-xl font-bold text-white">
-                    {alumno.nombres.charAt(0)}{alumno.apellidos.charAt(0)}
+                    {alumno.nombres.charAt(0)}
+                    {alumno.apellidos.charAt(0)}
                   </span>
                 </div>
                 <div className="flex-1">
@@ -540,8 +582,12 @@ function DetalleAlumnoModal({
                     <p className="font-medium">{alumno.apellidos}</p>
                   </div>
                   <div>
-                    <span className="text-sm text-gray-600">Contacto Padres:</span>
-                    <p className="font-medium">{alumno.contacto_padres || 'No registrado'}</p>
+                    <span className="text-sm text-gray-600">
+                      Contacto Padres:
+                    </span>
+                    <p className="font-medium">
+                      {alumno.contacto_padres || "No registrado"}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -553,15 +599,20 @@ function DetalleAlumnoModal({
                 <div className="space-y-2">
                   {asistencias.length > 0 ? (
                     asistencias.map((asistencia, index) => (
-                      <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                      <div
+                        key={index}
+                        className="flex items-center justify-between p-2 bg-gray-50 rounded"
+                      >
                         <div className="flex items-center space-x-2">
-                          {asistencia.tipo === 'entrada' ? (
+                          {asistencia.tipo === "entrada" ? (
                             <UserCheck className="w-4 h-4 text-green-600" />
                           ) : (
                             <UserX className="w-4 h-4 text-blue-600" />
                           )}
                           <span className="text-sm font-medium">
-                            {asistencia.tipo === 'entrada' ? 'Entrada' : 'Salida'}
+                            {asistencia.tipo === "entrada"
+                              ? "Entrada"
+                              : "Salida"}
                           </span>
                         </div>
                         <span className="text-sm text-gray-600">

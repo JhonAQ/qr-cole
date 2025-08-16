@@ -1,59 +1,53 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { supabase } from '@/utils/supabase';
-import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
-import { 
-  BarChart3, 
-  Users, 
-  ClipboardList, 
-  Home,
-  QrCode
-} from 'lucide-react';
-import { Toaster } from 'react-hot-toast';
+import { useEffect, useState } from "react";
+import { supabase } from "@/utils/supabase";
+import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+import { BarChart3, Users, ClipboardList, Home, QrCode } from "lucide-react";
+import { Toaster } from "react-hot-toast";
 
 // Context y Layout
-import { DashboardProvider } from '@/contexts/DashboardContext';
-import NewDashboardLayout from '@/components/Dashboard/NewDashboardLayout';
+import { DashboardProvider } from "@/contexts/DashboardContext";
+import NewDashboardLayout from "@/components/Dashboard/NewDashboardLayout";
 
 // Componentes de tabs
-import OverviewTab from '@/components/Dashboard/OverviewTab';
-import AlumnosTab from '@/components/Dashboard/AlumnosTab';
-import AsistenciaTab from '@/components/Dashboard/AsistenciaTab';
-import EstadisticasTab from '@/components/Dashboard/EstadisticasTab';
+import OverviewTab from "@/components/Dashboard/OverviewTab";
+import AlumnosTab from "@/components/Dashboard/AlumnosTab";
+import AsistenciaTab from "@/components/Dashboard/AsistenciaTab";
+import EstadisticasTab from "@/components/Dashboard/EstadisticasTab";
 
 const tabs = [
   {
-    id: 'overview',
-    label: 'Resumen',
+    id: "overview",
+    label: "Resumen",
     icon: <Home className="w-5 h-5" />,
-    content: <OverviewTab />
+    content: <OverviewTab />,
   },
   {
-    id: 'alumnos',
-    label: 'Alumnos',
+    id: "alumnos",
+    label: "Alumnos",
     icon: <Users className="w-5 h-5" />,
-    content: <AlumnosTab />
+    content: <AlumnosTab />,
   },
   {
-    id: 'asistencia',
-    label: 'Asistencia',
+    id: "asistencia",
+    label: "Asistencia",
     icon: <ClipboardList className="w-5 h-5" />,
-    content: <AsistenciaTab />
+    content: <AsistenciaTab />,
   },
   {
-    id: 'estadisticas',
-    label: 'Estadísticas',
+    id: "estadisticas",
+    label: "Estadísticas",
     icon: <BarChart3 className="w-5 h-5" />,
-    content: <EstadisticasTab />
-  }
+    content: <EstadisticasTab />,
+  },
 ];
 
 export default function DashboardPage() {
   const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState("overview");
   const router = useRouter();
 
   useEffect(() => {
@@ -61,16 +55,16 @@ export default function DashboardPage() {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setLoading(false);
-      if (!session) router.push('/');
+      if (!session) router.push("/");
     });
 
     // Escuchar cambios de autenticación
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setSession(session);
-        if (!session) router.push('/');
-      }
-    );
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      if (!session) router.push("/");
+    });
 
     return () => subscription.unsubscribe();
   }, [router]);
@@ -96,31 +90,31 @@ export default function DashboardPage() {
 
   return (
     <DashboardProvider>
-      <Toaster 
+      <Toaster
         position="top-right"
         toastOptions={{
           duration: 4000,
           style: {
-            background: '#363636',
-            color: '#fff',
+            background: "#363636",
+            color: "#fff",
           },
           success: {
             duration: 3000,
             iconTheme: {
-              primary: '#4ade80',
-              secondary: '#fff',
+              primary: "#4ade80",
+              secondary: "#fff",
             },
           },
           error: {
             duration: 5000,
             iconTheme: {
-              primary: '#ef4444',
-              secondary: '#fff',
+              primary: "#ef4444",
+              secondary: "#fff",
             },
           },
         }}
       />
-      
+
       <NewDashboardLayout
         activeTab={activeTab}
         onTabChange={setActiveTab}
@@ -135,7 +129,7 @@ export default function DashboardPage() {
             transition={{ duration: 0.3 }}
             className="h-full"
           >
-            {tabs.find(tab => tab.id === activeTab)?.content}
+            {tabs.find((tab) => tab.id === activeTab)?.content}
           </motion.div>
         </div>
       </NewDashboardLayout>

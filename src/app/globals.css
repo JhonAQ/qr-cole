@@ -7,6 +7,17 @@
   --font-mono: var(--font-geist-mono);
 }
 
+/* Utilidades personalizadas para el dashboard */
+@layer utilities {
+  .w-70 {
+    width: 17.5rem; /* 280px */
+  }
+
+  .ml-70 {
+    margin-left: 17.5rem; /* 280px */
+  }
+}
+
 :root {
   --primary: #07aee1;
   --primary-dark: #04457d;
@@ -20,7 +31,7 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #04457d;
-    --foreground: #e6e8e9;
+    --foreground: #171717;
   }
 }
 

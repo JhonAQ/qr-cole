@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import React, { useState, useMemo, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { 
+import React, { useState, useMemo, useEffect } from "react";
+import { motion } from "framer-motion";
+import {
   BarChart3,
   PieChart,
   Calendar,
@@ -14,36 +14,36 @@ import {
   Target,
   BookOpen,
   Filter,
-  RefreshCw
-} from 'lucide-react';
-import { supabase } from '@/utils/supabase';
-import { useDashboard } from '@/contexts/DashboardContext';
-import { Alumno, Asistencia } from '@/types';
-import { 
+  RefreshCw,
+} from "lucide-react";
+import { supabase } from "@/utils/supabase";
+import { useDashboard } from "@/contexts/DashboardContext";
+import { Alumno, Asistencia } from "@/types";
+import {
   obtenerFechaHoy,
   formatearFecha,
   obtenerGradosUnicos,
-  obtenerSeccionesUnicas
-} from '@/utils/helpers';
+  obtenerSeccionesUnicas,
+} from "@/utils/helpers";
 
 // Componente para gráfico de barras simple
-function SimpleBarChart({ 
-  data, 
-  title, 
-  color = 'blue' 
-}: { 
+function SimpleBarChart({
+  data,
+  title,
+  color = "blue",
+}: {
   data: Array<{ label: string; value: number; total?: number }>;
   title: string;
-  color?: 'blue' | 'green' | 'red' | 'purple' | 'yellow';
+  color?: "blue" | "green" | "red" | "purple" | "yellow";
 }) {
-  const maxValue = Math.max(...data.map(d => d.total || d.value));
-  
+  const maxValue = Math.max(...data.map((d) => d.total || d.value));
+
   const colorClasses: Record<string, string> = {
-    blue: 'bg-blue-500',
-    green: 'bg-green-500',
-    red: 'bg-red-500',
-    purple: 'bg-purple-500',
-    yellow: 'bg-yellow-500'
+    blue: "bg-blue-500",
+    green: "bg-green-500",
+    red: "bg-red-500",
+    purple: "bg-purple-500",
+    yellow: "bg-yellow-500",
   };
 
   return (
@@ -52,14 +52,20 @@ function SimpleBarChart({
       <div className="space-y-3">
         {data.map((item, index) => {
           const percentage = maxValue > 0 ? (item.value / maxValue) * 100 : 0;
-          const attendanceRate = item.total ? (item.value / item.total) * 100 : 0;
-          
+          const attendanceRate = item.total
+            ? (item.value / item.total) * 100
+            : 0;
+
           return (
             <div key={item.label} className="space-y-1">
               <div className="flex justify-between text-sm">
                 <span className="font-medium text-gray-700">{item.label}</span>
                 <span className="text-gray-500">
-                  {item.total ? `${item.value}/${item.total} (${attendanceRate.toFixed(1)}%)` : item.value}
+                  {item.total
+                    ? `${item.value}/${item.total} (${attendanceRate.toFixed(
+                        1
+                      )}%)`
+                    : item.value}
                 </span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
@@ -79,25 +85,40 @@ function SimpleBarChart({
 }
 
 // Componente para métricas clave
-function MetricCard({ 
-  title, 
-  value, 
-  trend, 
-  icon: Icon, 
-  color 
+function MetricCard({
+  title,
+  value,
+  trend,
+  icon: Icon,
+  color,
 }: {
   title: string;
   value: string | number;
   trend?: { value: number; isUp: boolean };
   icon: React.ElementType;
-  color: 'blue' | 'green' | 'red' | 'purple' | 'yellow';
+  color: "blue" | "green" | "red" | "purple" | "yellow";
 }) {
-  const colorClasses: Record<string, { bg: string; icon: string; text: string }> = {
-    blue: { bg: 'bg-blue-50', icon: 'text-blue-600', text: 'text-blue-600' },
-    green: { bg: 'bg-green-50', icon: 'text-green-600', text: 'text-green-600' },
-    red: { bg: 'bg-red-50', icon: 'text-red-600', text: 'text-red-600' },
-    purple: { bg: 'bg-purple-50', icon: 'text-purple-600', text: 'text-purple-600' },
-    yellow: { bg: 'bg-yellow-50', icon: 'text-yellow-600', text: 'text-yellow-600' }
+  const colorClasses: Record<
+    string,
+    { bg: string; icon: string; text: string }
+  > = {
+    blue: { bg: "bg-blue-50", icon: "text-blue-600", text: "text-blue-600" },
+    green: {
+      bg: "bg-green-50",
+      icon: "text-green-600",
+      text: "text-green-600",
+    },
+    red: { bg: "bg-red-50", icon: "text-red-600", text: "text-red-600" },
+    purple: {
+      bg: "bg-purple-50",
+      icon: "text-purple-600",
+      text: "text-purple-600",
+    },
+    yellow: {
+      bg: "bg-yellow-50",
+      icon: "text-yellow-600",
+      text: "text-yellow-600",
+    },
   };
 
   const colors = colorClasses[color];
@@ -113,9 +134,11 @@ function MetricCard({
           <div className="flex items-center">
             <p className="text-2xl font-bold text-gray-900">{value}</p>
             {trend && (
-              <div className={`ml-2 flex items-center text-sm ${
-                trend.isUp ? 'text-green-600' : 'text-red-600'
-              }`}>
+              <div
+                className={`ml-2 flex items-center text-sm ${
+                  trend.isUp ? "text-green-600" : "text-red-600"
+                }`}
+              >
                 {trend.isUp ? (
                   <TrendingUp className="w-4 h-4 mr-1" />
                 ) : (
@@ -132,14 +155,20 @@ function MetricCard({
 }
 
 export default function EstadisticasTab() {
-  const { alumnos, asistencias: asistenciasHoy, estadisticas: estadisticasGenerales } = useDashboard();
+  const {
+    alumnos,
+    asistencias: asistenciasHoy,
+    estadisticas: estadisticasGenerales,
+  } = useDashboard();
   const [fechaInicio, setFechaInicio] = useState(() => {
     const hoy = new Date();
     const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
-    return inicioMes.toISOString().split('T')[0];
+    return inicioMes.toISOString().split("T")[0];
   });
   const [fechaFin, setFechaFin] = useState(obtenerFechaHoy());
-  const [asistenciasRango, setAsistenciasRango] = useState<(Asistencia & { alumno: Alumno })[]>([]);
+  const [asistenciasRango, setAsistenciasRango] = useState<
+    (Asistencia & { alumno: Alumno })[]
+  >([]);
   const [loading, setLoading] = useState(false);
 
   // Cargar asistencias del rango seleccionado
@@ -147,19 +176,21 @@ export default function EstadisticasTab() {
     setLoading(true);
     try {
       const { data, error } = await supabase
-        .from('asistencias')
-        .select(`
+        .from("asistencias")
+        .select(
+          `
           *,
           alumno:alumnos(*)
-        `)
-        .gte('hora', `${fechaInicio}T00:00:00`)
-        .lte('hora', `${fechaFin}T23:59:59`)
-        .order('hora', { ascending: false });
+        `
+        )
+        .gte("hora", `${fechaInicio}T00:00:00`)
+        .lte("hora", `${fechaFin}T23:59:59`)
+        .order("hora", { ascending: false });
 
       if (error) throw error;
       setAsistenciasRango(data || []);
     } catch (error) {
-      console.error('Error al cargar asistencias:', error);
+      console.error("Error al cargar asistencias:", error);
     } finally {
       setLoading(false);
     }
@@ -172,12 +203,17 @@ export default function EstadisticasTab() {
   // Estadísticas del rango seleccionado
   const estadisticasRango = useMemo(() => {
     const totalRegistros = asistenciasRango.length;
-    const entradas = asistenciasRango.filter(a => a.tipo === 'entrada').length;
-    const salidas = asistenciasRango.filter(a => a.tipo === 'salida').length;
-    const alumnosConAsistencia = new Set(asistenciasRango.map(a => a.id_alumno)).size;
-    const porcentajeAsistencia = alumnos.length > 0 
-      ? Math.round((alumnosConAsistencia / alumnos.length) * 100) 
-      : 0;
+    const entradas = asistenciasRango.filter(
+      (a) => a.tipo === "entrada"
+    ).length;
+    const salidas = asistenciasRango.filter((a) => a.tipo === "salida").length;
+    const alumnosConAsistencia = new Set(
+      asistenciasRango.map((a) => a.id_alumno)
+    ).size;
+    const porcentajeAsistencia =
+      alumnos.length > 0
+        ? Math.round((alumnosConAsistencia / alumnos.length) * 100)
+        : 0;
 
     return {
       totalRegistros,
@@ -185,69 +221,82 @@ export default function EstadisticasTab() {
       salidas,
       alumnosConAsistencia,
       porcentajeAsistencia,
-      alumnosSinAsistencia: alumnos.length - alumnosConAsistencia
+      alumnosSinAsistencia: alumnos.length - alumnosConAsistencia,
     };
   }, [asistenciasRango, alumnos]);
 
   // Estadísticas por grado
   const estadisticasPorGrado = useMemo(() => {
     const gradosUnicos = obtenerGradosUnicos(alumnos);
-    
-    return gradosUnicos.map(grado => {
-      const alumnosDelGrado = alumnos.filter(a => a.grado === grado);
-      const asistenciasDelGrado = asistenciasRango.filter(a => a.alumno?.grado === grado);
-      const alumnosConAsistencia = new Set(asistenciasDelGrado.map(a => a.id_alumno)).size;
-      
-      return {
-        label: `${grado}° Grado`,
-        value: alumnosConAsistencia,
-        total: alumnosDelGrado.length,
-        porcentaje: alumnosDelGrado.length > 0 
-          ? Math.round((alumnosConAsistencia / alumnosDelGrado.length) * 100) 
-          : 0
-      };
-    }).sort((a, b) => parseInt(a.label) - parseInt(b.label));
+
+    return gradosUnicos
+      .map((grado) => {
+        const alumnosDelGrado = alumnos.filter((a) => a.grado === grado);
+        const asistenciasDelGrado = asistenciasRango.filter(
+          (a) => a.alumno?.grado === grado
+        );
+        const alumnosConAsistencia = new Set(
+          asistenciasDelGrado.map((a) => a.id_alumno)
+        ).size;
+
+        return {
+          label: `${grado}° Grado`,
+          value: alumnosConAsistencia,
+          total: alumnosDelGrado.length,
+          porcentaje:
+            alumnosDelGrado.length > 0
+              ? Math.round(
+                  (alumnosConAsistencia / alumnosDelGrado.length) * 100
+                )
+              : 0,
+        };
+      })
+      .sort((a, b) => parseInt(a.label) - parseInt(b.label));
   }, [alumnos, asistenciasRango]);
 
   // Estadísticas por día (últimos 7 días)
   const estadisticasPorDia = useMemo(() => {
     const dias = [];
     const hoy = new Date();
-    
+
     for (let i = 6; i >= 0; i--) {
       const fecha = new Date(hoy);
       fecha.setDate(fecha.getDate() - i);
-      const fechaStr = fecha.toISOString().split('T')[0];
-      
-      const asistenciasDia = asistenciasRango.filter(a => 
-        a.hora.split('T')[0] === fechaStr
+      const fechaStr = fecha.toISOString().split("T")[0];
+
+      const asistenciasDia = asistenciasRango.filter(
+        (a) => a.hora.split("T")[0] === fechaStr
       );
-      
-      const alumnosUnicos = new Set(asistenciasDia.map(a => a.id_alumno)).size;
-      
+
+      const alumnosUnicos = new Set(asistenciasDia.map((a) => a.id_alumno))
+        .size;
+
       dias.push({
-        label: fecha.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric' }),
+        label: fecha.toLocaleDateString("es-ES", {
+          weekday: "short",
+          day: "numeric",
+        }),
         value: alumnosUnicos,
-        total: alumnos.length
+        total: alumnos.length,
       });
     }
-    
+
     return dias;
   }, [asistenciasRango, alumnos]);
 
   // Horarios pico
   const horariosPico = useMemo(() => {
     const horasPorHora: Record<number, number> = {};
-    
-    asistenciasRango.forEach(asistencia => {
+
+    asistenciasRango.forEach((asistencia) => {
       const hora = new Date(asistencia.hora).getHours();
       horasPorHora[hora] = (horasPorHora[hora] || 0) + 1;
     });
-    
+
     return Object.entries(horasPorHora)
       .map(([hora, cantidad]) => ({
         label: `${hora}:00`,
-        value: cantidad as number
+        value: cantidad as number,
       }))
       .sort((a, b) => b.value - a.value)
       .slice(0, 5);
@@ -255,29 +304,32 @@ export default function EstadisticasTab() {
 
   // Top alumnos más puntuales
   const alumnosPuntuales = useMemo(() => {
-    const asistenciasPorAlumno: Record<string, { alumno: Alumno; entradas: number; salidas: number }> = {};
-    
-    asistenciasRango.forEach(asistencia => {
+    const asistenciasPorAlumno: Record<
+      string,
+      { alumno: Alumno; entradas: number; salidas: number }
+    > = {};
+
+    asistenciasRango.forEach((asistencia) => {
       if (!asistenciasPorAlumno[asistencia.id_alumno]) {
         asistenciasPorAlumno[asistencia.id_alumno] = {
           alumno: asistencia.alumno,
           entradas: 0,
-          salidas: 0
+          salidas: 0,
         };
       }
-      
-      if (asistencia.tipo === 'entrada') {
+
+      if (asistencia.tipo === "entrada") {
         asistenciasPorAlumno[asistencia.id_alumno].entradas++;
       } else {
         asistenciasPorAlumno[asistencia.id_alumno].salidas++;
       }
     });
-    
+
     return Object.values(asistenciasPorAlumno)
       .map((data) => ({
         label: `${data.alumno?.nombres} ${data.alumno?.apellidos}`,
         value: data.entradas + data.salidas,
-        grado: `${data.alumno?.grado}°-${data.alumno?.seccion}`
+        grado: `${data.alumno?.grado}°-${data.alumno?.seccion}`,
       }))
       .sort((a, b) => b.value - a.value)
       .slice(0, 5);
@@ -289,13 +341,13 @@ export default function EstadisticasTab() {
       estadisticasGenerales: estadisticasRango,
       estadisticasPorGrado,
       horariosPico,
-      alumnosPuntuales
+      alumnosPuntuales,
     };
-    
+
     const jsonContent = JSON.stringify(datos, null, 2);
-    const blob = new Blob([jsonContent], { type: 'application/json' });
+    const blob = new Blob([jsonContent], { type: "application/json" });
     const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
     a.download = `reporte_asistencia_${fechaInicio}_${fechaFin}.json`;
     a.click();
@@ -307,9 +359,12 @@ export default function EstadisticasTab() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Estadísticas y Reportes</h2>
+          <h2 className="text-2xl font-bold text-gray-900">
+            Estadísticas y Reportes
+          </h2>
           <p className="text-gray-600">
-            Análisis detallado de asistencia del {formatearFecha(fechaInicio)} al {formatearFecha(fechaFin)}
+            Análisis detallado de asistencia del {formatearFecha(fechaInicio)}{" "}
+            al {formatearFecha(fechaFin)}
           </p>
         </div>
         <div className="flex items-center space-x-3">
@@ -318,7 +373,9 @@ export default function EstadisticasTab() {
             disabled={loading}
             className="flex items-center px-3 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50"
           >
-            <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+            <RefreshCw
+              className={`w-4 h-4 mr-2 ${loading ? "animate-spin" : ""}`}
+            />
             Actualizar
           </button>
           <button
@@ -382,9 +439,9 @@ export default function EstadisticasTab() {
         <MetricCard
           title="Alumnos con Asistencia"
           value={`${estadisticasRango.alumnosConAsistencia}/${alumnos.length}`}
-          trend={{ 
-            value: estadisticasRango.porcentajeAsistencia, 
-            isUp: estadisticasRango.porcentajeAsistencia >= 80 
+          trend={{
+            value: estadisticasRango.porcentajeAsistencia,
+            isUp: estadisticasRango.porcentajeAsistencia >= 80,
           }}
           icon={Users}
           color="green"
@@ -393,7 +450,7 @@ export default function EstadisticasTab() {
           title="% Asistencia"
           value={`${estadisticasRango.porcentajeAsistencia}%`}
           icon={Target}
-          color={estadisticasRango.porcentajeAsistencia >= 80 ? 'green' : 'red'}
+          color={estadisticasRango.porcentajeAsistencia >= 80 ? "green" : "red"}
         />
         <MetricCard
           title="Entradas/Salidas"
@@ -410,19 +467,19 @@ export default function EstadisticasTab() {
           title="Asistencia por Grado"
           color="blue"
         />
-        
+
         <SimpleBarChart
           data={estadisticasPorDia}
           title="Tendencia Semanal"
           color="green"
         />
-        
+
         <SimpleBarChart
           data={horariosPico}
           title="Horarios con Más Actividad"
           color="purple"
         />
-        
+
         <SimpleBarChart
           data={alumnosPuntuales}
           title="Alumnos Más Puntuales"
@@ -441,20 +498,24 @@ export default function EstadisticasTab() {
             <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg">
               <div className="flex items-center">
                 <div className="w-4 h-4 bg-green-500 rounded-full mr-3" />
-                <span className="font-medium text-green-800">Con Asistencia</span>
+                <span className="font-medium text-green-800">
+                  Con Asistencia
+                </span>
               </div>
               <span className="text-green-900 font-bold">
-                {estadisticasRango.alumnosConAsistencia} ({estadisticasRango.porcentajeAsistencia}%)
+                {estadisticasRango.alumnosConAsistencia} (
+                {estadisticasRango.porcentajeAsistencia}%)
               </span>
             </div>
-            
+
             <div className="flex items-center justify-between p-4 bg-red-50 rounded-lg">
               <div className="flex items-center">
                 <div className="w-4 h-4 bg-red-500 rounded-full mr-3" />
                 <span className="font-medium text-red-800">Sin Asistencia</span>
               </div>
               <span className="text-red-900 font-bold">
-                {estadisticasRango.alumnosSinAsistencia} ({100 - estadisticasRango.porcentajeAsistencia}%)
+                {estadisticasRango.alumnosSinAsistencia} (
+                {100 - estadisticasRango.porcentajeAsistencia}%)
               </span>
             </div>
           </div>
@@ -478,11 +539,15 @@ export default function EstadisticasTab() {
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">Grados activos:</span>
-              <span className="font-medium">{obtenerGradosUnicos(alumnos).length}</span>
+              <span className="font-medium">
+                {obtenerGradosUnicos(alumnos).length}
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">Secciones activas:</span>
-              <span className="font-medium">{obtenerSeccionesUnicas(alumnos).length}</span>
+              <span className="font-medium">
+                {obtenerSeccionesUnicas(alumnos).length}
+              </span>
             </div>
           </div>
         </div>
@@ -505,8 +570,13 @@ export default function EstadisticasTab() {
               </h4>
               <ul className="space-y-2 text-yellow-700">
                 <li>• La asistencia está por debajo del 80% recomendado</li>
-                <li>• Considere implementar un sistema de seguimiento más estricto</li>
-                <li>• Revise los grados con menor asistencia para intervenciones específicas</li>
+                <li>
+                  • Considere implementar un sistema de seguimiento más estricto
+                </li>
+                <li>
+                  • Revise los grados con menor asistencia para intervenciones
+                  específicas
+                </li>
                 <li>• Establezca comunicación directa con padres de familia</li>
               </ul>
             </div>

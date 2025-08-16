@@ -1,23 +1,23 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  BarChart3, 
-  Users, 
-  ClipboardList, 
-  QrCode, 
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  BarChart3,
+  Users,
+  ClipboardList,
+  QrCode,
   Settings,
   LogOut,
   Menu,
   X,
   Bell,
-  RefreshCw
-} from 'lucide-react';
-import { supabase } from '@/utils/supabase';
-import { useRouter } from 'next/navigation';
-import { formatearFecha, formatearHora } from '@/utils/helpers';
-import { useDashboard } from '@/contexts/DashboardContext';
+  RefreshCw,
+} from "lucide-react";
+import { supabase } from "@/utils/supabase";
+import { useRouter } from "next/navigation";
+import { formatearFecha, formatearHora } from "@/utils/helpers";
+import { useDashboard } from "@/contexts/DashboardContext";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -30,11 +30,11 @@ interface DashboardLayoutProps {
   }>;
 }
 
-export default function NewDashboardLayout({ 
-  children, 
-  activeTab, 
-  onTabChange, 
-  tabs 
+export default function NewDashboardLayout({
+  children,
+  activeTab,
+  onTabChange,
+  tabs,
 }: DashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -43,7 +43,7 @@ export default function NewDashboardLayout({
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
-    router.push('/');
+    router.push("/");
   };
 
   const handleRefresh = async () => {
@@ -71,9 +71,7 @@ export default function NewDashboardLayout({
               className="fixed inset-y-0 left-0 w-70 bg-white shadow-xl z-50 lg:hidden"
             >
               <div className="flex items-center justify-between p-4 border-b">
-                <h2 className="text-lg font-semibold text-gray-800">
-                  QR Cole
-                </h2>
+                <h2 className="text-lg font-semibold text-gray-800">QR Cole</h2>
                 <button
                   onClick={() => setSidebarOpen(false)}
                   className="p-2 rounded-md text-gray-400 hover:text-gray-600"
@@ -81,9 +79,9 @@ export default function NewDashboardLayout({
                   <X className="w-5 h-5" />
                 </button>
               </div>
-              <SidebarContent 
-                tabs={tabs} 
-                activeTab={activeTab} 
+              <SidebarContent
+                tabs={tabs}
+                activeTab={activeTab}
                 onTabChange={onTabChange}
                 onClose={() => setSidebarOpen(false)}
               />
@@ -98,9 +96,9 @@ export default function NewDashboardLayout({
           <QrCode className="w-8 h-8 text-blue-600 mr-3" />
           <h2 className="text-xl font-bold text-gray-800">QR Cole</h2>
         </div>
-        <SidebarContent 
-          tabs={tabs} 
-          activeTab={activeTab} 
+        <SidebarContent
+          tabs={tabs}
+          activeTab={activeTab}
           onTabChange={onTabChange}
         />
       </aside>
@@ -121,7 +119,8 @@ export default function NewDashboardLayout({
                 </button>
                 <div className="ml-4 lg:ml-0">
                   <h1 className="text-xl font-semibold text-gray-800">
-                    {tabs.find(tab => tab.id === activeTab)?.label || 'Dashboard'}
+                    {tabs.find((tab) => tab.id === activeTab)?.label ||
+                      "Dashboard"}
                   </h1>
                   <p className="text-sm text-gray-500">
                     {formatearFecha(new Date())} • {formatearHora(new Date())}
@@ -150,7 +149,9 @@ export default function NewDashboardLayout({
                   className="p-2 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
                   title="Actualizar datos"
                 >
-                  <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
+                  <RefreshCw
+                    className={`w-5 h-5 ${loading ? "animate-spin" : ""}`}
+                  />
                 </button>
 
                 <button className="p-2 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors">
@@ -164,7 +165,9 @@ export default function NewDashboardLayout({
                     className="flex items-center p-2 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
                   >
                     <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                      <span className="text-sm font-medium text-blue-600">A</span>
+                      <span className="text-sm font-medium text-blue-600">
+                        A
+                      </span>
                     </div>
                   </button>
 
@@ -177,8 +180,12 @@ export default function NewDashboardLayout({
                         className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg ring-1 ring-gray-200 z-50"
                       >
                         <div className="p-3 border-b">
-                          <p className="text-sm font-medium text-gray-700">Administrador</p>
-                          <p className="text-xs text-gray-500">Sistema QR Cole</p>
+                          <p className="text-sm font-medium text-gray-700">
+                            Administrador
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            Sistema QR Cole
+                          </p>
                         </div>
                         <div className="p-1">
                           <button
@@ -222,11 +229,11 @@ export default function NewDashboardLayout({
 }
 
 // Componente del contenido del sidebar
-function SidebarContent({ 
-  tabs, 
-  activeTab, 
-  onTabChange, 
-  onClose 
+function SidebarContent({
+  tabs,
+  activeTab,
+  onTabChange,
+  onClose,
 }: {
   tabs: Array<{ id: string; label: string; icon: React.ReactNode }>;
   activeTab: string;
@@ -242,11 +249,15 @@ function SidebarContent({
         <div className="grid grid-cols-2 gap-3">
           <div className="bg-white rounded-lg p-3">
             <p className="text-xs text-gray-500 mb-1">Total Alumnos</p>
-            <p className="text-lg font-semibold text-gray-900">{estadisticas.totalAlumnos}</p>
+            <p className="text-lg font-semibold text-gray-900">
+              {estadisticas.totalAlumnos}
+            </p>
           </div>
           <div className="bg-white rounded-lg p-3">
             <p className="text-xs text-gray-500 mb-1">Asistencia Hoy</p>
-            <p className="text-lg font-semibold text-green-600">{estadisticas.porcentajeAsistencia}%</p>
+            <p className="text-lg font-semibold text-green-600">
+              {estadisticas.porcentajeAsistencia}%
+            </p>
           </div>
         </div>
       </div>
@@ -262,9 +273,10 @@ function SidebarContent({
             }}
             className={`
               w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
-              ${activeTab === tab.id 
-                ? 'bg-blue-50 text-blue-700 border border-blue-200' 
-                : 'text-gray-700 hover:bg-gray-100'
+              ${
+                activeTab === tab.id
+                  ? "bg-blue-50 text-blue-700 border border-blue-200"
+                  : "text-gray-700 hover:bg-gray-100"
               }
             `}
           >
@@ -278,14 +290,14 @@ function SidebarContent({
       <div className="p-4 border-t bg-gray-50">
         <div className="space-y-2">
           <button
-            onClick={() => window.open('/scan', '_blank')}
+            onClick={() => window.open("/scan", "_blank")}
             className="w-full flex items-center px-3 py-2 text-sm text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
           >
             <QrCode className="w-4 h-4 mr-3" />
             Escanear QR
           </button>
           <button
-            onClick={() => window.open('/alumnos/create', '_blank')}
+            onClick={() => window.open("/alumnos/create", "_blank")}
             className="w-full flex items-center px-3 py-2 text-sm text-green-600 bg-green-50 rounded-lg hover:bg-green-100 transition-colors"
           >
             <Users className="w-4 h-4 mr-3" />

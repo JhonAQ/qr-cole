@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import React, { useState, useMemo, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
+import React, { useState, useMemo, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
   Calendar,
   Clock,
   Filter,
@@ -17,30 +17,34 @@ import {
   RefreshCw,
   FileText,
   BarChart3,
-  TrendingUp
-} from 'lucide-react';
-import { supabase } from '@/utils/supabase';
-import { Alumno, Asistencia } from '@/types';
-import { 
-  formatearFecha, 
+  TrendingUp,
+} from "lucide-react";
+import { supabase } from "@/utils/supabase";
+import { Alumno, Asistencia } from "@/types";
+import {
+  formatearFecha,
   formatearHora,
   formatearFechaHora,
   obtenerFechaHoy,
   obtenerGradosUnicos,
   obtenerSeccionesUnicas,
-  debounce
-} from '@/utils/helpers';
+  debounce,
+} from "@/utils/helpers";
 
 export default function AsistenciaTab() {
-  const [asistencias, setAsistencias] = useState<(Asistencia & { alumno: Alumno })[]>([]);
+  const [asistencias, setAsistencias] = useState<
+    (Asistencia & { alumno: Alumno })[]
+  >([]);
   const [loading, setLoading] = useState(true);
   const [fechaInicio, setFechaInicio] = useState(obtenerFechaHoy());
   const [fechaFin, setFechaFin] = useState(obtenerFechaHoy());
-  const [tipoFiltro, setTipoFiltro] = useState<'todos' | 'entrada' | 'salida'>('todos');
+  const [tipoFiltro, setTipoFiltro] = useState<"todos" | "entrada" | "salida">(
+    "todos"
+  );
   const [gradoFiltro, setGradoFiltro] = useState<number | null>(null);
   const [seccionFiltro, setSeccionFiltro] = useState<string | null>(null);
-  const [busqueda, setBusqueda] = useState('');
-  const [ordenPor, setOrdenPor] = useState<'hora' | 'alumno' | 'grado'>('hora');
+  const [busqueda, setBusqueda] = useState("");
+  const [ordenPor, setOrdenPor] = useState<"hora" | "alumno" | "grado">("hora");
   const [ordenAsc, setOrdenAsc] = useState(false);
   const [mostrarFiltros, setMostrarFiltros] = useState(false);
 
@@ -49,19 +53,21 @@ export default function AsistenciaTab() {
     setLoading(true);
     try {
       let query = supabase
-        .from('asistencias')
-        .select(`
+        .from("asistencias")
+        .select(
+          `
           *,
           alumno:alumnos(*)
-        `)
-        .gte('hora', `${fechaInicio}T00:00:00`)
-        .lte('hora', `${fechaFin}T23:59:59`);
+        `
+        )
+        .gte("hora", `${fechaInicio}T00:00:00`)
+        .lte("hora", `${fechaFin}T23:59:59`);
 
-      if (tipoFiltro !== 'todos') {
-        query = query.eq('tipo', tipoFiltro);
+      if (tipoFiltro !== "todos") {
+        query = query.eq("tipo", tipoFiltro);
       }
 
-      const { data, error } = await query.order('hora', { ascending: false });
+      const { data, error } = await query.order("hora", { ascending: false });
 
       if (error) throw error;
 
@@ -70,24 +76,29 @@ export default function AsistenciaTab() {
       // Filtros adicionales en el cliente
       if (busqueda) {
         const busquedaLower = busqueda.toLowerCase();
-        asistenciasFiltradas = asistenciasFiltradas.filter(a => 
-          a.alumno?.nombres.toLowerCase().includes(busquedaLower) ||
-          a.alumno?.apellidos.toLowerCase().includes(busquedaLower) ||
-          a.alumno?.codigo_qr.toLowerCase().includes(busquedaLower)
+        asistenciasFiltradas = asistenciasFiltradas.filter(
+          (a) =>
+            a.alumno?.nombres.toLowerCase().includes(busquedaLower) ||
+            a.alumno?.apellidos.toLowerCase().includes(busquedaLower) ||
+            a.alumno?.codigo_qr.toLowerCase().includes(busquedaLower)
         );
       }
 
       if (gradoFiltro) {
-        asistenciasFiltradas = asistenciasFiltradas.filter(a => a.alumno?.grado === gradoFiltro);
+        asistenciasFiltradas = asistenciasFiltradas.filter(
+          (a) => a.alumno?.grado === gradoFiltro
+        );
       }
 
       if (seccionFiltro) {
-        asistenciasFiltradas = asistenciasFiltradas.filter(a => a.alumno?.seccion === seccionFiltro);
+        asistenciasFiltradas = asistenciasFiltradas.filter(
+          (a) => a.alumno?.seccion === seccionFiltro
+        );
       }
 
       setAsistencias(asistenciasFiltradas);
     } catch (error) {
-      console.error('Error al cargar asistencias:', error);
+      console.error("Error al cargar asistencias:", error);
     } finally {
       setLoading(false);
     }
@@ -104,7 +115,7 @@ export default function AsistenciaTab() {
   );
 
   useEffect(() => {
-    if (busqueda !== '') {
+    if (busqueda !== "") {
       debouncedSearch();
     } else {
       cargarAsistencias();
@@ -117,15 +128,15 @@ export default function AsistenciaTab() {
       let valorA, valorB;
 
       switch (ordenPor) {
-        case 'hora':
+        case "hora":
           valorA = new Date(a.hora).getTime();
           valorB = new Date(b.hora).getTime();
           break;
-        case 'alumno':
+        case "alumno":
           valorA = `${a.alumno?.apellidos} ${a.alumno?.nombres}`;
           valorB = `${b.alumno?.apellidos} ${b.alumno?.nombres}`;
           break;
-        case 'grado':
+        case "grado":
           valorA = `${a.alumno?.grado}-${a.alumno?.seccion}`;
           valorB = `${b.alumno?.grado}-${b.alumno?.seccion}`;
           break;
@@ -142,36 +153,38 @@ export default function AsistenciaTab() {
   // Estadísticas del período
   const estadisticas = useMemo(() => {
     const totalRegistros = asistencias.length;
-    const entradas = asistencias.filter(a => a.tipo === 'entrada').length;
-    const salidas = asistencias.filter(a => a.tipo === 'salida').length;
-    const alumnosUnicos = new Set(asistencias.map(a => a.id_alumno)).size;
+    const entradas = asistencias.filter((a) => a.tipo === "entrada").length;
+    const salidas = asistencias.filter((a) => a.tipo === "salida").length;
+    const alumnosUnicos = new Set(asistencias.map((a) => a.id_alumno)).size;
 
     return {
       totalRegistros,
       entradas,
       salidas,
-      alumnosUnicos
+      alumnosUnicos,
     };
   }, [asistencias]);
 
   // Obtener opciones para filtros
   const gradosDisponibles = useMemo(() => {
-    const grados = new Set(asistencias.map(a => a.alumno?.grado).filter(Boolean));
+    const grados = new Set(
+      asistencias.map((a) => a.alumno?.grado).filter(Boolean)
+    );
     return Array.from(grados).sort((a, b) => a - b);
   }, [asistencias]);
 
   const seccionesDisponibles = useMemo(() => {
-    let secciones = asistencias.map(a => a.alumno?.seccion).filter(Boolean);
+    let secciones = asistencias.map((a) => a.alumno?.seccion).filter(Boolean);
     if (gradoFiltro) {
       secciones = asistencias
-        .filter(a => a.alumno?.grado === gradoFiltro)
-        .map(a => a.alumno?.seccion)
+        .filter((a) => a.alumno?.grado === gradoFiltro)
+        .map((a) => a.alumno?.seccion)
         .filter(Boolean);
     }
     return Array.from(new Set(secciones)).sort();
   }, [asistencias, gradoFiltro]);
 
-  const handleOrdenar = (campo: 'hora' | 'alumno' | 'grado') => {
+  const handleOrdenar = (campo: "hora" | "alumno" | "grado") => {
     if (ordenPor === campo) {
       setOrdenAsc(!ordenAsc);
     } else {
@@ -181,25 +194,32 @@ export default function AsistenciaTab() {
   };
 
   const limpiarFiltros = () => {
-    setBusqueda('');
+    setBusqueda("");
     setGradoFiltro(null);
     setSeccionFiltro(null);
-    setTipoFiltro('todos');
+    setTipoFiltro("todos");
     setFechaInicio(obtenerFechaHoy());
     setFechaFin(obtenerFechaHoy());
   };
 
   const exportarDatos = () => {
     // Implementar exportación a CSV/Excel
-    const csvContent = asistenciasOrdenadas.map(a => 
-      `${formatearFechaHora(a.hora)},${a.alumno?.nombres} ${a.alumno?.apellidos},${a.alumno?.grado}°-${a.alumno?.seccion},${a.tipo}`
-    ).join('\n');
-    
-    const blob = new Blob([`Fecha y Hora,Alumno,Grado-Sección,Tipo\n${csvContent}`], 
-      { type: 'text/csv' });
-    
+    const csvContent = asistenciasOrdenadas
+      .map(
+        (a) =>
+          `${formatearFechaHora(a.hora)},${a.alumno?.nombres} ${
+            a.alumno?.apellidos
+          },${a.alumno?.grado}°-${a.alumno?.seccion},${a.tipo}`
+      )
+      .join("\n");
+
+    const blob = new Blob(
+      [`Fecha y Hora,Alumno,Grado-Sección,Tipo\n${csvContent}`],
+      { type: "text/csv" }
+    );
+
     const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
     a.download = `asistencias_${fechaInicio}_${fechaFin}.csv`;
     a.click();
@@ -213,7 +233,7 @@ export default function AsistenciaTab() {
           <div className="h-8 bg-gray-200 rounded w-1/4" />
           <div className="h-32 bg-gray-200 rounded" />
           <div className="space-y-2">
-            {[1, 2, 3, 4, 5].map(i => (
+            {[1, 2, 3, 4, 5].map((i) => (
               <div key={i} className="h-16 bg-gray-200 rounded" />
             ))}
           </div>
@@ -227,7 +247,9 @@ export default function AsistenciaTab() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Historial de Asistencia</h2>
+          <h2 className="text-2xl font-bold text-gray-900">
+            Historial de Asistencia
+          </h2>
           <p className="text-gray-600">
             {asistencias.length} registros encontrados
           </p>
@@ -237,7 +259,9 @@ export default function AsistenciaTab() {
             onClick={() => cargarAsistencias()}
             className="flex items-center px-3 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50"
           >
-            <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+            <RefreshCw
+              className={`w-4 h-4 mr-2 ${loading ? "animate-spin" : ""}`}
+            />
             Actualizar
           </button>
           <button
@@ -258,8 +282,12 @@ export default function AsistenciaTab() {
               <FileText className="h-8 w-8 text-blue-600" />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-500">Total Registros</p>
-              <p className="text-2xl font-semibold text-gray-900">{estadisticas.totalRegistros}</p>
+              <p className="text-sm font-medium text-gray-500">
+                Total Registros
+              </p>
+              <p className="text-2xl font-semibold text-gray-900">
+                {estadisticas.totalRegistros}
+              </p>
             </div>
           </div>
         </div>
@@ -271,7 +299,9 @@ export default function AsistenciaTab() {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-500">Entradas</p>
-              <p className="text-2xl font-semibold text-gray-900">{estadisticas.entradas}</p>
+              <p className="text-2xl font-semibold text-gray-900">
+                {estadisticas.entradas}
+              </p>
             </div>
           </div>
         </div>
@@ -283,7 +313,9 @@ export default function AsistenciaTab() {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-500">Salidas</p>
-              <p className="text-2xl font-semibold text-gray-900">{estadisticas.salidas}</p>
+              <p className="text-2xl font-semibold text-gray-900">
+                {estadisticas.salidas}
+              </p>
             </div>
           </div>
         </div>
@@ -294,8 +326,12 @@ export default function AsistenciaTab() {
               <Users className="h-8 w-8 text-purple-600" />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-500">Alumnos Únicos</p>
-              <p className="text-2xl font-semibold text-gray-900">{estadisticas.alumnosUnicos}</p>
+              <p className="text-sm font-medium text-gray-500">
+                Alumnos Únicos
+              </p>
+              <p className="text-2xl font-semibold text-gray-900">
+                {estadisticas.alumnosUnicos}
+              </p>
             </div>
           </div>
         </div>
@@ -353,7 +389,11 @@ export default function AsistenciaTab() {
                 </label>
                 <select
                   value={tipoFiltro}
-                  onChange={(e) => setTipoFiltro(e.target.value as 'todos' | 'entrada' | 'salida')}
+                  onChange={(e) =>
+                    setTipoFiltro(
+                      e.target.value as "todos" | "entrada" | "salida"
+                    )
+                  }
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                 >
                   <option value="todos">Todos</option>
@@ -369,7 +409,11 @@ export default function AsistenciaTab() {
                 >
                   <Filter className="w-4 h-4 mr-2" />
                   Más filtros
-                  {mostrarFiltros ? <ChevronUp className="w-4 h-4 ml-2" /> : <ChevronDown className="w-4 h-4 ml-2" />}
+                  {mostrarFiltros ? (
+                    <ChevronUp className="w-4 h-4 ml-2" />
+                  ) : (
+                    <ChevronDown className="w-4 h-4 ml-2" />
+                  )}
                 </button>
               </div>
             </div>
@@ -380,7 +424,7 @@ export default function AsistenciaTab() {
             {mostrarFiltros && (
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
+                animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
                 className="border-t pt-4 grid grid-cols-1 md:grid-cols-2 gap-4"
               >
@@ -389,16 +433,20 @@ export default function AsistenciaTab() {
                     Grado
                   </label>
                   <select
-                    value={gradoFiltro || ''}
+                    value={gradoFiltro || ""}
                     onChange={(e) => {
-                      setGradoFiltro(e.target.value ? Number(e.target.value) : null);
+                      setGradoFiltro(
+                        e.target.value ? Number(e.target.value) : null
+                      );
                       setSeccionFiltro(null);
                     }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                   >
                     <option value="">Todos los grados</option>
-                    {gradosDisponibles.map(grado => (
-                      <option key={grado} value={grado}>{grado}° Grado</option>
+                    {gradosDisponibles.map((grado) => (
+                      <option key={grado} value={grado}>
+                        {grado}° Grado
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -408,14 +456,16 @@ export default function AsistenciaTab() {
                     Sección
                   </label>
                   <select
-                    value={seccionFiltro || ''}
+                    value={seccionFiltro || ""}
                     onChange={(e) => setSeccionFiltro(e.target.value || null)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                     disabled={seccionesDisponibles.length === 0}
                   >
                     <option value="">Todas las secciones</option>
-                    {seccionesDisponibles.map(seccion => (
-                      <option key={seccion} value={seccion}>Sección {seccion}</option>
+                    {seccionesDisponibles.map((seccion) => (
+                      <option key={seccion} value={seccion}>
+                        Sección {seccion}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -426,8 +476,12 @@ export default function AsistenciaTab() {
           {/* Acciones de filtro */}
           <div className="flex items-center justify-between pt-2 border-t">
             <div className="flex items-center space-x-4">
-              {(busqueda || gradoFiltro || seccionFiltro || tipoFiltro !== 'todos' || 
-                fechaInicio !== obtenerFechaHoy() || fechaFin !== obtenerFechaHoy()) && (
+              {(busqueda ||
+                gradoFiltro ||
+                seccionFiltro ||
+                tipoFiltro !== "todos" ||
+                fechaInicio !== obtenerFechaHoy() ||
+                fechaFin !== obtenerFechaHoy()) && (
                 <button
                   onClick={limpiarFiltros}
                   className="text-red-600 hover:text-red-700 text-sm"
@@ -440,11 +494,11 @@ export default function AsistenciaTab() {
             <div className="flex items-center space-x-2">
               <span className="text-sm text-gray-500">Ordenar por:</span>
               <select
-                value={`${ordenPor}-${ordenAsc ? 'asc' : 'desc'}`}
+                value={`${ordenPor}-${ordenAsc ? "asc" : "desc"}`}
                 onChange={(e) => {
-                  const [campo, direccion] = e.target.value.split('-');
-                  setOrdenPor(campo as 'hora' | 'alumno' | 'grado');
-                  setOrdenAsc(direccion === 'asc');
+                  const [campo, direccion] = e.target.value.split("-");
+                  setOrdenPor(campo as "hora" | "alumno" | "grado");
+                  setOrdenAsc(direccion === "asc");
                 }}
                 className="text-sm border border-gray-300 rounded px-2 py-1"
               >
@@ -468,8 +522,8 @@ export default function AsistenciaTab() {
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    <button 
-                      onClick={() => handleOrdenar('hora')}
+                    <button
+                      onClick={() => handleOrdenar("hora")}
                       className="flex items-center space-x-1 hover:text-gray-700"
                     >
                       <span>Fecha y Hora</span>
@@ -477,8 +531,8 @@ export default function AsistenciaTab() {
                     </button>
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    <button 
-                      onClick={() => handleOrdenar('alumno')}
+                    <button
+                      onClick={() => handleOrdenar("alumno")}
                       className="flex items-center space-x-1 hover:text-gray-700"
                     >
                       <span>Alumno</span>
@@ -486,8 +540,8 @@ export default function AsistenciaTab() {
                     </button>
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    <button 
-                      onClick={() => handleOrdenar('grado')}
+                    <button
+                      onClick={() => handleOrdenar("grado")}
                       className="flex items-center space-x-1 hover:text-gray-700"
                     >
                       <span>Grado/Sección</span>
@@ -526,13 +580,15 @@ export default function AsistenciaTab() {
                         <div className="flex-shrink-0 h-10 w-10">
                           <div className="h-10 w-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
                             <span className="text-sm font-medium text-white">
-                              {asistencia.alumno?.nombres.charAt(0)}{asistencia.alumno?.apellidos.charAt(0)}
+                              {asistencia.alumno?.nombres.charAt(0)}
+                              {asistencia.alumno?.apellidos.charAt(0)}
                             </span>
                           </div>
                         </div>
                         <div className="ml-4">
                           <div className="text-sm font-medium text-gray-900">
-                            {asistencia.alumno?.nombres} {asistencia.alumno?.apellidos}
+                            {asistencia.alumno?.nombres}{" "}
+                            {asistencia.alumno?.apellidos}
                           </div>
                           <div className="text-sm text-gray-500 font-mono">
                             {asistencia.alumno?.codigo_qr}
@@ -542,30 +598,37 @@ export default function AsistenciaTab() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className="text-sm text-gray-900">
-                        {asistencia.alumno?.grado}° - {asistencia.alumno?.seccion}
+                        {asistencia.alumno?.grado}° -{" "}
+                        {asistencia.alumno?.seccion}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
-                        {asistencia.tipo === 'entrada' ? (
+                        {asistencia.tipo === "entrada" ? (
                           <>
                             <UserCheck className="w-4 h-4 text-green-500 mr-2" />
-                            <span className="text-sm text-green-700 font-medium">Entrada</span>
+                            <span className="text-sm text-green-700 font-medium">
+                              Entrada
+                            </span>
                           </>
                         ) : (
                           <>
                             <UserX className="w-4 h-4 text-blue-500 mr-2" />
-                            <span className="text-sm text-blue-700 font-medium">Salida</span>
+                            <span className="text-sm text-blue-700 font-medium">
+                              Salida
+                            </span>
                           </>
                         )}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        asistencia.tipo === 'entrada' 
-                          ? 'bg-green-100 text-green-800' 
-                          : 'bg-blue-100 text-blue-800'
-                      }`}>
+                      <span
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          asistencia.tipo === "entrada"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-blue-100 text-blue-800"
+                        }`}
+                      >
                         <Clock className="w-3 h-3 mr-1" />
                         Registrado
                       </span>
