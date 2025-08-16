@@ -12,14 +12,21 @@
 }
 
 :root {
-  --primary: #07aee1;
-  --primary-dark: #04457d;
-  --primary-medium: #00a3dc;
-  --light: #e6e8e9;
-  --gray: #587d95;
+  --primary: #3b82f6;
+  --primary-dark: #1d4ed8;
+  --primary-medium: #2563eb;
+  --primary-light: #dbeafe;
+  --light: #f8fafc;
+  --gray: #64748b;
   --background: #ffffff;
-  --foreground: #333;
-  --text-color: #388;
+  --foreground: #475569;
+  --text-color: #374151;
+  --border-color: #e2e8f0;
+  --sidebar-active: #3b82f6;
+  --sidebar-active-bg: #dbeafe;
+  --sidebar-hover: #f8fafc;
+  --card-border: #e2e8f0;
+  --input-border: #d1d5db;
 }
 
 body {
@@ -30,7 +37,7 @@ body {
 
 /* Componentes personalizados usando CSS normal */
 .fc-btn-primary {
-  background-color: #07aee1;
+  background-color: var(--primary);
   color: white;
   font-weight: 600;
   padding: 0.5rem 1rem;
@@ -40,22 +47,22 @@ body {
 }
 
 .fc-btn-primary:hover {
-  background-color: #00a3dc;
+  background-color: var(--primary-dark);
 }
 
 .fc-btn-secondary {
   background-color: white;
-  color: #04457d;
+  color: var(--primary-dark);
   font-weight: 600;
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
-  border: 1px solid #04457d;
+  border: 1px solid var(--primary-dark);
   box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   transition: all 0.15s ease-in-out;
 }
 
 .fc-btn-secondary:hover {
-  background-color: #f9fafb;
+  background-color: var(--primary-light);
 }
 
 .fc-card {
@@ -63,32 +70,110 @@ body {
   padding: 1.5rem;
   border-radius: 0.75rem;
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--card-border);
 }
 
 .fc-input {
   width: 100%;
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--input-border);
   transition: all 0.15s ease-in-out;
-  color: #777;
+  color: var(--foreground);
 }
 
 .fc-input:focus {
   outline: none;
-  box-shadow: 0 0 0 2px #07aee1;
+  box-shadow: 0 0 0 2px var(--primary);
   border-color: transparent;
 }
 
 .fc-heading {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #04457d;
+  color: var(--primary-dark);
 }
 
 .fc-subheading {
   font-size: 1.125rem;
   font-weight: 600;
-  color: #00a3dc;
+  color: var(--gray);
+}
+
+/* Clases para navegación mejorada */
+.nav-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  transition: colors 0.15s ease;
+}
+
+.nav-item-active {
+  background-color: #dbeafe;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+}
+
+.nav-item-inactive {
+  color: #4b5563;
+}
+
+.nav-item-inactive:hover {
+  background-color: #f3f4f6;
+}
+
+.nav-section {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  transition: colors 0.15s ease;
+}
+
+.nav-section-active {
+  background-color: #dbeafe;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+}
+
+.nav-section-inactive {
+  color: #6b7280;
+}
+
+.nav-section-inactive:hover {
+  background-color: #f9fafb;
+}
+
+/* Mejores animaciones para dropdowns */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+.dropdown-animation {
+  animation: slideDown 0.2s ease;
 }

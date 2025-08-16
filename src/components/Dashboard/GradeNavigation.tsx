@@ -66,7 +66,7 @@ export default function GradeNavigation({
         }}
         className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
           activeTab === "alumnos" && selectedGrade === 0
-            ? "bg-primary text-white"
+            ? "bg-blue-100 text-blue-700 border border-blue-200"
             : "text-gray-600 hover:bg-gray-100"
         }`}
       >
@@ -98,7 +98,9 @@ export default function GradeNavigation({
                   activeTab === "alumnos" &&
                   selectedGrade === grado &&
                   !selectedSection
-                    ? "bg-primary text-white"
+                    ? "bg-blue-100 text-blue-700 border border-blue-200"
+                    : selectedGrade === grado && selectedSection
+                    ? "bg-blue-50 text-blue-600"
                     : "text-gray-600 hover:bg-gray-100"
                 }`}
               >
@@ -141,11 +143,17 @@ export default function GradeNavigation({
                             activeTab === "alumnos" &&
                             selectedGrade === grado &&
                             selectedSection === seccion
-                              ? "bg-primary-medium text-white"
+                              ? "bg-blue-100 text-blue-700 border border-blue-200"
                               : "text-gray-500 hover:bg-gray-50"
                           }`}
                         >
-                          <div className="w-2 h-2 rounded-full bg-current opacity-60" />
+                          <div className={`w-2 h-2 rounded-full ${
+                            activeTab === "alumnos" &&
+                            selectedGrade === grado &&
+                            selectedSection === seccion
+                              ? 'bg-blue-500' 
+                              : 'bg-gray-400'
+                          } opacity-60`} />
                           <span>Sección {seccion}</span>
                           <span className="ml-auto bg-gray-200 text-gray-600 text-xs px-2 py-1 rounded-full">
                             {sectionCount}
