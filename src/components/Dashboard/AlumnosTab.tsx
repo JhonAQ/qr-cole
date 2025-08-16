@@ -1,0 +1,596 @@
+'use client';
+
+import React, { useState, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  Search,
+  Filter,
+  Plus,
+  Edit3,
+  Trash2,
+  QrCode,
+  Phone,
+  Users,
+  BookOpen,
+  ChevronDown,
+  ChevronUp,
+  MoreVertical,
+  UserCheck,
+  UserX,
+  Eye,
+  Download,
+  X
+} from 'lucide-react';
+import { useDashboard } from '@/contexts/DashboardContext';
+import { Alumno } from '@/types';
+import { 
+  filtrarAlumnos, 
+  obtenerGradosUnicos, 
+  obtenerSeccionesUnicas, 
+  obtenerSeccionesPorGrado, 
+  normalizarNombre,
+  obtenerColorEstado,
+  obtenerTextoEstado,
+  calcularEstadoAsistencia,
+  debounce
+} from '@/utils/helpers';
+
+export default function AlumnosTab() {
+  const { alumnos, asistencias, loading } = useDashboard();
+  const [busqueda, setBusqueda] = useState('');
+  const [gradoFiltro, setGradoFiltro] = useState<number | null>(null);
+  const [seccionFiltro, setSeccionFiltro] = useState<string | null>(null);
+  const [mostrarFiltros, setMostrarFiltros] = useState(false);
+  const [alumnoSeleccionado, setAlumnoSeleccionado] = useState<Alumno | null>(null);
+  const [mostrarModal, setMostrarModal] = useState(false);
+  const [ordenPor, setOrdenPor] = useState<'nombre' | 'grado' | 'asistencia'>('nombre');
+  const [ordenAsc, setOrdenAsc] = useState(true);
+
+  // Filtrar y ordenar alumnos
+  const alumnosFiltrados = useMemo(() => {
+    let resultado = filtrarAlumnos(alumnos, {
+      busqueda,
+      grado: gradoFiltro || undefined,
+      seccion: seccionFiltro || undefined
+    });
+
+    // Ordenar
+    resultado = resultado.sort((a, b) => {
+      let valorA: string | number;
+      let valorB: string | number;
+
+      switch (ordenPor) {
+        case 'nombre':
+          valorA = normalizarNombre(a.nombres, a.apellidos);
+          valorB = normalizarNombre(b.nombres, b.apellidos);
+          break;
+        case 'grado':
+          valorA = `${a.grado}-${a.seccion}`;
+          valorB = `${b.grado}-${b.seccion}`;
+          break;
+        case 'asistencia':
+          const asistenciasA = asistencias.filter(as => as.id_alumno === a.id);
+          const asistenciasB = asistencias.filter(as => as.id_alumno === b.id);
+          valorA = calcularEstadoAsistencia(asistenciasA);
+          valorB = calcularEstadoAsistencia(asistenciasB);
+          break;
+        default:
+          valorA = a.nombres;
+          valorB = b.nombres;
+      }
+
+      if (valorA < valorB) return ordenAsc ? -1 : 1;
+      if (valorA > valorB) return ordenAsc ? 1 : -1;
+      return 0;
+    });
+
+    return resultado;
+  }, [alumnos, busqueda, gradoFiltro, seccionFiltro, ordenPor, ordenAsc, asistencias]);
+
+  // Búsqueda con debounce
+  const debouncedSetBusqueda = useMemo(
+    () => debounce((valor: string) => setBusqueda(valor), 300),
+    []
+  );
+
+  const handleBusquedaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    debouncedSetBusqueda(e.target.value);
+  };
+
+  const limpiarFiltros = () => {
+    setBusqueda('');
+    setGradoFiltro(null);
+    setSeccionFiltro(null);
+  };
+
+  const gradosDisponibles = obtenerGradosUnicos(alumnos);
+  const seccionesDisponibles = gradoFiltro 
+    ? obtenerSeccionesPorGrado(alumnos, gradoFiltro)
+    : obtenerSeccionesUnicas(alumnos);
+
+  const handleOrdenar = (tipo: 'nombre' | 'grado' | 'asistencia') => {
+    if (ordenPor === tipo) {
+      setOrdenAsc(!ordenAsc);
+    } else {
+      setOrdenPor(tipo);
+      setOrdenAsc(true);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="p-6">
+        <div className="animate-pulse space-y-4">
+          <div className="h-10 bg-gray-200 rounded w-1/3" />
+          <div className="h-12 bg-gray-200 rounded" />
+          <div className="space-y-3">
+            {[1, 2, 3, 4, 5].map(i => (
+              <div key={i} className="h-16 bg-gray-200 rounded" />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="p-6 space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900">Gestión de Alumnos</h2>
+          <p className="text-gray-600">
+            {alumnosFiltrados.length} de {alumnos.length} alumnos
+          </p>
+        </div>
+        <button
+          onClick={() => window.open('/alumnos/create', '_blank')}
+          className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          <Plus className="w-4 h-4 mr-2" />
+          Nuevo Alumno
+        </button>
+      </div>
+
+      {/* Barra de búsqueda y filtros */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+        <div className="flex flex-col space-y-4">
+          {/* Búsqueda */}
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <input
+              type="text"
+              placeholder="Buscar por nombre, apellido o código QR..."
+              onChange={handleBusquedaChange}
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+
+          {/* Controles de filtros */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <button
+                onClick={() => setMostrarFiltros(!mostrarFiltros)}
+                className="flex items-center px-3 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50"
+              >
+                <Filter className="w-4 h-4 mr-2" />
+                Filtros
+                {mostrarFiltros ? <ChevronUp className="w-4 h-4 ml-2" /> : <ChevronDown className="w-4 h-4 ml-2" />}
+              </button>
+              
+              {(gradoFiltro || seccionFiltro || busqueda) && (
+                <button
+                  onClick={limpiarFiltros}
+                  className="px-3 py-2 text-red-600 text-sm hover:text-red-700"
+                >
+                  Limpiar filtros
+                </button>
+              )}
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <span className="text-sm text-gray-500">Ordenar por:</span>
+              <select
+                value={`${ordenPor}-${ordenAsc ? 'asc' : 'desc'}`}
+                onChange={(e) => {
+                  const [tipo, direccion] = e.target.value.split('-');
+                  setOrdenPor(tipo as 'nombre' | 'grado' | 'asistencia');
+                  setOrdenAsc(direccion === 'asc');
+                }}
+                className="text-sm border border-gray-300 rounded px-2 py-1"
+              >
+                <option value="nombre-asc">Nombre A-Z</option>
+                <option value="nombre-desc">Nombre Z-A</option>
+                <option value="grado-asc">Grado ↑</option>
+                <option value="grado-desc">Grado ↓</option>
+                <option value="asistencia-asc">Asistencia ↑</option>
+                <option value="asistencia-desc">Asistencia ↓</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Panel de filtros expandido */}
+          <AnimatePresence>
+            {mostrarFiltros && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="border-t pt-4 space-y-4"
+              >
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Grado
+                    </label>
+                    <select
+                      value={gradoFiltro || ''}
+                      onChange={(e) => {
+                        const grado = e.target.value ? Number(e.target.value) : null;
+                        setGradoFiltro(grado);
+                        setSeccionFiltro(null); // Reset sección al cambiar grado
+                      }}
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                    >
+                      <option value="">Todos los grados</option>
+                      {gradosDisponibles.map((grado) => (
+                        <option key={grado} value={grado}>
+                          {grado}° Grado
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Sección
+                    </label>
+                    <select
+                      value={seccionFiltro || ''}
+                      onChange={(e) => setSeccionFiltro(e.target.value || null)}
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                      disabled={!gradoFiltro && seccionesDisponibles.length === 0}
+                    >
+                      <option value="">Todas las secciones</option>
+                      {seccionesDisponibles.map((seccion) => (
+                        <option key={seccion} value={seccion}>
+                          Sección {seccion}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+
+      {/* Lista de alumnos */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        {alumnosFiltrados.length > 0 ? (
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <button 
+                      onClick={() => handleOrdenar('nombre')}
+                      className="flex items-center space-x-1 hover:text-gray-700"
+                    >
+                      <span>Alumno</span>
+                      {ordenPor === 'nombre' && (
+                        ordenAsc ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />
+                      )}
+                    </button>
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <button 
+                      onClick={() => handleOrdenar('grado')}
+                      className="flex items-center space-x-1 hover:text-gray-700"
+                    >
+                      <span>Grado/Sección</span>
+                      {ordenPor === 'grado' && (
+                        ordenAsc ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />
+                      )}
+                    </button>
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Contacto
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <button 
+                      onClick={() => handleOrdenar('asistencia')}
+                      className="flex items-center space-x-1 hover:text-gray-700"
+                    >
+                      <span>Estado Hoy</span>
+                      {ordenPor === 'asistencia' && (
+                        ordenAsc ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />
+                      )}
+                    </button>
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Acciones
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {alumnosFiltrados.map((alumno, index) => (
+                  <AlumnoRow 
+                    key={alumno.id} 
+                    alumno={alumno} 
+                    asistencias={asistencias.filter(a => a.id_alumno === alumno.id)}
+                    index={index}
+                    onVerDetalle={setAlumnoSeleccionado}
+                  />
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="text-center py-12">
+            <Users className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              No se encontraron alumnos
+            </h3>
+            <p className="text-gray-500 mb-6">
+              {busqueda || gradoFiltro || seccionFiltro 
+                ? 'Intenta ajustar los filtros de búsqueda'
+                : 'No hay alumnos registrados en el sistema'
+              }
+            </p>
+            <button
+              onClick={() => window.open('/alumnos/create', '_blank')}
+              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Registrar Primer Alumno
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Modal de detalle */}
+      <AnimatePresence>
+        {alumnoSeleccionado && (
+          <DetalleAlumnoModal
+            alumno={alumnoSeleccionado}
+            asistencias={asistencias.filter(a => a.id_alumno === alumnoSeleccionado.id)}
+            onClose={() => setAlumnoSeleccionado(null)}
+          />
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+// Componente para cada fila de alumno
+function AlumnoRow({ 
+  alumno, 
+  asistencias, 
+  index, 
+  onVerDetalle 
+}: {
+  alumno: Alumno;
+  asistencias: any[];
+  index: number;
+  onVerDetalle: (alumno: Alumno) => void;
+}) {
+  const estado = calcularEstadoAsistencia(asistencias);
+  const colores = obtenerColorEstado(estado);
+
+  return (
+    <motion.tr
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.05 }}
+      className="hover:bg-gray-50 transition-colors"
+    >
+      <td className="px-6 py-4 whitespace-nowrap">
+        <div className="flex items-center">
+          <div className="flex-shrink-0 h-10 w-10">
+            <div className="h-10 w-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
+              <span className="text-sm font-medium text-white">
+                {alumno.nombres.charAt(0)}{alumno.apellidos.charAt(0)}
+              </span>
+            </div>
+          </div>
+          <div className="ml-4">
+            <div className="text-sm font-medium text-gray-900">
+              {normalizarNombre(alumno.nombres, alumno.apellidos)}
+            </div>
+            <div className="text-sm text-gray-500 font-mono">
+              {alumno.codigo_qr}
+            </div>
+          </div>
+        </div>
+      </td>
+      
+      <td className="px-6 py-4 whitespace-nowrap">
+        <div className="flex items-center">
+          <BookOpen className="w-4 h-4 text-gray-400 mr-2" />
+          <span className="text-sm text-gray-900">
+            {alumno.grado}° - {alumno.seccion}
+          </span>
+        </div>
+      </td>
+      
+      <td className="px-6 py-4 whitespace-nowrap">
+        <div className="flex items-center">
+          <Phone className="w-4 h-4 text-gray-400 mr-2" />
+          <span className="text-sm text-gray-900">
+            {alumno.contacto_padres || 'No registrado'}
+          </span>
+        </div>
+      </td>
+      
+      <td className="px-6 py-4 whitespace-nowrap">
+        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${colores.bg} ${colores.text} border ${colores.border}`}>
+          <div className={`w-2 h-2 ${colores.dot} rounded-full mr-2`} />
+          {obtenerTextoEstado(estado)}
+        </span>
+      </td>
+      
+      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+        <div className="flex items-center space-x-2">
+          <button
+            onClick={() => onVerDetalle(alumno)}
+            className="text-blue-600 hover:text-blue-900 p-1 rounded"
+            title="Ver detalle"
+          >
+            <Eye className="w-4 h-4" />
+          </button>
+          <button
+            className="text-gray-600 hover:text-gray-900 p-1 rounded"
+            title="Mostrar QR"
+          >
+            <QrCode className="w-4 h-4" />
+          </button>
+          <button
+            className="text-gray-600 hover:text-gray-900 p-1 rounded"
+            title="Más opciones"
+          >
+            <MoreVertical className="w-4 h-4" />
+          </button>
+        </div>
+      </td>
+    </motion.tr>
+  );
+}
+
+// Modal de detalle del alumno
+function DetalleAlumnoModal({ 
+  alumno, 
+  asistencias, 
+  onClose 
+}: {
+  alumno: Alumno;
+  asistencias: any[];
+  onClose: () => void;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ scale: 0.95, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.95, opacity: 0 }}
+        className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="p-6">
+          {/* Header del modal */}
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h3 className="text-xl font-bold text-gray-900">
+                Detalle del Alumno
+              </h3>
+              <p className="text-gray-600">
+                Información completa y historial de asistencia
+              </p>
+            </div>
+            <button
+              onClick={onClose}
+              className="text-gray-400 hover:text-gray-600 p-2 rounded-full hover:bg-gray-100"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* Información del alumno */}
+          <div className="space-y-6">
+            <div className="bg-gray-50 rounded-lg p-4">
+              <div className="flex items-center space-x-4">
+                <div className="h-16 w-16 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
+                  <span className="text-xl font-bold text-white">
+                    {alumno.nombres.charAt(0)}{alumno.apellidos.charAt(0)}
+                  </span>
+                </div>
+                <div className="flex-1">
+                  <h4 className="text-lg font-semibold text-gray-900">
+                    {normalizarNombre(alumno.nombres, alumno.apellidos)}
+                  </h4>
+                  <p className="text-gray-600">
+                    {alumno.grado}° Grado - Sección {alumno.seccion}
+                  </p>
+                  <p className="text-sm text-gray-500 font-mono">
+                    ID: {alumno.codigo_qr}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <h5 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2">
+                  Información Personal
+                </h5>
+                <div className="space-y-2">
+                  <div>
+                    <span className="text-sm text-gray-600">Nombres:</span>
+                    <p className="font-medium">{alumno.nombres}</p>
+                  </div>
+                  <div>
+                    <span className="text-sm text-gray-600">Apellidos:</span>
+                    <p className="font-medium">{alumno.apellidos}</p>
+                  </div>
+                  <div>
+                    <span className="text-sm text-gray-600">Contacto Padres:</span>
+                    <p className="font-medium">{alumno.contacto_padres || 'No registrado'}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h5 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2">
+                  Asistencia Hoy
+                </h5>
+                <div className="space-y-2">
+                  {asistencias.length > 0 ? (
+                    asistencias.map((asistencia, index) => (
+                      <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                        <div className="flex items-center space-x-2">
+                          {asistencia.tipo === 'entrada' ? (
+                            <UserCheck className="w-4 h-4 text-green-600" />
+                          ) : (
+                            <UserX className="w-4 h-4 text-blue-600" />
+                          )}
+                          <span className="text-sm font-medium">
+                            {asistencia.tipo === 'entrada' ? 'Entrada' : 'Salida'}
+                          </span>
+                        </div>
+                        <span className="text-sm text-gray-600">
+                          {new Date(asistencia.hora).toLocaleTimeString()}
+                        </span>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-gray-500 text-sm">Sin registros hoy</p>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Acciones */}
+            <div className="flex justify-end space-x-3 pt-6 border-t">
+              <button
+                onClick={onClose}
+                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+              >
+                Cerrar
+              </button>
+              <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                Editar Alumno
+              </button>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}

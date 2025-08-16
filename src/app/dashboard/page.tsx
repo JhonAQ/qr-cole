@@ -3,23 +3,68 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/utils/supabase';
 import { useRouter } from 'next/navigation';
-import StudentList from '@/components/Dashboard/StudentList';
-import AttendanceHistory from '@/components/Dashboard/AttendanceHistory';
+import { motion } from 'framer-motion';
+import { 
+  BarChart3, 
+  Users, 
+  ClipboardList, 
+  Home,
+  QrCode
+} from 'lucide-react';
 import { Toaster } from 'react-hot-toast';
-import Link from 'next/link';
+
+// Context y Layout
+import { DashboardProvider } from '@/contexts/DashboardContext';
+import NewDashboardLayout from '@/components/Dashboard/NewDashboardLayout';
+
+// Componentes de tabs
+import OverviewTab from '@/components/Dashboard/OverviewTab';
+import AlumnosTab from '@/components/Dashboard/AlumnosTab';
+import AsistenciaTab from '@/components/Dashboard/AsistenciaTab';
+import EstadisticasTab from '@/components/Dashboard/EstadisticasTab';
+
+const tabs = [
+  {
+    id: 'overview',
+    label: 'Resumen',
+    icon: <Home className="w-5 h-5" />,
+    content: <OverviewTab />
+  },
+  {
+    id: 'alumnos',
+    label: 'Alumnos',
+    icon: <Users className="w-5 h-5" />,
+    content: <AlumnosTab />
+  },
+  {
+    id: 'asistencia',
+    label: 'Asistencia',
+    icon: <ClipboardList className="w-5 h-5" />,
+    content: <AsistenciaTab />
+  },
+  {
+    id: 'estadisticas',
+    label: 'Estadísticas',
+    icon: <BarChart3 className="w-5 h-5" />,
+    content: <EstadisticasTab />
+  }
+];
 
 export default function DashboardPage() {
-  const [session, setSession] = useState(null);
+  const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('overview');
   const router = useRouter();
 
   useEffect(() => {
+    // Verificar sesión
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setLoading(false);
       if (!session) router.push('/');
     });
 
+    // Escuchar cambios de autenticación
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         setSession(session);
@@ -30,68 +75,70 @@ export default function DashboardPage() {
     return () => subscription.unsubscribe();
   }, [router]);
 
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
-  };
+  // Pantalla de carga
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+            className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full mb-4 mx-auto"
+          />
+          <p className="text-gray-600 text-lg">Cargando dashboard...</p>
+        </div>
+      </div>
+    );
+  }
 
-  if (loading) return <div>Cargando...</div>;
-
+  // Redirigir si no hay sesión
   if (!session) return null;
 
   return (
-    <div className="container mx-auto p-4">
-      <Toaster />
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Sistema de Asistencia Escolar</h1>
-        <div className="flex space-x-2">
-          <button
-            onClick={handleSignOut}
-            className="px-4 py-2 text-white bg-red-600 rounded-md hover:bg-red-700"
+    <DashboardProvider>
+      <Toaster 
+        position="top-right"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: '#363636',
+            color: '#fff',
+          },
+          success: {
+            duration: 3000,
+            iconTheme: {
+              primary: '#4ade80',
+              secondary: '#fff',
+            },
+          },
+          error: {
+            duration: 5000,
+            iconTheme: {
+              primary: '#ef4444',
+              secondary: '#fff',
+            },
+          },
+        }}
+      />
+      
+      <NewDashboardLayout
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        tabs={tabs}
+      >
+        <div className="min-h-screen">
+          <motion.div
+            key={activeTab}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.3 }}
+            className="h-full"
           >
-            Cerrar Sesión
-          </button>
+            {tabs.find(tab => tab.id === activeTab)?.content}
+          </motion.div>
         </div>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div className="bg-white p-4 rounded-lg shadow">
-          <h2 className="text-lg font-semibold mb-2">Acciones Rápidas</h2>
-          <div className="space-y-2">
-            <Link href="/scan" className="block w-full px-4 py-2 text-center text-white bg-blue-600 rounded-md hover:bg-blue-700">
-              Escanear QR
-            </Link>
-            <Link href="/alumnos/create" className="block w-full px-4 py-2 text-center text-white bg-green-600 rounded-md hover:bg-green-700">
-              Registrar Alumno
-            </Link>
-            <Link href="/alumnos" className="block w-full px-4 py-2 text-center text-gray-700 border border-gray-300 rounded-md hover:bg-gray-100">
-              Ver Alumnos
-            </Link>
-          </div>
-        </div>
-        
-        <div className="md:col-span-2 bg-white p-4 rounded-lg shadow">
-          <h2 className="text-lg font-semibold mb-2">Resumen del Día</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="bg-blue-50 p-3 rounded-md">
-              <h3 className="text-sm font-medium text-blue-800">Presentes</h3>
-              <p className="text-2xl font-bold text-blue-900">-</p>
-            </div>
-            <div className="bg-red-50 p-3 rounded-md">
-              <h3 className="text-sm font-medium text-red-800">Ausentes</h3>
-              <p className="text-2xl font-bold text-red-900">-</p>
-            </div>
-            <div className="bg-green-50 p-3 rounded-md">
-              <h3 className="text-sm font-medium text-green-800">Registros Hoy</h3>
-              <p className="text-2xl font-bold text-green-900">-</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <div className="space-y-6">
-        <StudentList />
-        <AttendanceHistory />
-      </div>
-    </div>
+      </NewDashboardLayout>
+    </DashboardProvider>
   );
 }
