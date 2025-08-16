@@ -98,7 +98,7 @@ export default function Home() {
       });
 
       if (error) {
-        toast.error(error.message);
+        toast.error("Email o contraseña invalidos");
       } else {
         if (rememberMe) {
           localStorage.setItem("rememberedEmail", email);
@@ -277,7 +277,7 @@ export default function Home() {
                         placeholder="tu@email.com"
                         className={`w-full pl-10 pr-4 py-3 border ${
                           emailError ? "border-red-300" : "border-gray-300"
-                        } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00a3dc] focus:border-transparent`}
+                        } text-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00a3dc] focus:border-transparent`}
                       />
                     </div>
                     {emailError && (
@@ -301,7 +301,7 @@ export default function Home() {
                         placeholder="••••••••"
                         className={`w-full pl-10 pr-10 py-3 border ${
                           passwordError ? "border-red-300" : "border-gray-300"
-                        } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00a3dc] focus:border-transparent`}
+                        } text-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00a3dc] focus:border-transparent`}
                       />
                       <button
                         type="button"
@@ -423,25 +423,17 @@ export default function Home() {
             <div className="space-y-4">
               <div>
                 <h4 className="font-medium text-gray-900">Email</h4>
-                <p className="text-gray-600">contacto@colegiofeciencia.edu</p>
+                <p className="text-gray-600">dev.dczel@gmail.com</p>
               </div>
-              <div className="bg-cyan-50 rounded-lg p-3">
-                <h4 className="font-medium text-gray-900 mb-1">
-                  Investigadora
-                </h4>
-                <p className="text-gray-600">
-                  Maricielo Arias - Investigadora principal
-                </p>
-              </div>
-              <div className="bg-cyan-50 rounded-lg p-3">
+              {/* <div className="bg-cyan-50 rounded-lg p-3">
 
                 <h4 className="font-medium text-gray-900 mb-1">
                   Desarrollador
                 </h4>
                 <p className="text-gray-600">
-                  Jhonatan Arias - Estudiante de Ingeniería de Sistemas
+                  dev.dczel@gmail.com
                 </p>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
