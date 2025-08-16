@@ -2,28 +2,26 @@
 
 import { useEffect, useState } from 'react';
 import { supabase } from '@/utils/supabase';
-import Auth from '@/components/Auth';
 import { useRouter } from 'next/navigation';
+import QRGenerator from '@/components/QRGenerator';
 import { Toaster } from 'react-hot-toast';
 
-export default function Home() {
+export default function CreateAlumnoPage() {
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
-    // Verificar sesión actual
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setLoading(false);
-      if (session) router.push('/dashboard');
+      if (!session) router.push('/');
     });
 
-    // Escuchar cambios en la autenticación
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         setSession(session);
-        if (session) router.push('/dashboard');
+        if (!session) router.push('/');
       }
     );
 
@@ -32,10 +30,21 @@ export default function Home() {
 
   if (loading) return <div>Cargando...</div>;
 
+  if (!session) return null;
+
   return (
-    <div>
+    <div className="container mx-auto p-4">
       <Toaster />
-      {!session ? <Auth /> : <div>Redirigiendo...</div>}
+      <h1 className="text-2xl font-bold mb-6">Registrar Nuevo Alumno</h1>
+      <QRGenerator />
+      <div className="mt-4">
+        <button
+          onClick={() => router.push('/alumnos')}
+          className="px-4 py-2 text-gray-700 border border-gray-300 rounded-md hover:bg-gray-100"
+        >
+          Volver a la Lista
+        </button>
+      </div>
     </div>
   );
 }
