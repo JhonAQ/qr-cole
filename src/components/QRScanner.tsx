@@ -344,7 +344,7 @@ export default function QRScanner() {
                 value={currentCameraId}
                 onChange={(e) => setCurrentCameraId(e.target.value)}
                 disabled={scanning}
-                className="fc-input text-sm"
+                className="fc-input text-sm text-gray-700"
               >
                 {cameras.map((camera) => (
                   <option key={camera.id} value={camera.id}>
@@ -377,7 +377,7 @@ export default function QRScanner() {
                     onChange={(e) =>
                       setTipoRegistro(e.target.value as "entrada" | "salida")
                     }
-                    className="fc-input"
+                    className="fc-input text-gray-700"
                     disabled={loading}
                   >
                     <option value="entrada">Entrada</option>
@@ -431,7 +431,7 @@ export default function QRScanner() {
                     className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
                   >
                     <div>
-                      <p className="font-medium text-sm">
+                      <p className="font-medium text-sm text-gray-700">
                         {registro.alumno.nombres} {registro.alumno.apellidos}
                       </p>
                       <p className="text-xs text-gray-600">

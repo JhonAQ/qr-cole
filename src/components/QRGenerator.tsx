@@ -325,7 +325,7 @@ export default function QRGenerator({
                       name="grado"
                       value={formData.grado}
                       onChange={handleInputChange}
-                      className="fc-input"
+                      className="fc-input text-gray-700"
                     >
                       {grados.map((grado) => (
                         <option key={grado} value={grado}>
@@ -343,7 +343,7 @@ export default function QRGenerator({
                       name="seccion"
                       value={formData.seccion}
                       onChange={handleInputChange}
-                      className="fc-input"
+                      className="fc-input text-gray-700"
                     >
                       {secciones.map((seccion) => (
                         <option key={seccion} value={seccion}>

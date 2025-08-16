@@ -180,7 +180,7 @@ export default function AlumnosTab() {
               type="text"
               placeholder="Buscar por nombre, apellido o código QR..."
               onChange={handleBusquedaChange}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2 text-gray-70 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-700 focus:border-transparent"
             />
           </div>
 
@@ -219,7 +219,7 @@ export default function AlumnosTab() {
                   setOrdenPor(tipo as "nombre" | "grado" | "asistencia");
                   setOrdenAsc(direccion === "asc");
                 }}
-                className="text-sm border border-gray-300 rounded px-2 py-1"
+                className="text-sm border text-gray-700 border-gray-300 rounded px-2 py-1"
               >
                 <option value="nombre-asc">Nombre A-Z</option>
                 <option value="nombre-desc">Nombre Z-A</option>
@@ -254,7 +254,7 @@ export default function AlumnosTab() {
                         setGradoFiltro(grado);
                         setSeccionFiltro(null); // Reset sección al cambiar grado
                       }}
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                      className="w-full border text-gray-700 border-gray-300 rounded-lg px-3 py-2"
                     >
                       <option value="">Todos los grados</option>
                       {gradosDisponibles.map((grado) => (
@@ -272,7 +272,7 @@ export default function AlumnosTab() {
                     <select
                       value={seccionFiltro || ""}
                       onChange={(e) => setSeccionFiltro(e.target.value || null)}
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                      className="w-full border text-gray-700 border-gray-300 rounded-lg px-3 py-2"
                       disabled={
                         !gradoFiltro && seccionesDisponibles.length === 0
                       }
@@ -293,7 +293,7 @@ export default function AlumnosTab() {
       </div>
 
       {/* Lista de alumnos */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+      <div className=" bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
         {alumnosFiltrados.length > 0 ? (
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">

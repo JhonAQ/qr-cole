@@ -355,13 +355,13 @@ export default function AsistenciaTab() {
                 Buscar alumno
               </label>
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Search className=" text-gray-700 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <input
                   type="text"
                   value={busqueda}
                   onChange={(e) => setBusqueda(e.target.value)}
                   placeholder="Nombre, apellido o código QR..."
-                  className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full pl-9 pr-4 py-2 border text-gray-700 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
             </div>
@@ -375,7 +375,7 @@ export default function AsistenciaTab() {
                   type="date"
                   value={fechaInicio}
                   onChange={(e) => setFechaInicio(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                  className="w-full px-3 text-gray-700 py-2 border border-gray-300 rounded-lg"
                 />
               </div>
 
@@ -387,7 +387,7 @@ export default function AsistenciaTab() {
                   type="date"
                   value={fechaFin}
                   onChange={(e) => setFechaFin(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                  className="w-full px-3 py-2 border text-gray-700 border-gray-300 rounded-lg"
                 />
               </div>
 
@@ -402,7 +402,7 @@ export default function AsistenciaTab() {
                       e.target.value as "todos" | "entrada" | "salida"
                     )
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                  className="w-full px-3 py-2 border text-gray-700 border-gray-300 rounded-lg"
                 >
                   <option value="todos">Todos</option>
                   <option value="entrada">Entradas</option>
@@ -413,9 +413,10 @@ export default function AsistenciaTab() {
               <div className="flex items-end">
                 <button
                   onClick={() => setMostrarFiltros(!mostrarFiltros)}
-                  className="w-full flex items-center justify-center px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                  className="w-full flex items-center justify-center px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700"
                 >
-                  <Filter className="w-4 h-4 mr-2" />
+                  <Filter className="w-4 h-4 mr-2 text-gray-700" />
+
                   Más filtros
                   {mostrarFiltros ? (
                     <ChevronUp className="w-4 h-4 ml-2" />
@@ -448,7 +449,7 @@ export default function AsistenciaTab() {
                       );
                       setSeccionFiltro(null);
                     }}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                    className="w-full px-3 text-gray-700 py-2 border border-gray-300 rounded-lg"
                   >
                     <option value="">Todos los grados</option>
                     {gradosDisponibles.map((grado) => (
@@ -466,7 +467,7 @@ export default function AsistenciaTab() {
                   <select
                     value={seccionFiltro || ""}
                     onChange={(e) => setSeccionFiltro(e.target.value || null)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                    className="w-full px-3 py-2 border text-gray-700 border-gray-300 rounded-lg"
                     disabled={seccionesDisponibles.length === 0}
                   >
                     <option value="">Todas las secciones</option>
@@ -508,7 +509,7 @@ export default function AsistenciaTab() {
                   setOrdenPor(campo as "hora" | "alumno" | "grado");
                   setOrdenAsc(direccion === "asc");
                 }}
-                className="text-sm border border-gray-300 rounded px-2 py-1"
+                className="text-sm border text-gray-700 border-gray-300 rounded px-2 py-1"
               >
                 <option value="hora-desc">Más reciente</option>
                 <option value="hora-asc">Más antiguo</option>

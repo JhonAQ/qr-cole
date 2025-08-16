@@ -399,7 +399,7 @@ export default function EstadisticasTab() {
               type="date"
               value={fechaInicio}
               onChange={(e) => setFechaInicio(e.target.value)}
-              className="border border-gray-300 rounded-lg px-3 py-2"
+              className="border border-gray-300 text-gray-700 rounded-lg px-3 py-2"
             />
           </div>
           <div>
@@ -410,7 +410,7 @@ export default function EstadisticasTab() {
               type="date"
               value={fechaFin}
               onChange={(e) => setFechaFin(e.target.value)}
-              className="border border-gray-300 rounded-lg px-3 py-2"
+              className="border border-gray-300 text-gray-700 rounded-lg px-3 py-2"
             />
           </div>
           <div className="flex items-end">

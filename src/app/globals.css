@@ -18,7 +18,8 @@
   --light: #e6e8e9;
   --gray: #587d95;
   --background: #ffffff;
-  --foreground: #1f2937;
+  --foreground: #ddd;
+  --text-color: #388;
 }
 
 body {
@@ -71,6 +72,7 @@ body {
   border-radius: 0.5rem;
   border: 1px solid #d1d5db;
   transition: all 0.15s ease-in-out;
+  color: #777;
 }
 
 .fc-input:focus {

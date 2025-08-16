@@ -273,7 +273,7 @@ export default function StudentList() {
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00a3dc] focus:border-transparent"
+                className="px-3 text-gray-700 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00a3dc] focus:border-transparent"
               >
                 <option value="all">Todos</option>
                 <option value="present">Presentes</option>
@@ -283,7 +283,7 @@ export default function StudentList() {
               <select
                 value={filterGrado}
                 onChange={(e) => setFilterGrado(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00a3dc] focus:border-transparent"
+                className="px-3 text-gray-700 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00a3dc] focus:border-transparent"
               >
                 <option value="all">Todos los grados</option>
                 {grados.map((grado) => (
@@ -296,7 +296,7 @@ export default function StudentList() {
               <select
                 value={filterSeccion}
                 onChange={(e) => setFilterSeccion(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00a3dc] focus:border-transparent"
+                className="px-3 text-gray-700 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00a3dc] focus:border-transparent"
               >
                 <option value="all">Todas las secciones</option>
                 {secciones.map((seccion) => (
