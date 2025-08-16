@@ -286,13 +286,7 @@ export default function QRScanner() {
   return (
     <div className="min-h-screen bg-gray-50 p-4">
       <div className="max-w-md mx-auto">
-        {/* Header */}
-        <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
-          <h1 className="fc-heading text-center mb-2">Escáner QR</h1>
-          <p className="text-gray-600 text-center text-sm">
-            Escanea el código QR del alumno para registrar asistencia
-          </p>
-        </div>
+
 
         {/* Scanner Container */}
         <div className="bg-white rounded-lg shadow-sm p-4 mb-4">

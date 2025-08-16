@@ -11,6 +11,8 @@ import {
   Home,
   QrCode,
   Loader2,
+  UserPlus,
+  Scan,
 } from "lucide-react";
 import { Toaster } from "react-hot-toast";
 
@@ -23,6 +25,8 @@ import OverviewTab from "@/components/Dashboard/OverviewTab";
 import AlumnosTab from "@/components/Dashboard/AlumnosTab";
 import AsistenciaTab from "@/components/Dashboard/AsistenciaTab";
 import EstadisticasTab from "@/components/Dashboard/EstadisticasTab";
+import RegistrarTab from "@/components/Dashboard/RegistrarTab";
+import EscanearTab from "@/components/Dashboard/EscanearTab";
 
 const tabs = [
   {
@@ -34,6 +38,16 @@ const tabs = [
     id: "alumnos",
     label: "Alumnos",
     icon: <Users className="w-5 h-5" />,
+  },
+  {
+    id: "registrar",
+    label: "Registrar",
+    icon: <UserPlus className="w-5 h-5" />,
+  },
+  {
+    id: "escanear",
+    label: "Escanear QR",
+    icon: <Scan className="w-5 h-5" />,
   },
   {
     id: "asistencia",
@@ -74,6 +88,15 @@ export default function DashboardPage() {
     return () => subscription.unsubscribe();
   }, [router]);
 
+  // Manejar parámetros de URL para abrir el tab correcto
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const tabParam = urlParams.get("tab");
+    if (tabParam && tabs.some((tab) => tab.id === tabParam)) {
+      setActiveTab(tabParam);
+    }
+  }, []);
+
   const handleGradeSelect = (grado: number, seccion?: string) => {
     setSelectedGrade(grado === 0 ? null : grado);
     setSelectedSection(seccion || null);
@@ -89,6 +112,20 @@ export default function DashboardPage() {
             selectedGrade={selectedGrade}
             selectedSection={selectedSection}
           />
+        );
+      case "registrar":
+        return (
+          <RegistrarTab
+            onBackToDashboard={() => setActiveTab("alumnos")}
+            onStudentRegistered={() => {
+              // Refrescar datos y cambiar a alumnos
+              setActiveTab("alumnos");
+            }}
+          />
+        );
+      case "escanear":
+        return (
+          <EscanearTab onBackToDashboard={() => setActiveTab("asistencia")} />
         );
       case "asistencia":
         return <AsistenciaTab />;

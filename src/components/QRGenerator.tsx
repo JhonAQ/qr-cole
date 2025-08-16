@@ -261,23 +261,6 @@ export default function QRGenerator({
   return (
     <div className="min-h-screen bg-gray-50 p-4">
       <div className="max-w-lg mx-auto">
-        {/* Header */}
-        <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
-          <div className="flex items-center justify-between">
-            <h1 className="fc-heading flex items-center gap-2">
-              <User className="w-6 h-6" />
-              {step === "form" ? "Registrar Alumno" : "Código QR Generado"}
-            </h1>
-            {onClose && (
-              <button
-                onClick={onClose}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <X className="w-6 h-6" />
-              </button>
-            )}
-          </div>
-        </div>
 
         {step === "form" ? (
           <>

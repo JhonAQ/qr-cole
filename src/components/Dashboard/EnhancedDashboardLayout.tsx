@@ -14,6 +14,8 @@ import {
   Bell,
   RefreshCw,
   Home,
+  UserPlus,
+  Scan,
 } from "lucide-react";
 import { supabase } from "@/utils/supabase";
 import { useRouter } from "next/navigation";
@@ -314,14 +316,16 @@ function SidebarContent({
 
         {/* Tabs principales excepto alumnos */}
         {tabs
-          .filter((tab) => tab.id !== "alumnos")
+          .filter(
+            (tab) => !["alumnos", "registrar", "escanear"].includes(tab.id)
+          )
           .map((tab) => (
             <button
               key={tab.id}
               onClick={() => handleTabClick(tab.id)}
               className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
-                activeTab === tab.id && tab.id !== "alumnos"
-                  ? "bg-primary text-white"
+                activeTab === tab.id
+                  ? "bg-blue-100 text-blue-700 border border-blue-200"
                   : "text-gray-600 hover:bg-gray-100"
               }`}
             >
@@ -346,21 +350,28 @@ function SidebarContent({
         />
       </div>
 
-      {/* Enlaces rápidos */}
+      {/* Enlaces rápidos - ahora usando tabs internos */}
       <div className="p-4 border-t mt-auto">
+        <div className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">
+          Acciones Rápidas
+        </div>
         <div className="space-y-2">
           <button
-            onClick={() => window.open("/register", "_blank")}
+            onClick={() => {
+              handleTabClick("registrar");
+            }}
             className="w-full flex items-center gap-3 px-3 py-2 text-sm text-primary hover:bg-primary/10 rounded-lg transition-colors"
           >
-            <Users className="w-4 h-4" />
+            <UserPlus className="w-4 h-4" />
             <span>Registrar Alumno</span>
           </button>
           <button
-            onClick={() => window.open("/scan", "_blank")}
+            onClick={() => {
+              handleTabClick("escanear");
+            }}
             className="w-full flex items-center gap-3 px-3 py-2 text-sm text-primary hover:bg-primary/10 rounded-lg transition-colors"
           >
-            <QrCode className="w-4 h-4" />
+            <Scan className="w-4 h-4" />
             <span>Escanear QR</span>
           </button>
         </div>
@@ -385,6 +396,10 @@ function getPageTitle(
         return `${selectedGrade}° Grado`;
       }
       return "Gestión de Alumnos";
+    case "registrar":
+      return "Registrar Nuevo Alumno";
+    case "escanear":
+      return "Escanear Código QR";
     case "asistencia":
       return "Registros de Asistencia";
     case "estadisticas":

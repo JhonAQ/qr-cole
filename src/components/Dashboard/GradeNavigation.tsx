@@ -147,13 +147,15 @@ export default function GradeNavigation({
                               : "text-gray-500 hover:bg-gray-50"
                           }`}
                         >
-                          <div className={`w-2 h-2 rounded-full ${
-                            activeTab === "alumnos" &&
-                            selectedGrade === grado &&
-                            selectedSection === seccion
-                              ? 'bg-blue-500' 
-                              : 'bg-gray-400'
-                          } opacity-60`} />
+                          <div
+                            className={`w-2 h-2 rounded-full ${
+                              activeTab === "alumnos" &&
+                              selectedGrade === grado &&
+                              selectedSection === seccion
+                                ? "bg-blue-500"
+                                : "bg-gray-400"
+                            } opacity-60`}
+                          />
                           <span>Sección {seccion}</span>
                           <span className="ml-auto bg-gray-200 text-gray-600 text-xs px-2 py-1 rounded-full">
                             {sectionCount}
