@@ -297,11 +297,11 @@ function SidebarContent({
             Escanear QR
           </button>
           <button
-            onClick={() => window.open("/alumnos/create", "_blank")}
+            onClick={() => window.open("/register", "_blank")}
             className="w-full flex items-center px-3 py-2 text-sm text-green-600 bg-green-50 rounded-lg hover:bg-green-100 transition-colors"
           >
             <Users className="w-4 h-4 mr-3" />
-            Nuevo Alumno
+            Registrar Alumno
           </button>
         </div>
       </div>

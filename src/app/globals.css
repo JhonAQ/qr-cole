@@ -1,12 +1,5 @@
 @import "tailwindcss";
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
 /* Utilidades personalizadas para el dashboard */
 @layer utilities {
   .w-70 {
@@ -25,47 +18,75 @@
   --light: #e6e8e9;
   --gray: #587d95;
   --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #04457d;
-    --foreground: #171717;
-  }
+  --foreground: #1f2937;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans, Arial, Helvetica, sans-serif);
+  font-family: var(--font-geist-sans, Arial, Helvetica, sans-serif);
 }
 
-@layer components {
-  .fc-btn-primary {
-    @apply bg-[#07AEE1] hover:bg-[#00A3DC] text-[#FFFFFF] font-semibold py-2 px-4 rounded-lg shadow transition-colors;
-  }
-
-  .fc-btn-secondary {
-    @apply bg-white hover:bg-[#E6E8E9] text-[#04457D] font-semibold py-2 px-4 rounded-lg border border-[#04457D] shadow transition-colors;
-  }
-
-  .fc-card {
-    @apply bg-white p-6 rounded-xl shadow-md border border-[#E6E8E9];
-  }
-
-  .fc-input {
-    @apply w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#07AEE1] focus:border-transparent transition;
-  }
-
-  .fc-heading {
-    @apply text-2xl font-bold text-[#04457D];
-  }
-
-  .fc-subheading {
-    @apply text-lg font-semibold text-[#00A3DC];
-  }
+/* Componentes personalizados usando CSS normal */
+.fc-btn-primary {
+  background-color: #07aee1;
+  color: white;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  transition: all 0.15s ease-in-out;
 }
+
+.fc-btn-primary:hover {
+  background-color: #00a3dc;
+}
+
+.fc-btn-secondary {
+  background-color: white;
+  color: #04457d;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid #04457d;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  transition: all 0.15s ease-in-out;
+}
+
+.fc-btn-secondary:hover {
+  background-color: #f9fafb;
+}
+
+.fc-card {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  border: 1px solid #e5e7eb;
+}
+
+.fc-input {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid #d1d5db;
+  transition: all 0.15s ease-in-out;
+}
+
+.fc-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #07aee1;
+  border-color: transparent;
+}
+
+.fc-heading {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #04457d;
+}
+
 .fc-subheading {
-  @apply text-lg font-semibold text-[#00A3DC];
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #00a3dc;
 }

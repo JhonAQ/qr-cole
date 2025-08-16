@@ -162,7 +162,7 @@ export default function AlumnosTab() {
           </p>
         </div>
         <button
-          onClick={() => window.open("/alumnos/create", "_blank")}
+          onClick={() => window.open("/register", "_blank")}
           className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
         >
           <Plus className="w-4 h-4 mr-2" />
@@ -376,7 +376,7 @@ export default function AlumnosTab() {
                 : "No hay alumnos registrados en el sistema"}
             </p>
             <button
-              onClick={() => window.open("/alumnos/create", "_blank")}
+              onClick={() => window.open("/register", "_blank")}
               className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
               <Plus className="w-4 h-4 mr-2" />

@@ -18,6 +18,7 @@ import {
   FileText,
   BarChart3,
   TrendingUp,
+  QrCode,
 } from "lucide-react";
 import { supabase } from "@/utils/supabase";
 import { Alumno, Asistencia } from "@/types";
@@ -255,6 +256,13 @@ export default function AsistenciaTab() {
           </p>
         </div>
         <div className="flex items-center space-x-3">
+          <button
+            onClick={() => window.open("/scan", "_blank")}
+            className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            <QrCode className="w-4 h-4 mr-2" />
+            Escanear QR
+          </button>
           <button
             onClick={() => cargarAsistencias()}
             className="flex items-center px-3 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50"
