@@ -237,7 +237,6 @@ export default function QRScanner() {
 
     setLoading(true);
     try {
-      // Obtener el usuario actual
       const {
         data: { user },
       } = await supabase.auth.getUser();
@@ -247,7 +246,7 @@ export default function QRScanner() {
         return;
       }
 
-      // Registrar asistencia
+      // Registrar asistencia en Supabase
       const { error } = await supabase.from("asistencias").insert({
         id_alumno: alumno.id,
         tipo: tipoRegistro,
@@ -262,10 +261,25 @@ export default function QRScanner() {
         } registrada correctamente`
       );
 
-      // Actualizar lista de últimos registros
+      //  Enviar WhatsApp al padre inmediatamente
+      const mensaje =
+        tipoRegistro === "entrada"
+          ? `Le informamos que su hijo(a) ${alumno.nombres} ${alumno.apellidos} fue registrado como PRESENTE en su ${tipoRegistro}.`
+          : `Le informamos que su hijo(a) ${alumno.nombres} ${alumno.apellidos} fue registrado como FALTA/ausente.`;
+
+      await fetch("/api/whatsapp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          to: alumno.padre_telefono, // Cambiar cuando se tenga acceso a supabase
+          message: mensaje,
+        }),
+      });
+
+    // Actualizar últimos registros
       await fetchLastRegistrations();
 
-      // Limpiar y continuar escaneando
+      // Limpiar estado
       setAlumno(null);
       setLastScannedCode("");
     } catch (error) {
