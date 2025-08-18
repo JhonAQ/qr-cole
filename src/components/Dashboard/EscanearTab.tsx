@@ -1,8 +1,7 @@
 "use client";
 
 import React from "react";
-import QRScanner from "@/components/QRScanner";
-import { Scan } from "lucide-react";
+import { EnhancedQRScanner } from "@/components/Scanner";
 
 interface EscanearTabProps {
   onBackToDashboard?: () => void;
@@ -10,13 +9,8 @@ interface EscanearTabProps {
 
 export default function EscanearTab({ onBackToDashboard }: EscanearTabProps) {
   return (
-    <div className="space-y-6">
-
-
-      {/* Escáner QR */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <QRScanner />
-      </div>
+    <div className="p-4">
+      <EnhancedQRScanner />
     </div>
   );
 }
