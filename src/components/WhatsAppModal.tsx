@@ -80,7 +80,7 @@ export default function WhatsAppModal({
   const config = typeConfig[attendanceType];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay">
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-md max-h-[90vh] overflow-hidden">
         {/* Header */}
         <div className={`${config.bgColor} ${config.borderColor} border-b p-6`}>

@@ -14,6 +14,26 @@
     animation: successScale 0.3s ease-out;
   }
 
+  /* Utilidades para efectos de blur mejorados */
+  .backdrop-blur-custom {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .modal-overlay {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    background: rgba(0, 0, 0, 0.15);
+    transition: all 0.2s ease-in-out;
+  }
+
+  .sidebar-overlay {
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    background: rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+  }
+
   @keyframes scanLine {
     0%,
     100% {

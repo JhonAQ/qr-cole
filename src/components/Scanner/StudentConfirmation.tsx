@@ -87,7 +87,7 @@ export default function StudentConfirmation({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay">
       <div
         className={`bg-white rounded-2xl shadow-xl w-full max-w-md transform transition-all duration-200 ${
           isVisible ? "scale-100 opacity-100" : "scale-95 opacity-0"
