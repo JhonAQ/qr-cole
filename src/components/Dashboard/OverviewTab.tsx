@@ -308,7 +308,7 @@ export default function OverviewTab({ onTabChange }: OverviewTabProps) {
             <Users className="w-5 h-5 mr-2" />
             Nuevo Alumno
           </button>
-          <button 
+          <button
             onClick={() => onTabChange?.("asistencia")}
             className="flex items-center justify-center p-4 bg-purple-50 text-purple-600 rounded-lg hover:bg-purple-100 transition-colors"
           >
