@@ -173,7 +173,9 @@ export default function GradeNavigation({
                             return (
                               <button
                                 key={seccion}
-                                onClick={() => handleSectionClick(grado, seccion)}
+                                onClick={() =>
+                                  handleSectionClick(grado, seccion)
+                                }
                                 className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
                                   activeTab === "alumnos" &&
                                   selectedGrade === grado &&
