@@ -10,7 +10,6 @@ import {
   TrendingUp,
   Calendar,
   BookOpen,
-  Target,
   ArrowUp,
   ArrowDown,
   BarChart3,
@@ -19,7 +18,11 @@ import {
 import { useDashboard } from "@/contexts/DashboardContext";
 import { formatearHora } from "@/utils/helpers";
 
-export default function OverviewTab() {
+interface OverviewTabProps {
+  onTabChange?: (tab: string) => void;
+}
+
+export default function OverviewTab({ onTabChange }: OverviewTabProps) {
   const { estadisticas, asistencias, alumnos, loading } = useDashboard();
 
   const tarjetasEstadisticas = [
@@ -290,28 +293,27 @@ export default function OverviewTab() {
         <h3 className="text-lg font-semibold text-gray-900 mb-4">
           Acciones Rápidas
         </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <button
-            onClick={() => window.open("/scan", "_blank")}
+            onClick={() => onTabChange?.("escanear")}
             className="flex items-center justify-center p-4 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors"
           >
             <QrCode className="w-5 h-5 mr-2" />
             Escanear QR
           </button>
           <button
-            onClick={() => window.open("/alumnos/create", "_blank")}
+            onClick={() => onTabChange?.("registrar")}
             className="flex items-center justify-center p-4 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition-colors"
           >
             <Users className="w-5 h-5 mr-2" />
             Nuevo Alumno
           </button>
-          <button className="flex items-center justify-center p-4 bg-purple-50 text-purple-600 rounded-lg hover:bg-purple-100 transition-colors">
+          <button 
+            onClick={() => onTabChange?.("asistencia")}
+            className="flex items-center justify-center p-4 bg-purple-50 text-purple-600 rounded-lg hover:bg-purple-100 transition-colors"
+          >
             <BookOpen className="w-5 h-5 mr-2" />
             Ver Reportes
-          </button>
-          <button className="flex items-center justify-center p-4 bg-orange-50 text-orange-600 rounded-lg hover:bg-orange-100 transition-colors">
-            <Target className="w-5 h-5 mr-2" />
-            Configurar
           </button>
         </div>
       </motion.div>

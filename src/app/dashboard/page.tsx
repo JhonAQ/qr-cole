@@ -105,7 +105,7 @@ export default function DashboardPage() {
   const renderTabContent = () => {
     switch (activeTab) {
       case "overview":
-        return <OverviewTab />;
+        return <OverviewTab onTabChange={setActiveTab} />;
       case "alumnos":
         return (
           <AlumnosTab
@@ -132,7 +132,7 @@ export default function DashboardPage() {
       case "estadisticas":
         return <EstadisticasTab />;
       default:
-        return <OverviewTab />;
+        return <OverviewTab onTabChange={setActiveTab} />;
     }
   };
 
