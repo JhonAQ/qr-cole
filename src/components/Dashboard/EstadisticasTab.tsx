@@ -354,20 +354,45 @@ export default function EstadisticasTab() {
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">
-            Estadísticas de Asistencia
-          </h2>
-          <p className="text-gray-600">
-            Análisis detallado de asistencia del {formatearFecha(fechaInicio)} al {formatearFecha(fechaFin)}
-          </p>
+      <div className="space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900">
+              Estadísticas de Asistencia
+            </h2>
+            <p className="text-gray-600 text-sm sm:text-base">
+              Análisis detallado de asistencia del {formatearFecha(fechaInicio)} al {formatearFecha(fechaFin)}
+            </p>
+          </div>
+          
+          {/* Botones - solo en desktop inicialmente */}
+          <div className="hidden sm:flex items-center space-x-3">
+            <button
+              onClick={cargarAsistenciasRango}
+              disabled={loading}
+              className="flex items-center px-3 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50"
+            >
+              <RefreshCw
+                className={`w-4 h-4 mr-2 ${loading ? "animate-spin" : ""}`}
+              />
+              Actualizar
+            </button>
+            <button
+              onClick={exportarReporte}
+              className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Exportar
+            </button>
+          </div>
         </div>
-        <div className="flex items-center space-x-3">
+
+        {/* Botones móviles */}
+        <div className="flex sm:hidden flex-col gap-2">
           <button
             onClick={cargarAsistenciasRango}
             disabled={loading}
-            className="flex items-center px-3 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50"
+            className="flex items-center justify-center px-3 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50"
           >
             <RefreshCw
               className={`w-4 h-4 mr-2 ${loading ? "animate-spin" : ""}`}
@@ -376,7 +401,7 @@ export default function EstadisticasTab() {
           </button>
           <button
             onClick={exportarReporte}
-            className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            className="flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
             <Download className="w-4 h-4 mr-2" />
             Exportar
@@ -386,39 +411,48 @@ export default function EstadisticasTab() {
 
       {/* Filtros de fecha */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-        <div className="flex items-center space-x-4">
+        <div className="space-y-4">
           <div className="flex items-center space-x-2">
             <Filter className="w-5 h-5 text-gray-400" />
-            <span className="text-sm font-medium text-gray-700">Período:</span>
+            <span className="text-sm font-medium text-gray-700">Período de análisis:</span>
           </div>
-          <div className="flex items-center space-x-4">
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs text-gray-500 mb-1">Desde:</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Fecha inicial
+              </label>
               <input
                 type="date"
                 value={fechaInicio}
                 onChange={(e) => setFechaInicio(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
+            
             <div>
-              <label className="block text-xs text-gray-500 mb-1">Hasta:</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Fecha final
+              </label>
               <input
                 type="date"
                 value={fechaFin}
                 onChange={(e) => setFechaFin(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
-            <button
-              onClick={() => {
-                setFechaInicio(obtenerFechaHoy());
-                setFechaFin(obtenerFechaHoy());
-              }}
-              className="px-3 py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
-            >
-              Solo Hoy
-            </button>
+            
+            <div className="flex items-end">
+              <button
+                onClick={() => {
+                  setFechaInicio(obtenerFechaHoy());
+                  setFechaFin(obtenerFechaHoy());
+                }}
+                className="w-full px-3 py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                Solo Hoy
+              </button>
+            </div>
           </div>
         </div>
       </div>

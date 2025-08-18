@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -51,6 +51,24 @@ export default function EnhancedDashboardLayout({
   const router = useRouter();
   const { estadisticas, loading, error, refreshData } = useDashboard();
 
+  // Prevenir scroll del body cuando el sidebar está abierto
+  useEffect(() => {
+    if (sidebarOpen) {
+      const originalStyle = window.getComputedStyle(document.body).overflow;
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
+      document.body.style.height = '100%';
+      
+      return () => {
+        document.body.style.overflow = originalStyle;
+        document.body.style.position = '';
+        document.body.style.width = '';
+        document.body.style.height = '';
+      };
+    }
+  }, [sidebarOpen]);
+
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     router.push("/");
@@ -61,7 +79,7 @@ export default function EnhancedDashboardLayout({
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dashboard-layout">
+    <div className="safe-area-container bg-gray-50 dashboard-layout">
       {/* Sidebar para móvil */}
       <AnimatePresence>
         {sidebarOpen && (
@@ -70,7 +88,7 @@ export default function EnhancedDashboardLayout({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 sidebar-overlay z-40 lg:hidden"
+              className="mobile-overlay sidebar-overlay lg:hidden"
               onClick={() => setSidebarOpen(false)}
             />
             <motion.aside
@@ -78,38 +96,42 @@ export default function EnhancedDashboardLayout({
               animate={{ x: 0 }}
               exit={{ x: -320 }}
               transition={{ type: "spring", damping: 30, stiffness: 300 }}
-              className="fixed inset-y-0 left-0 w-80 bg-white shadow-xl z-50 lg:hidden"
+              className="mobile-sidebar lg:hidden"
             >
-              <div className="flex items-center justify-between p-4 border-b">
+              {/* Header del sidebar móvil con safe area */}
+              <div className="flex items-center justify-between p-4 border-b mobile-header">
                 <div className="flex items-center">
-            <Image
-              src="/LOGO-FC.png"
-              alt="Colegio Fe y Ciencia"
-              width={75}
-              height={80}
-              className="rounded"
-            />
-
+                  <Image
+                    src="/LOGO-FC.png"
+                    alt="Colegio Fe y Ciencia"
+                    width={75}
+                    height={80}
+                    className="rounded"
+                  />
                   <h2 className="text-lg ml-3 font-semibold text-gray-800">
                     Educheck - Fe y Ciencia
                   </h2>
                 </div>
                 <button
                   onClick={() => setSidebarOpen(false)}
-                  className="p-2 rounded-md text-gray-400 hover:text-gray-600"
+                  className="p-2 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
-              <SidebarContent
-                tabs={tabs}
-                activeTab={activeTab}
-                onTabChange={onTabChange}
-                selectedGrade={selectedGrade}
-                selectedSection={selectedSection}
-                onGradeSelect={onGradeSelect}
-                onClose={() => setSidebarOpen(false)}
-              />
+              
+              {/* Contenido scrolleable del sidebar */}
+              <div className="flex-1 overflow-y-auto mobile-footer-space">
+                <SidebarContent
+                  tabs={tabs}
+                  activeTab={activeTab}
+                  onTabChange={onTabChange}
+                  selectedGrade={selectedGrade}
+                  selectedSection={selectedSection}
+                  onGradeSelect={onGradeSelect}
+                  onClose={() => setSidebarOpen(false)}
+                />
+              </div>
             </motion.aside>
           </>
         )}
@@ -140,14 +162,14 @@ export default function EnhancedDashboardLayout({
       </aside>
 
       {/* Contenido principal */}
-      <div className="lg:pl-80">
+      <div className="lg:pl-80 mobile-content flex flex-col h-screen">
         {/* Header superior */}
-        <header className="bg-white shadow-sm border-b border-gray-200">
+        <header className="bg-white shadow-sm border-b border-gray-200 mobile-header flex-shrink-0">
           <div className="flex items-center justify-between px-4 py-3">
             {/* Botón de menú móvil */}
             <button
               onClick={() => setSidebarOpen(true)}
-              className="p-2 rounded-md text-gray-400 hover:text-gray-600 lg:hidden"
+              className="p-2 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100 lg:hidden transition-colors"
             >
               <Menu className="w-6 h-6" />
             </button>
@@ -262,7 +284,7 @@ export default function EnhancedDashboardLayout({
         </header>
 
         {/* Contenido de la página */}
-        <main className="flex-1 dashboard-container">
+        <main className="flex-1 overflow-y-auto mobile-footer-space">
           {error && (
             <div className="m-4 p-4 bg-red-50 border border-red-200 rounded-lg">
               <p className="text-red-600 text-sm">
@@ -270,7 +292,9 @@ export default function EnhancedDashboardLayout({
               </p>
             </div>
           )}
-          {children}
+          <div className="p-4 lg:p-6">
+            {children}
+          </div>
         </main>
       </div>
     </div>

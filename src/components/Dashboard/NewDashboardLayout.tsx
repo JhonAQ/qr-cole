@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   BarChart3,
@@ -41,6 +41,24 @@ export default function NewDashboardLayout({
   const router = useRouter();
   const { estadisticas, loading, error, refreshData } = useDashboard();
 
+  // Prevenir scroll del body cuando el sidebar está abierto
+  useEffect(() => {
+    if (sidebarOpen) {
+      const originalStyle = window.getComputedStyle(document.body).overflow;
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
+      document.body.style.height = '100%';
+      
+      return () => {
+        document.body.style.overflow = originalStyle;
+        document.body.style.position = '';
+        document.body.style.width = '';
+        document.body.style.height = '';
+      };
+    }
+  }, [sidebarOpen]);
+
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     router.push("/");
@@ -51,7 +69,7 @@ export default function NewDashboardLayout({
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="safe-area-container bg-gray-50">
       {/* Sidebar para móvil */}
       <AnimatePresence>
         {sidebarOpen && (
@@ -60,7 +78,7 @@ export default function NewDashboardLayout({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 sidebar-overlay z-40 lg:hidden"
+              className="mobile-overlay sidebar-overlay lg:hidden"
               onClick={() => setSidebarOpen(false)}
             />
             <motion.aside
@@ -68,23 +86,26 @@ export default function NewDashboardLayout({
               animate={{ x: 0 }}
               exit={{ x: -280 }}
               transition={{ type: "spring", damping: 30, stiffness: 300 }}
-              className="fixed inset-y-0 left-0 w-70 bg-white shadow-xl z-50 lg:hidden"
+              className="mobile-sidebar lg:hidden"
+              style={{ width: '17.5rem' }}
             >
-              <div className="flex items-center justify-between p-4 border-b">
+              <div className="flex items-center justify-between p-4 border-b mobile-header">
                 <h2 className="text-lg font-semibold text-gray-800">QR Cole</h2>
                 <button
                   onClick={() => setSidebarOpen(false)}
-                  className="p-2 rounded-md text-gray-400 hover:text-gray-600"
+                  className="p-2 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
-              <SidebarContent
-                tabs={tabs}
-                activeTab={activeTab}
-                onTabChange={onTabChange}
-                onClose={() => setSidebarOpen(false)}
-              />
+              <div className="flex-1 overflow-y-auto mobile-footer-space">
+                <SidebarContent
+                  tabs={tabs}
+                  activeTab={activeTab}
+                  onTabChange={onTabChange}
+                  onClose={() => setSidebarOpen(false)}
+                />
+              </div>
             </motion.aside>
           </>
         )}
@@ -104,16 +125,16 @@ export default function NewDashboardLayout({
       </aside>
 
       {/* Contenido principal */}
-      <div className="lg:ml-70">
+      <div className="lg:ml-70 mobile-content flex flex-col h-screen">
         {/* Header */}
-        <header className="bg-white shadow-sm border-b sticky top-0 z-30">
+        <header className="bg-white shadow-sm border-b mobile-header flex-shrink-0 sticky top-0 z-30">
           <div className="px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-16">
               {/* Botón de menú móvil y título */}
               <div className="flex items-center">
                 <button
                   onClick={() => setSidebarOpen(true)}
-                  className="p-2 rounded-md text-gray-400 hover:text-gray-600 lg:hidden"
+                  className="p-2 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100 lg:hidden transition-colors"
                 >
                   <Menu className="w-6 h-6" />
                 </button>
@@ -213,7 +234,7 @@ export default function NewDashboardLayout({
         </header>
 
         {/* Contenido */}
-        <main className="flex-1 overflow-hidden">
+        <main className="flex-1 overflow-y-auto mobile-footer-space">
           {error && (
             <div className="mx-4 sm:mx-6 lg:mx-8 mt-4">
               <div className="bg-red-50 border border-red-200 rounded-lg p-4">
@@ -221,7 +242,9 @@ export default function NewDashboardLayout({
               </div>
             </div>
           )}
-          {children}
+          <div className="pb-6">
+            {children}
+          </div>
         </main>
       </div>
     </div>

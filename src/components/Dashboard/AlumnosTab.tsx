@@ -203,53 +203,60 @@ export default function AlumnosTab({
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">{getTitulo()}</h2>
-          <p className="text-gray-600">
-            {alumnosFiltrados.length} de {alumnos.length} alumnos
-            {gradoFiltro && ` • ${gradoFiltro}° Grado`}
-            {seccionFiltro && ` • Sección ${seccionFiltro}`}
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <div className="flex items-center bg-gray-100 rounded-lg p-1">
+      <div className="space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+          <div className="flex-1">
+            <h2 className="text-2xl font-bold text-gray-900">{getTitulo()}</h2>
+            <p className="text-gray-600 text-sm mt-1">
+              {alumnosFiltrados.length} de {alumnos.length} alumnos
+              {gradoFiltro && ` • ${gradoFiltro}° Grado`}
+              {seccionFiltro && ` • Sección ${seccionFiltro}`}
+            </p>
+          </div>
+          
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            {/* Toggle de vista */}
+            <div className="flex items-center bg-gray-100 rounded-lg p-1">
+              <button
+                onClick={() => setViewMode("list")}
+                className={`p-2 rounded-md transition-colors ${
+                  viewMode === "list"
+                    ? "bg-white shadow text-primary"
+                    : "text-gray-500 hover:text-gray-700"
+                }`}
+                title="Vista de lista"
+              >
+                <List className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => setViewMode("grid")}
+                className={`p-2 rounded-md transition-colors ${
+                  viewMode === "grid"
+                    ? "bg-white shadow text-primary"
+                    : "text-gray-500 hover:text-gray-700"
+                }`}
+                title="Vista de cuadrícula"
+              >
+                <Grid className="w-4 h-4" />
+              </button>
+            </div>
+            
+            {/* Botón nuevo alumno */}
             <button
-              onClick={() => setViewMode("list")}
-              className={`p-2 rounded-md transition-colors ${
-                viewMode === "list"
-                  ? "bg-white shadow text-primary"
-                  : "text-gray-500 hover:text-gray-700"
-              }`}
-              title="Vista de lista"
+              onClick={() => window.open("/register", "_blank")}
+              className="flex items-center justify-center px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors"
             >
-              <List className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => setViewMode("grid")}
-              className={`p-2 rounded-md transition-colors ${
-                viewMode === "grid"
-                  ? "bg-white shadow text-primary"
-                  : "text-gray-500 hover:text-gray-700"
-              }`}
-              title="Vista de cuadrícula"
-            >
-              <Grid className="w-4 h-4" />
+              <Plus className="w-4 h-4 mr-2" />
+              <span className="hidden sm:inline">Nuevo Alumno</span>
+              <span className="sm:hidden">Agregar</span>
             </button>
           </div>
-          <button
-            onClick={() => window.open("/register", "_blank")}
-            className="flex items-center px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Nuevo Alumno
-          </button>
         </div>
       </div>
 
       {/* Barra de búsqueda y filtros */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-        <div className="flex flex-col space-y-4">
+        <div className="space-y-4">
           {/* Búsqueda */}
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -257,19 +264,19 @@ export default function AlumnosTab({
               type="text"
               placeholder="Buscar por nombre, apellido o código QR..."
               onChange={handleBusquedaChange}
-              className="w-full pl-10 pr-4 py-2 text-gray-70 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-700 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-700 focus:border-transparent"
             />
           </div>
 
           {/* Controles de filtros */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
               <button
                 onClick={() => setMostrarFiltros(!mostrarFiltros)}
-                className="flex items-center px-3 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50"
+                className="flex items-center px-3 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
               >
                 <Filter className="w-4 h-4 mr-2" />
-                Filtros
+                <span>Filtros avanzados</span>
                 {mostrarFiltros ? (
                   <ChevronUp className="w-4 h-4 ml-2" />
                 ) : (
@@ -280,14 +287,14 @@ export default function AlumnosTab({
               {(gradoFiltro || seccionFiltro || busqueda) && (
                 <button
                   onClick={limpiarFiltros}
-                  className="px-3 py-2 text-red-600 text-sm hover:text-red-700"
+                  className="px-3 py-2 text-red-600 text-sm hover:text-red-700 transition-colors"
                 >
                   Limpiar filtros
                 </button>
               )}
             </div>
 
-            <div className="flex items-center space-x-2">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
               <span className="text-sm text-gray-500">Ordenar por:</span>
               <select
                 value={`${ordenPor}-${ordenAsc ? "asc" : "desc"}`}
@@ -296,7 +303,7 @@ export default function AlumnosTab({
                   setOrdenPor(tipo as "nombre" | "grado" | "asistencia");
                   setOrdenAsc(direccion === "asc");
                 }}
-                className="text-sm border text-gray-700 border-gray-300 rounded px-2 py-1"
+                className="text-sm border text-gray-700 border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
               >
                 <option value="nombre-asc">Nombre A-Z</option>
                 <option value="nombre-desc">Nombre Z-A</option>
@@ -317,7 +324,7 @@ export default function AlumnosTab({
                 exit={{ opacity: 0, height: 0 }}
                 className="border-t pt-4 space-y-4"
               >
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Grado
@@ -331,7 +338,7 @@ export default function AlumnosTab({
                         setGradoFiltro(grado);
                         setSeccionFiltro(null); // Reset sección al cambiar grado
                       }}
-                      className="w-full border text-gray-700 border-gray-300 rounded-lg px-3 py-2"
+                      className="w-full border text-gray-700 border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
                     >
                       <option value="">Todos los grados</option>
                       {gradosDisponibles.map((grado) => (
@@ -349,7 +356,7 @@ export default function AlumnosTab({
                     <select
                       value={seccionFiltro || ""}
                       onChange={(e) => setSeccionFiltro(e.target.value || null)}
-                      className="w-full border text-gray-700 border-gray-300 rounded-lg px-3 py-2"
+                      className="w-full border text-gray-700 border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
                       disabled={
                         !gradoFiltro && seccionesDisponibles.length === 0
                       }
