@@ -1,19 +1,19 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import { 
-  CheckCircle, 
-  XCircle, 
-  Clock, 
-  User, 
-  GraduationCap, 
+import React, { useState, useEffect } from "react";
+import {
+  CheckCircle,
+  XCircle,
+  Clock,
+  User,
+  GraduationCap,
   AlertTriangle,
   Timer,
   X,
   LogIn,
-  LogOut
-} from 'lucide-react';
-import { StudentConfirmationProps } from './types';
+  LogOut,
+} from "lucide-react";
+import { StudentConfirmationProps } from "./types";
 
 export default function StudentConfirmation({
   scanResult,
@@ -40,7 +40,7 @@ export default function StudentConfirmation({
     if (!autoConfirm || loading || !scanResult) return;
 
     const timer = setInterval(() => {
-      setCountdown(prev => {
+      setCountdown((prev) => {
         if (prev <= 1) {
           clearInterval(timer);
           return 0;
@@ -55,27 +55,28 @@ export default function StudentConfirmation({
   if (!scanResult || !isVisible) return null;
 
   const { student, lastRegistration } = scanResult;
-  const isRecentDuplicate = lastRegistration && 
-    lastRegistration.type === selectedType && 
+  const isRecentDuplicate =
+    lastRegistration &&
+    lastRegistration.type === selectedType &&
     lastRegistration.minutesAgo < 5;
 
   const typeConfig = {
     entrada: {
-      color: 'green',
-      bgColor: 'bg-green-100',
-      textColor: 'text-green-800',
-      buttonColor: 'bg-green-500 hover:bg-green-600',
+      color: "green",
+      bgColor: "bg-green-100",
+      textColor: "text-green-800",
+      buttonColor: "bg-green-500 hover:bg-green-600",
       icon: <LogIn className="w-8 h-8 text-green-600" />,
-      label: 'Entrada'
+      label: "Entrada",
     },
     salida: {
-      color: 'orange', 
-      bgColor: 'bg-orange-100',
-      textColor: 'text-orange-800',
-      buttonColor: 'bg-orange-500 hover:bg-orange-600',
+      color: "orange",
+      bgColor: "bg-orange-100",
+      textColor: "text-orange-800",
+      buttonColor: "bg-orange-500 hover:bg-orange-600",
       icon: <LogOut className="w-8 h-8 text-orange-600" />,
-      label: 'Salida'
-    }
+      label: "Salida",
+    },
   };
 
   const currentConfig = typeConfig[selectedType];
@@ -87,15 +88,17 @@ export default function StudentConfirmation({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
-      <div 
+      <div
         className={`bg-white rounded-2xl shadow-xl w-full max-w-md transform transition-all duration-200 ${
-          isVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
+          isVisible ? "scale-100 opacity-100" : "scale-95 opacity-0"
         }`}
       >
         {/* Header del modal */}
         <div className="p-6 border-b border-gray-100">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold text-gray-900">Confirmar Registro</h2>
+            <h2 className="text-xl font-bold text-gray-900">
+              Confirmar Registro
+            </h2>
             <button
               onClick={handleCancel}
               className="p-2 rounded-full hover:bg-gray-100 transition-colors"
@@ -161,11 +164,11 @@ export default function StudentConfirmation({
             </label>
             <div className="grid grid-cols-2 gap-3">
               <button
-                onClick={() => onTypeChange('entrada')}
+                onClick={() => onTypeChange("entrada")}
                 className={`p-4 rounded-xl border-2 transition-all duration-200 ${
-                  selectedType === 'entrada'
-                    ? 'border-green-500 bg-green-50 text-green-700'
-                    : 'border-gray-200 bg-white text-gray-600 hover:border-green-300'
+                  selectedType === "entrada"
+                    ? "border-green-500 bg-green-50 text-green-700"
+                    : "border-gray-200 bg-white text-gray-600 hover:border-green-300"
                 }`}
                 disabled={loading}
               >
@@ -176,11 +179,11 @@ export default function StudentConfirmation({
                 <div className="text-xs text-gray-500">Llegada al colegio</div>
               </button>
               <button
-                onClick={() => onTypeChange('salida')}
+                onClick={() => onTypeChange("salida")}
                 className={`p-4 rounded-xl border-2 transition-all duration-200 ${
-                  selectedType === 'salida'
-                    ? 'border-orange-500 bg-orange-50 text-orange-700'
-                    : 'border-gray-200 bg-white text-gray-600 hover:border-orange-300'
+                  selectedType === "salida"
+                    ? "border-orange-500 bg-orange-50 text-orange-700"
+                    : "border-gray-200 bg-white text-gray-600 hover:border-orange-300"
                 }`}
                 disabled={loading}
               >
@@ -199,7 +202,8 @@ export default function StudentConfirmation({
               <div className="inline-flex items-center gap-2 bg-blue-50 rounded-full px-4 py-2 text-sm">
                 <Timer className="w-4 h-4 text-blue-500" />
                 <span className="text-blue-700">
-                  Confirmación automática en <span className="font-bold">{countdown}s</span>
+                  Confirmación automática en{" "}
+                  <span className="font-bold">{countdown}s</span>
                 </span>
               </div>
             </div>
@@ -211,9 +215,12 @@ export default function StudentConfirmation({
               <div className="flex items-center gap-2">
                 <AlertTriangle className="w-5 h-5 text-orange-600" />
                 <div>
-                  <p className="font-medium text-orange-800">Registro muy reciente</p>
+                  <p className="font-medium text-orange-800">
+                    Registro muy reciente
+                  </p>
                   <p className="text-sm text-orange-700">
-                    El estudiante ya registró {selectedType} hace {lastRegistration?.minutesAgo} minutos
+                    El estudiante ya registró {selectedType} hace{" "}
+                    {lastRegistration?.minutesAgo} minutos
                   </p>
                 </div>
               </div>
@@ -236,9 +243,9 @@ export default function StudentConfirmation({
               disabled={loading || isRecentDuplicate}
               className={`flex-1 py-3 px-4 rounded-xl font-medium transition-all duration-200 flex items-center justify-center gap-2 ${
                 isRecentDuplicate
-                  ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                  ? "bg-gray-200 text-gray-400 cursor-not-allowed"
                   : loading
-                  ? 'bg-gray-300 text-gray-600'
+                  ? "bg-gray-300 text-gray-600"
                   : `${currentConfig.buttonColor} text-white shadow-lg hover:shadow-xl`
               }`}
             >

@@ -15,7 +15,8 @@
   }
 
   @keyframes scanLine {
-    0%, 100% {
+    0%,
+    100% {
       opacity: 0.3;
       transform: scaleX(0.8);
     }
@@ -26,7 +27,8 @@
   }
 
   @keyframes scannerPulse {
-    0%, 100% {
+    0%,
+    100% {
       opacity: 0.6;
     }
     50% {

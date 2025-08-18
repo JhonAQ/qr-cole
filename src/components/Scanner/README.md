@@ -5,24 +5,28 @@ Un sistema completo y moderno de escaneo QR optimizado para dispositivos móvile
 ## ✨ Características Principales
 
 ### 🎯 **Experiencia de Usuario Mejorada**
+
 - **Sin padding innecesario**: Diseñado para integrarse perfectamente en layouts existentes
 - **Mobile-first**: Optimizado para dispositivos móviles con interfaz touch-friendly
 - **Sonidos de feedback**: Beeps personalizados para éxito, error y confirmación
 - **Prevención de duplicados**: Sistema inteligente para evitar registros múltiples
 
 ### 🔍 **Scanner Avanzado**
+
 - **Detección inteligente**: Auto-selección de cámara trasera en móviles
 - **Área de escaneo limpia**: Sin marcos grises, interfaz minimalista
 - **Esquinas de escaneo animadas**: Indicadores visuales claros
 - **Debounce inteligente**: Evita escaneos accidentales múltiples
 
 ### 👨‍🎓 **Confirmación de Estudiante**
+
 - **Modal informativo**: Muestra datos completos del estudiante
 - **Selección de tipo**: Entrada/Salida con interfaz intuitiva
 - **Auto-confirmación**: Confirmación automática con countdown
 - **Historial de registros**: Muestra último registro y sugiere tipo
 
 ### ⚙️ **Configuración Avanzada**
+
 - **Ajustes personalizables**: FPS, debounce, auto-confirm, etc.
 - **Persistencia**: Guarda preferencias del usuario
 - **Valores por defecto**: Configuración optimizada lista para usar
@@ -47,7 +51,7 @@ Scanner/
 ## 🚀 **Uso Básico**
 
 ```tsx
-import { EnhancedQRScanner } from '@/components/Scanner';
+import { EnhancedQRScanner } from "@/components/Scanner";
 
 function ScannerPage() {
   return (
@@ -61,8 +65,9 @@ function ScannerPage() {
 ## 🔧 **Componentes Individuales**
 
 ### ScannerCamera
+
 ```tsx
-import { ScannerCamera } from '@/components/Scanner';
+import { ScannerCamera } from "@/components/Scanner";
 
 <ScannerCamera
   scanning={scanning}
@@ -71,12 +76,13 @@ import { ScannerCamera } from '@/components/Scanner';
   onStartScanning={handleStart}
   onStopScanning={handleStop}
   onCameraSwitch={handleSwitch}
-/>
+/>;
 ```
 
 ### StudentConfirmation
+
 ```tsx
-import { StudentConfirmation } from '@/components/Scanner';
+import { StudentConfirmation } from "@/components/Scanner";
 
 <StudentConfirmation
   scanResult={result}
@@ -86,18 +92,18 @@ import { StudentConfirmation } from '@/components/Scanner';
   onConfirm={handleConfirm}
   onCancel={handleCancel}
   autoConfirm={true}
-/>
+/>;
 ```
 
 ## ⚙️ **Configuración**
 
 ```tsx
 const config = {
-  fps: 10,                    // Frames por segundo
+  fps: 10, // Frames por segundo
   qrbox: { width: 250, height: 250 }, // Área de escaneo
-  debounceMs: 1000,          // Anti-duplicados (ms)
-  autoConfirmMs: 5000,       // Auto-confirmación (ms)
-  preventDuplicateMs: 300000 // Bloqueo duplicados (ms)
+  debounceMs: 1000, // Anti-duplicados (ms)
+  autoConfirmMs: 5000, // Auto-confirmación (ms)
+  preventDuplicateMs: 300000, // Bloqueo duplicados (ms)
 };
 ```
 

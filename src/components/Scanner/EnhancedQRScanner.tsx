@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useEffect } from 'react';
-import { Html5Qrcode } from 'html5-qrcode';
-import { useScannerLogic } from './hooks/useScannerLogic';
-import ScannerCamera from './ScannerCamera';
-import StudentConfirmation from './StudentConfirmation';
-import RecentRegistrations from './RecentRegistrations';
-import { AlertCircle, Wifi, WifiOff } from 'lucide-react';
+import React, { useEffect } from "react";
+import { Html5Qrcode } from "html5-qrcode";
+import { useScannerLogic } from "./hooks/useScannerLogic";
+import ScannerCamera from "./ScannerCamera";
+import StudentConfirmation from "./StudentConfirmation";
+import RecentRegistrations from "./RecentRegistrations";
+import { AlertCircle, Wifi, WifiOff } from "lucide-react";
 
 export default function EnhancedQRScanner() {
   const {
@@ -36,12 +36,12 @@ export default function EnhancedQRScanner() {
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
 
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
 
     return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
     };
   }, []);
 
@@ -50,11 +50,11 @@ export default function EnhancedQRScanner() {
     // Crear el elemento del scanner si no existe
     const scannerElement = document.getElementById(scannerId);
     if (!scannerElement) {
-      const container = document.getElementById('scanner-camera');
+      const container = document.getElementById("scanner-camera");
       if (container) {
-        const scannerDiv = document.createElement('div');
+        const scannerDiv = document.createElement("div");
         scannerDiv.id = scannerId;
-        scannerDiv.className = 'w-full h-full';
+        scannerDiv.className = "w-full h-full";
         container.appendChild(scannerDiv);
       }
     }
@@ -88,8 +88,12 @@ export default function EnhancedQRScanner() {
         <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-4 flex items-center gap-3">
           <WifiOff className="w-5 h-5 text-yellow-600" />
           <div className="flex-1">
-            <p className="text-yellow-800 font-medium">Sin conexión a internet</p>
-            <p className="text-yellow-700 text-sm">Los registros se guardarán cuando se restablezca la conexión</p>
+            <p className="text-yellow-800 font-medium">
+              Sin conexión a internet
+            </p>
+            <p className="text-yellow-700 text-sm">
+              Los registros se guardarán cuando se restablezca la conexión
+            </p>
           </div>
         </div>
       )}

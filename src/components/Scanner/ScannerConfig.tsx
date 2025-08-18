@@ -1,18 +1,18 @@
 "use client";
 
-import React from 'react';
-import { 
-  Settings, 
-  Zap, 
-  Timer, 
-  Shield, 
+import React from "react";
+import {
+  Settings,
+  Zap,
+  Timer,
+  Shield,
   Volume2,
   ChevronDown,
   ChevronUp,
-  RotateCcw
-} from 'lucide-react';
-import { ScannerConfigProps } from './types';
-import { DEFAULT_SCANNER_CONFIG } from './utils';
+  RotateCcw,
+} from "lucide-react";
+import { ScannerConfigProps } from "./types";
+import { DEFAULT_SCANNER_CONFIG } from "./utils";
 
 export default function ScannerConfig({
   config,
@@ -20,7 +20,6 @@ export default function ScannerConfig({
   visible,
   onToggle,
 }: ScannerConfigProps) {
-
   const handleConfigChange = (key: keyof typeof config, value: any) => {
     onChange({
       ...config,
@@ -44,19 +43,26 @@ export default function ScannerConfig({
             <Settings className="w-5 h-5 text-gray-600" />
           </div>
           <div className="text-left">
-            <h3 className="font-medium text-gray-900">Configuración del Escáner</h3>
-            <p className="text-sm text-gray-500">Ajusta el comportamiento del scanner</p>
+            <h3 className="font-medium text-gray-900">
+              Configuración del Escáner
+            </h3>
+            <p className="text-sm text-gray-500">
+              Ajusta el comportamiento del scanner
+            </p>
           </div>
         </div>
         <div className="text-gray-400">
-          {visible ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+          {visible ? (
+            <ChevronUp className="w-5 h-5" />
+          ) : (
+            <ChevronDown className="w-5 h-5" />
+          )}
         </div>
       </button>
 
       {/* Contenido de configuración */}
       {visible && (
         <div className="border-t border-gray-100 p-4 space-y-6">
-          
           {/* Velocidad de escaneo */}
           <div>
             <div className="flex items-center gap-2 mb-3">
@@ -71,7 +77,9 @@ export default function ScannerConfig({
               max="30"
               step="5"
               value={config.fps}
-              onChange={(e) => handleConfigChange('fps', parseInt(e.target.value))}
+              onChange={(e) =>
+                handleConfigChange("fps", parseInt(e.target.value))
+              }
               className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
             />
             <div className="flex justify-between text-xs text-gray-500 mt-1">
@@ -79,7 +87,8 @@ export default function ScannerConfig({
               <span>Rápido (30)</span>
             </div>
             <p className="text-xs text-gray-600 mt-2">
-              Mayor velocidad consume más batería pero detecta códigos más rápido
+              Mayor velocidad consume más batería pero detecta códigos más
+              rápido
             </p>
           </div>
 
@@ -97,7 +106,9 @@ export default function ScannerConfig({
               max="3000"
               step="500"
               value={config.debounceMs}
-              onChange={(e) => handleConfigChange('debounceMs', parseInt(e.target.value))}
+              onChange={(e) =>
+                handleConfigChange("debounceMs", parseInt(e.target.value))
+              }
               className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
             />
             <div className="flex justify-between text-xs text-gray-500 mt-1">
@@ -123,7 +134,9 @@ export default function ScannerConfig({
               max="10000"
               step="1000"
               value={config.autoConfirmMs}
-              onChange={(e) => handleConfigChange('autoConfirmMs', parseInt(e.target.value))}
+              onChange={(e) =>
+                handleConfigChange("autoConfirmMs", parseInt(e.target.value))
+              }
               className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
             />
             <div className="flex justify-between text-xs text-gray-500 mt-1">
@@ -140,7 +153,8 @@ export default function ScannerConfig({
             <div className="flex items-center gap-2 mb-3">
               <Shield className="w-4 h-4 text-primary" />
               <label className="font-medium text-gray-700">
-                Bloqueo duplicados: {config.preventDuplicateMs / (1000 * 60)} min
+                Bloqueo duplicados: {config.preventDuplicateMs / (1000 * 60)}{" "}
+                min
               </label>
             </div>
             <input
@@ -149,7 +163,12 @@ export default function ScannerConfig({
               max="900000"
               step="60000"
               value={config.preventDuplicateMs}
-              onChange={(e) => handleConfigChange('preventDuplicateMs', parseInt(e.target.value))}
+              onChange={(e) =>
+                handleConfigChange(
+                  "preventDuplicateMs",
+                  parseInt(e.target.value)
+                )
+              }
               className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
             />
             <div className="flex justify-between text-xs text-gray-500 mt-1">
@@ -177,7 +196,7 @@ export default function ScannerConfig({
               value={config.qrbox.width}
               onChange={(e) => {
                 const size = parseInt(e.target.value);
-                handleConfigChange('qrbox', { width: size, height: size });
+                handleConfigChange("qrbox", { width: size, height: size });
               }}
               className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
             />
@@ -203,7 +222,9 @@ export default function ScannerConfig({
 
           {/* Información adicional */}
           <div className="bg-blue-50 rounded-xl p-4">
-            <h4 className="font-medium text-blue-900 mb-2">💡 Recomendaciones</h4>
+            <h4 className="font-medium text-blue-900 mb-2">
+              💡 Recomendaciones
+            </h4>
             <ul className="text-sm text-blue-700 space-y-1">
               <li>• Para uso intensivo: velocidad media (15 FPS)</li>
               <li>• Para ahorrar batería: velocidad baja (10 FPS)</li>

@@ -1,23 +1,22 @@
 "use client";
 
-import React from 'react';
-import { 
-  Clock, 
-  RefreshCw, 
-  User, 
+import React from "react";
+import {
+  Clock,
+  RefreshCw,
+  User,
   Users,
   TrendingUp,
-  Calendar
-} from 'lucide-react';
-import { RecentRegistrationsProps } from './types';
-import { formatTime } from './utils';
+  Calendar,
+} from "lucide-react";
+import { RecentRegistrationsProps } from "./types";
+import { formatTime } from "./utils";
 
 export default function RecentRegistrations({
   registrations,
   loading,
   onRefresh,
 }: RecentRegistrationsProps) {
-  
   if (registrations.length === 0 && !loading) {
     return (
       <div className="bg-white rounded-2xl p-6 text-center">
@@ -33,8 +32,8 @@ export default function RecentRegistrations({
   }
 
   // Agrupar registros por tipo para mostrar estadísticas rápidas
-  const entradas = registrations.filter(r => r.tipo === 'entrada').length;
-  const salidas = registrations.filter(r => r.tipo === 'salida').length;
+  const entradas = registrations.filter((r) => r.tipo === "entrada").length;
+  const salidas = registrations.filter((r) => r.tipo === "salida").length;
 
   return (
     <div className="space-y-4">
@@ -50,7 +49,7 @@ export default function RecentRegistrations({
             className="p-2 rounded-lg bg-gray-50 hover:bg-gray-100 text-gray-600 transition-colors"
             disabled={loading}
           >
-            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
           </button>
         </div>
 
@@ -85,31 +84,34 @@ export default function RecentRegistrations({
             Últimos registros
           </h4>
         </div>
-        
+
         <div className="divide-y divide-gray-50 max-h-80 overflow-y-auto">
           {registrations.map((registro, index) => {
             const isRecent = index < 3; // Marcar los 3 más recientes
-            
+
             return (
-              <div 
-                key={registro.id} 
+              <div
+                key={registro.id}
                 className={`p-4 hover:bg-gray-25 transition-colors ${
-                  isRecent ? 'bg-blue-25' : ''
+                  isRecent ? "bg-blue-25" : ""
                 }`}
               >
                 <div className="flex items-center gap-3">
                   {/* Avatar del estudiante */}
                   <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white font-medium text-sm">
-                    {registro.alumno.nombres.charAt(0)}{registro.alumno.apellidos.charAt(0)}
+                    {registro.alumno.nombres.charAt(0)}
+                    {registro.alumno.apellidos.charAt(0)}
                   </div>
-                  
+
                   {/* Información del estudiante */}
                   <div className="flex-1 min-w-0">
                     <div className="font-medium text-gray-900 text-sm truncate">
                       {registro.alumno.nombres} {registro.alumno.apellidos}
                     </div>
                     <div className="text-xs text-gray-500 flex items-center gap-2">
-                      <span>{registro.alumno.grado}° - {registro.alumno.seccion}</span>
+                      <span>
+                        {registro.alumno.grado}° - {registro.alumno.seccion}
+                      </span>
                     </div>
                   </div>
 
