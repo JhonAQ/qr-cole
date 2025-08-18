@@ -41,7 +41,7 @@ export default function RecentRegistrations({
       <div className="bg-white rounded-2xl p-4">
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-semibold text-gray-900 flex items-center gap-2">
-            <Clock className="w-5 h-5 text-primary" />
+            <Clock className="w-5 h-5 text-blue-600" />
             Registros de Hoy
           </h3>
           <button
@@ -98,7 +98,7 @@ export default function RecentRegistrations({
               >
                 <div className="flex items-center gap-3">
                   {/* Avatar del estudiante */}
-                  <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white font-medium text-sm">
+                  <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-medium text-sm">
                     {registro.alumno.nombres.charAt(0)}
                     {registro.alumno.apellidos.charAt(0)}
                   </div>

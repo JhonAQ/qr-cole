@@ -73,7 +73,7 @@ export default function ScannerCamera({
         {!scanning ? (
           <button
             onClick={onStartScanning}
-            className="bg-primary hover:bg-primary-dark text-white font-semibold py-4 px-8 rounded-2xl shadow-lg transition-all duration-200 flex items-center gap-3 text-lg"
+            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-8 rounded-2xl shadow-lg transition-all duration-200 flex items-center gap-3 text-lg"
             disabled={!currentCameraId}
           >
             <Camera className="w-6 h-6" />

@@ -66,7 +66,7 @@ export default function ScannerConfig({
           {/* Velocidad de escaneo */}
           <div>
             <div className="flex items-center gap-2 mb-3">
-              <Zap className="w-4 h-4 text-primary" />
+              <Zap className="w-4 h-4 text-blue-600" />
               <label className="font-medium text-gray-700">
                 Velocidad de Escaneo: {config.fps} FPS
               </label>
@@ -95,7 +95,7 @@ export default function ScannerConfig({
           {/* Tiempo de debounce */}
           <div>
             <div className="flex items-center gap-2 mb-3">
-              <Timer className="w-4 h-4 text-primary" />
+              <Timer className="w-4 h-4 text-blue-600" />
               <label className="font-medium text-gray-700">
                 Anti-duplicados: {config.debounceMs / 1000}s
               </label>
@@ -123,7 +123,7 @@ export default function ScannerConfig({
           {/* Auto confirmación */}
           <div>
             <div className="flex items-center gap-2 mb-3">
-              <Volume2 className="w-4 h-4 text-primary" />
+              <Volume2 className="w-4 h-4 text-blue-600" />
               <label className="font-medium text-gray-700">
                 Auto-confirmación: {config.autoConfirmMs / 1000}s
               </label>
@@ -151,7 +151,7 @@ export default function ScannerConfig({
           {/* Prevención de duplicados */}
           <div>
             <div className="flex items-center gap-2 mb-3">
-              <Shield className="w-4 h-4 text-primary" />
+              <Shield className="w-4 h-4 text-blue-600" />
               <label className="font-medium text-gray-700">
                 Bloqueo duplicados: {config.preventDuplicateMs / (1000 * 60)}{" "}
                 min
@@ -183,7 +183,7 @@ export default function ScannerConfig({
           {/* Tamaño del área de escaneo */}
           <div>
             <div className="flex items-center gap-2 mb-3">
-              <Settings className="w-4 h-4 text-primary" />
+              <Settings className="w-4 h-4 text-blue-600" />
               <label className="font-medium text-gray-700">
                 Área de escaneo:{" "}
                 {config.qrbox ? `${config.qrbox.width}px` : "Toda la pantalla"}
