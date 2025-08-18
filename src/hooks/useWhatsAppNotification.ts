@@ -19,23 +19,33 @@ export const useWhatsAppNotification = () => {
     type: TipoAsistencia,
     timestamp?: string
   ): WhatsAppMessage => {
-    const fechaHora = formatearFechaHora(timestamp || new Date().toISOString());
-    const tipoTexto = type === "entrada" ? "ingresó al colegio" : "salió del colegio";
-    const emoji = type === "entrada" ? "🏫📚" : "🏠👋";
+    const now = new Date(timestamp || new Date().toISOString());
+    const hora = now.toLocaleTimeString('es-PE', { 
+      hour: '2-digit', 
+      minute: '2-digit',
+      hour12: true 
+    });
     
-    // Mensaje sin emojis para evitar problemas de codificación
-    const message = `*Colegio Fe y Ciencia* - Notificación de Asistencia
+    const tipoTexto = type === "entrada" ? "ingresó" : "salió";
+    const tipoEmoji = type === "entrada" ? "🏫✅" : "🏠👋";
+    const saludoEmoji = "👋";
+    const infoEmoji = type === "entrada" ? "�" : "�";
+    
+    // Mensaje mejorado con formato WhatsApp y emojis
+    const message = `*🎓 EDUCHECK - FE Y CIENCIA*
+━━━━━━━━━━━━━━━━━━━━━━
 
-*Estudiante:* ${student.nombres} ${student.apellidos}
-*DNI:* ${student.dni}
-*Grado:* ${student.grado}° - Sección ${student.seccion}
-*Apoderado:* ${student.nombres_apoderado}
+${saludoEmoji} Hola *${student.nombres_apoderado}*,
 
-*${student.nombres} ${tipoTexto} el ${fechaHora}*
+Le comunicamos que su hijo(a) *${student.nombres} ${student.apellidos}* ${tipoTexto} ${type === "entrada" ? "al colegio" : "del colegio"} hoy a las *${hora}* ${tipoEmoji}
 
-${type === "entrada" ? "Su hijo(a) llegó seguro al colegio." : "Su hijo(a) salió del colegio."}
+> *Grado:* ${student.grado}° - Sección ${student.seccion}
 
-Sistema Educheck Fe y Ciencia`;
+━━━━━━━━━━━━━━━━━━━━━━
+\`\`\`Este es un mensaje automático
+No es necesario responder\`\`\`
+
+_Sistema Educheck Fe y Ciencia_ 📱`;
 
     // Limpiar el número de teléfono y asegurar formato internacional
     let phoneNumber = student.contacto_padres.replace(/[^\d]/g, "");
@@ -47,8 +57,9 @@ Sistema Educheck Fe y Ciencia`;
       phoneNumber = "519" + phoneNumber;
     }
 
+    // Codificar el mensaje correctamente para URL
     const encodedMessage = encodeURIComponent(message);
-    const deepLink = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+    const deepLink = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodedMessage}`;
 
     return {
       phoneNumber: student.contacto_padres,

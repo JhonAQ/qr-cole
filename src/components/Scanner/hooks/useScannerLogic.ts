@@ -354,29 +354,32 @@ export const useScannerLogic = () => {
 
       // Abrir WhatsApp inmediatamente - sin preguntar ni confirmar
       try {
-        // Generar mensaje de WhatsApp
-        const fechaHora = new Date().toLocaleString('es-ES', {
-          year: 'numeric',
-          month: '2-digit',
-          day: '2-digit',
-          hour: '2-digit',
+        // Generar mensaje de WhatsApp con nuevo formato profesional
+        const now = new Date();
+        const hora = now.toLocaleTimeString('es-PE', { 
+          hour: '2-digit', 
           minute: '2-digit',
+          hour12: true 
         });
         
-        const tipoTexto = selectedType === "entrada" ? "ingresó al colegio" : "salió del colegio";
+        const tipoTexto = selectedType === "entrada" ? "ingresó" : "salió";
+        const tipoEmoji = selectedType === "entrada" ? "🏫✅" : "🏠👋";
+        const saludoEmoji = "👋";
         
-        const message = `*Colegio Fe y Ciencia* - Notificación de Asistencia
+        const message = `*🎓 EDUCHECK - FE Y CIENCIA*
+━━━━━━━━━━━━━━━━━━━━━━
 
-*Estudiante:* ${scanResult.student.nombres} ${scanResult.student.apellidos}
-*DNI:* ${scanResult.student.dni}
-*Grado:* ${scanResult.student.grado}° - Sección ${scanResult.student.seccion}
-*Apoderado:* ${scanResult.student.nombres_apoderado}
+${saludoEmoji} Hola *${scanResult.student.nombres_apoderado}*,
 
-*${scanResult.student.nombres} ${tipoTexto} el ${fechaHora}*
+Le comunicamos que su hijo(a) *${scanResult.student.nombres} ${scanResult.student.apellidos}* ${tipoTexto} ${selectedType === "entrada" ? "al colegio" : "del colegio"} hoy a las *${hora}* ${tipoEmoji}
 
-${selectedType === "entrada" ? "Su hijo(a) llegó seguro al colegio." : "Su hijo(a) salió del colegio."}
+> *Grado:* ${scanResult.student.grado}° - Sección ${scanResult.student.seccion}
 
-Sistema Educheck Fe y Ciencia`;
+━━━━━━━━━━━━━━━━━━━━━━
+\`\`\`Este es un mensaje automático
+No es necesario responder\`\`\`
+
+_Sistema Educheck Fe y Ciencia_ 📱`;
 
         // Limpiar el número de teléfono y asegurar formato internacional
         let phoneNumber = scanResult.student.contacto_padres.replace(/[^\d]/g, "");
@@ -389,7 +392,7 @@ Sistema Educheck Fe y Ciencia`;
         }
 
         const encodedMessage = encodeURIComponent(message);
-        const deepLink = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+        const deepLink = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodedMessage}`;
         
         // Abrir WhatsApp inmediatamente
         window.open(deepLink, "_blank");
