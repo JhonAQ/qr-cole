@@ -246,35 +246,51 @@ export default function AsistenciaTab() {
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">
-            Historial de Asistencia
-          </h2>
-          <p className="text-gray-600">
-            {asistencias.length} registros encontrados
-          </p>
+      <div className="space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900">
+              Historial de Asistencia
+            </h2>
+            <p className="text-gray-600">
+              {asistencias.length} registros encontrados
+            </p>
+          </div>
+          
+          {/* Botón de exportar - solo en desktop */}
+          <div className="hidden sm:block">
+            <button
+              onClick={exportarDatos}
+              className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Exportar
+            </button>
+          </div>
         </div>
-        <div className="flex items-center space-x-3">
+
+        {/* Botones de acción - en fila separada */}
+        <div className="flex flex-col sm:flex-row gap-3">
           <button
             onClick={() => window.open("/scan", "_blank")}
-            className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
             <QrCode className="w-4 h-4 mr-2" />
             Escanear QR
           </button>
           <button
             onClick={() => cargarAsistencias()}
-            className="flex items-center px-3 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50"
+            className="flex items-center justify-center px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50"
           >
             <RefreshCw
               className={`w-4 h-4 mr-2 ${loading ? "animate-spin" : ""}`}
             />
             Actualizar
           </button>
+          {/* Botón de exportar - visible en mobile */}
           <button
             onClick={exportarDatos}
-            className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+            className="flex sm:hidden items-center justify-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
           >
             <Download className="w-4 h-4 mr-2" />
             Exportar
@@ -348,82 +364,82 @@ export default function AsistenciaTab() {
       {/* Filtros */}
       <div className="bg-white rounded-lg shadow-sm border p-4">
         <div className="space-y-4">
-          {/* Controles básicos */}
-          <div className="flex flex-col lg:flex-row lg:items-end lg:space-x-4 space-y-4 lg:space-y-0">
-            <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Buscar alumno
+          {/* Barra de búsqueda - siempre visible */}
+          <div className="w-full">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Buscar alumno
+            </label>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <input
+                type="text"
+                value={busqueda}
+                onChange={(e) => setBusqueda(e.target.value)}
+                placeholder="Nombre, apellido o DNI..."
+                className="w-full pl-9 pr-4 py-2 border text-gray-700 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+          </div>
+
+          {/* Filtros básicos en grid responsive */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Fecha inicio
               </label>
-              <div className="relative">
-                <Search className=" text-gray-700 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <input
-                  type="text"
-                  value={busqueda}
-                  onChange={(e) => setBusqueda(e.target.value)}
-                  placeholder="Nombre, apellido o código QR..."
-                  className="w-full pl-9 pr-4 py-2 border text-gray-700 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
+              <input
+                type="date"
+                value={fechaInicio}
+                onChange={(e) => setFechaInicio(e.target.value)}
+                className="w-full px-3 text-gray-700 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              />
             </div>
 
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:flex-shrink-0">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Fecha inicio
-                </label>
-                <input
-                  type="date"
-                  value={fechaInicio}
-                  onChange={(e) => setFechaInicio(e.target.value)}
-                  className="w-full px-3 text-gray-700 py-2 border border-gray-300 rounded-lg"
-                />
-              </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Fecha fin
+              </label>
+              <input
+                type="date"
+                value={fechaFin}
+                onChange={(e) => setFechaFin(e.target.value)}
+                className="w-full px-3 py-2 border text-gray-700 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Fecha fin
-                </label>
-                <input
-                  type="date"
-                  value={fechaFin}
-                  onChange={(e) => setFechaFin(e.target.value)}
-                  className="w-full px-3 py-2 border text-gray-700 border-gray-300 rounded-lg"
-                />
-              </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Tipo
+              </label>
+              <select
+                value={tipoFiltro}
+                onChange={(e) =>
+                  setTipoFiltro(
+                    e.target.value as "todos" | "entrada" | "salida"
+                  )
+                }
+                className="w-full px-3 py-2 border text-gray-700 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="todos">Todos</option>
+                <option value="entrada">Entradas</option>
+                <option value="salida">Salidas</option>
+              </select>
+            </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Tipo
-                </label>
-                <select
-                  value={tipoFiltro}
-                  onChange={(e) =>
-                    setTipoFiltro(
-                      e.target.value as "todos" | "entrada" | "salida"
-                    )
-                  }
-                  className="w-full px-3 py-2 border text-gray-700 border-gray-300 rounded-lg"
-                >
-                  <option value="todos">Todos</option>
-                  <option value="entrada">Entradas</option>
-                  <option value="salida">Salidas</option>
-                </select>
-              </div>
-
-              <div className="flex items-end">
-                <button
-                  onClick={() => setMostrarFiltros(!mostrarFiltros)}
-                  className="w-full flex items-center justify-center px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700"
-                >
-                  <Filter className="w-4 h-4 mr-2 text-gray-700" />
-                  Más filtros
-                  {mostrarFiltros ? (
-                    <ChevronUp className="w-4 h-4 ml-2" />
-                  ) : (
-                    <ChevronDown className="w-4 h-4 ml-2" />
-                  )}
-                </button>
-              </div>
+            <div className="flex items-end">
+              <button
+                onClick={() => setMostrarFiltros(!mostrarFiltros)}
+                className="w-full flex items-center justify-center px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700 transition-colors"
+              >
+                <Filter className="w-4 h-4 mr-2 text-gray-700" />
+                <span className="hidden sm:inline">Más filtros</span>
+                <span className="sm:hidden">Filtros</span>
+                {mostrarFiltros ? (
+                  <ChevronUp className="w-4 h-4 ml-1" />
+                ) : (
+                  <ChevronDown className="w-4 h-4 ml-1" />
+                )}
+              </button>
             </div>
           </div>
 
@@ -434,10 +450,10 @@ export default function AsistenciaTab() {
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
-                className="border-t pt-4 grid grid-cols-1 md:grid-cols-2 gap-4"
+                className="border-t pt-4 grid grid-cols-1 sm:grid-cols-2 gap-4"
               >
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Grado
                   </label>
                   <select
@@ -448,7 +464,7 @@ export default function AsistenciaTab() {
                       );
                       setSeccionFiltro(null);
                     }}
-                    className="w-full px-3 text-gray-700 py-2 border border-gray-300 rounded-lg"
+                    className="w-full px-3 text-gray-700 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="">Todos los grados</option>
                     {gradosDisponibles.map((grado) => (
@@ -460,13 +476,13 @@ export default function AsistenciaTab() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Sección
                   </label>
                   <select
                     value={seccionFiltro || ""}
                     onChange={(e) => setSeccionFiltro(e.target.value || null)}
-                    className="w-full px-3 py-2 border text-gray-700 border-gray-300 rounded-lg"
+                    className="w-full px-3 py-2 border text-gray-700 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                     disabled={seccionesDisponibles.length === 0}
                   >
                     <option value="">Todas las secciones</option>
