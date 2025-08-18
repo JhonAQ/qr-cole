@@ -17,6 +17,10 @@ import {
   Home,
   UserPlus,
   Scan,
+  User,
+  Mail,
+  Calendar,
+  Shield,
 } from "lucide-react";
 import { supabase } from "@/utils/supabase";
 import { useRouter } from "next/navigation";
@@ -48,6 +52,13 @@ export default function EnhancedDashboardLayout({
 }: EnhancedDashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [userInfo, setUserInfo] = useState<{
+    email: string;
+    fullName: string;
+    role: string;
+    joinDate: string;
+    avatar: string;
+  } | null>(null);
   const router = useRouter();
   const { estadisticas, loading, error, refreshData } = useDashboard();
 
@@ -68,6 +79,53 @@ export default function EnhancedDashboardLayout({
       };
     }
   }, [sidebarOpen]);
+
+  // Cargar información del usuario
+  useEffect(() => {
+    const loadUserInfo = async () => {
+      try {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        if (user) {
+          setUserInfo({
+            email: user.email || "admin@qrcole.edu.pe",
+            fullName: user.email?.split("@")[0] || "Administrador del Sistema",
+            role: "Admin",
+            joinDate: user.created_at || new Date().toISOString(),
+            avatar: user.email?.charAt(0).toUpperCase() || "A",
+          });
+        }
+      } catch (error) {
+        console.error("Error loading user info:", error);
+        // Información por defecto
+        setUserInfo({
+          email: "admin@qrcole.edu.pe",
+          fullName: "Administrador del Sistema",
+          role: "Administrador",
+          joinDate: new Date().toISOString().toUpperCase(),
+          avatar: "A",
+        });
+      }
+    };
+
+    loadUserInfo();
+  }, []);
+
+  // Cerrar menú de usuario al hacer clic fuera
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (showUserMenu) {
+        const target = event.target as Element;
+        if (!target.closest(".user-menu-container")) {
+          setShowUserMenu(false);
+        }
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [showUserMenu]);
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -208,31 +266,127 @@ export default function EnhancedDashboardLayout({
                 </button>
 
                 {/* Menú de usuario */}
-                <div className="relative">
+                <div className="relative user-menu-container">
                   <button
                     onClick={() => setShowUserMenu(!showUserMenu)}
-                    className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                    className="flex items-center p-2 rounded-lg hover:bg-gray-100 transition-colors group"
                   >
-                    <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-                      <span className="text-sm font-medium text-white">A</span>
+                    <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center ring-2 ring-blue-100 group-hover:ring-blue-200 transition-all">
+                      <span className="text-sm font-medium text-white">
+                        {userInfo?.avatar || "A"}
+                      </span>
+                    </div>
+                    <div className="ml-3 text-left hidden sm:block">
+                      <p className="text-sm font-medium text-gray-900">
+                        {userInfo?.fullName || "Administrador"}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {userInfo?.role || "Sistema"}
+                      </p>
                     </div>
                   </button>
 
                   <AnimatePresence>
                     {showUserMenu && (
                       <motion.div
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.95 }}
-                        className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50"
+                        initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                        className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-lg ring-1 ring-gray-200 z-50 overflow-hidden"
                       >
-                        <button
-                          onClick={handleSignOut}
-                          className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
-                        >
-                          <LogOut className="w-4 h-4 mr-3" />
-                          Cerrar Sesión
-                        </button>
+                        {/* Header del perfil */}
+                        <div className="bg-gradient-to-r from-blue-500 to-blue-700 p-4">
+                          <div className="flex items-center">
+                            <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center ring-2 ring-white/30">
+                              <span className="text-lg font-bold text-white">
+                                {userInfo?.avatar || "A"}
+                              </span>
+                            </div>
+                            <div className="ml-3">
+                              <p className="font-semibold text-white">
+                                {userInfo?.fullName ||
+                                  "Administrador del Sistema"}
+                              </p>
+                              <p className="text-sm text-blue-100">
+                                {userInfo?.email || "admin@qrcole.edu.pe"}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Información del usuario */}
+                        <div className="p-4 bg-gray-50 border-b">
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="text-center">
+                              <div className="flex items-center justify-center w-8 h-8 bg-green-100 rounded-lg mx-auto mb-1">
+                                <Users className="w-4 h-4 text-green-600" />
+                              </div>
+                              <p className="text-sm font-semibold text-gray-900">
+                                {estadisticas.totalAlumnos}
+                              </p>
+                              <p className="text-xs text-gray-500">Alumnos</p>
+                            </div>
+                            <div className="text-center">
+                              <div className="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-lg mx-auto mb-1">
+                                <BarChart3 className="w-4 h-4 text-blue-600" />
+                              </div>
+                              <p className="text-sm font-semibold text-gray-900">
+                                {estadisticas.porcentajeAsistencia}%
+                              </p>
+                              <p className="text-xs text-gray-500">
+                                Asistencia
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Detalles del perfil */}
+                        <div className="p-4 space-y-3">
+                          <div className="flex items-center text-sm">
+                            <Shield className="w-4 h-4 text-gray-400 mr-3" />
+                            <span className="text-gray-600">Rol:</span>
+                            <span className="ml-auto font-medium text-gray-900">
+                              {userInfo?.role || "Administrador"}
+                            </span>
+                          </div>
+
+                          <div className="flex items-center text-sm">
+                            <Mail className="w-4 h-4 text-gray-400 mr-3" />
+                            <span className="text-gray-600">Email:</span>
+                            <span className="ml-auto font-medium text-gray-900 truncate max-w-40">
+                              {userInfo?.email || "admin@qrcole.edu.pe"}
+                            </span>
+                          </div>
+
+                          <div className="flex items-center text-sm">
+                            <Calendar className="w-4 h-4 text-gray-400 mr-3" />
+                            <span className="text-gray-600">Desde:</span>
+                            <span className="ml-auto font-medium text-gray-900">
+                              {userInfo?.joinDate
+                                ? new Date(
+                                    userInfo.joinDate
+                                  ).toLocaleDateString("es-ES", {
+                                    year: "numeric",
+                                    month: "short",
+                                  })
+                                : "2024"}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Acciones */}
+                        <div className="border-t bg-gray-50 p-2">
+                          <button
+                            onClick={() => {
+                              setShowUserMenu(false);
+                              handleSignOut();
+                            }}
+                            className="flex items-center w-full px-3 py-2 text-sm text-red-600 rounded-lg hover:bg-red-50 hover:text-red-700 transition-all duration-200"
+                          >
+                            <LogOut className="w-4 h-4 mr-3" />
+                            <span>Cerrar Sesión</span>
+                          </button>
+                        </div>
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -252,29 +406,118 @@ export default function EnhancedDashboardLayout({
                 />
               </button>
 
-              <div className="relative">
+              <div className="relative user-menu-container">
                 <button
                   onClick={() => setShowUserMenu(!showUserMenu)}
-                  className="w-8 h-8 bg-primary rounded-full flex items-center justify-center"
+                  className="flex items-center p-2 rounded-lg hover:bg-gray-100 transition-colors group"
                 >
-                  <span className="text-sm font-medium text-white">A</span>
+                  <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center ring-2 ring-blue-100 group-hover:ring-blue-200 transition-all">
+                    <span className="text-sm font-medium text-white">
+                      {userInfo?.avatar || "A"}
+                    </span>
+                  </div>
                 </button>
 
                 <AnimatePresence>
                   {showUserMenu && (
                     <motion.div
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.95 }}
-                      className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50"
+                      initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                      className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-lg ring-1 ring-gray-200 z-50 overflow-hidden"
                     >
-                      <button
-                        onClick={handleSignOut}
-                        className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
-                      >
-                        <LogOut className="w-4 h-4 mr-3" />
-                        Cerrar Sesión
-                      </button>
+                      {/* Header del perfil */}
+                      <div className="bg-gradient-to-r from-blue-500 to-blue-700 p-4">
+                        <div className="flex items-center">
+                          <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center ring-2 ring-white/30">
+                            <span className="text-lg font-bold text-white">
+                              {userInfo?.avatar || "A"}
+                            </span>
+                          </div>
+                          <div className="ml-3">
+                            <p className="font-semibold text-white">
+                              {userInfo?.fullName ||
+                                "Administrador del Sistema"}
+                            </p>
+                            <p className="text-sm text-blue-100">
+                              {userInfo?.email || "admin@qrcole.edu.pe"}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Información del usuario */}
+                      <div className="p-4 bg-gray-50 border-b">
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="text-center">
+                            <div className="flex items-center justify-center w-8 h-8 bg-green-100 rounded-lg mx-auto mb-1">
+                              <Users className="w-4 h-4 text-green-600" />
+                            </div>
+                            <p className="text-sm font-semibold text-gray-900">
+                              {estadisticas.totalAlumnos}
+                            </p>
+                            <p className="text-xs text-gray-500">Alumnos</p>
+                          </div>
+                          <div className="text-center">
+                            <div className="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-lg mx-auto mb-1">
+                              <BarChart3 className="w-4 h-4 text-blue-600" />
+                            </div>
+                            <p className="text-sm font-semibold text-gray-900">
+                              {estadisticas.porcentajeAsistencia}%
+                            </p>
+                            <p className="text-xs text-gray-500">Asistencia</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Detalles del perfil */}
+                      <div className="p-4 space-y-3">
+                        <div className="flex items-center text-sm">
+                          <Shield className="w-4 h-4 text-gray-400 mr-3" />
+                          <span className="text-gray-600">Rol:</span>
+                          <span className="ml-auto font-medium text-gray-900">
+                            {userInfo?.role || "Administrador"}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center text-sm">
+                          <Mail className="w-4 h-4 text-gray-400 mr-3" />
+                          <span className="text-gray-600">Email:</span>
+                          <span className="ml-auto font-medium text-gray-900 truncate max-w-40">
+                            {userInfo?.email || "admin@qrcole.edu.pe"}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center text-sm">
+                          <Calendar className="w-4 h-4 text-gray-400 mr-3" />
+                          <span className="text-gray-600">Desde:</span>
+                          <span className="ml-auto font-medium text-gray-900">
+                            {userInfo?.joinDate
+                              ? new Date(userInfo.joinDate).toLocaleDateString(
+                                  "es-ES",
+                                  {
+                                    year: "numeric",
+                                    month: "short",
+                                  }
+                                )
+                              : "2024"}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Acciones */}
+                      <div className="border-t bg-gray-50 p-2">
+                        <button
+                          onClick={() => {
+                            setShowUserMenu(false);
+                            handleSignOut();
+                          }}
+                          className="flex items-center w-full px-3 py-2 text-sm text-red-600 rounded-lg hover:bg-red-50 hover:text-red-700 transition-all duration-200"
+                        >
+                          <LogOut className="w-4 h-4 mr-3" />
+                          <span>Cerrar Sesión</span>
+                        </button>
+                      </div>
                     </motion.div>
                   )}
                 </AnimatePresence>
