@@ -261,22 +261,47 @@ export default function QRScanner() {
         } registrada correctamente`
       );
 
-      //  Enviar WhatsApp al padre inmediatamente
-      const mensaje =
-        tipoRegistro === "entrada"
-          ? `Le informamos que su hijo(a) ${alumno.nombres} ${alumno.apellidos} fue registrado como PRESENTE en su ${tipoRegistro}.`
-          : `Le informamos que su hijo(a) ${alumno.nombres} ${alumno.apellidos} fue registrado como FALTA/ausente.`;
+      // Enviar WhatsApp simple
+      if (alumno.contacto_padres) {
+        try {
+          const now = new Date();
+          const timeFormatted = now.toLocaleTimeString("es-ES", {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true,
+          });
 
-      await fetch("/api/whatsapp", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          to: alumno.padre_telefono, // Cambiar cuando se tenga acceso a supabase
-          message: mensaje,
-        }),
-      });
+          const response = await fetch('/api/whatsapp', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              to: alumno.contacto_padres,
+              templateName: "plantqr",
+              parameters: [
+                `${alumno.nombres} ${alumno.apellidos}`,
+                tipoRegistro === "entrada" ? "LLEGADA" : "SALIDA",
+                timeFormatted,
+                "Colegio Fe y Ciencia"
+              ]
+            }),
+          });
 
-    // Actualizar últimos registros
+          const result = await response.json();
+          
+          if (result.success) {
+            toast.success("Notificación WhatsApp enviada");
+          } else {
+            toast.error("Error enviando notificación WhatsApp");
+          }
+        } catch (whatsappError) {
+          console.error("WhatsApp error:", whatsappError);
+          toast.error("Error enviando notificación WhatsApp");
+        }
+      }
+
+      // Actualizar últimos registros
       await fetchLastRegistrations();
 
       // Limpiar estado

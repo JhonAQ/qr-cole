@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.55.0",
+    "axios": "^1.11.0",
     "framer-motion": "^12.23.12",
     "html5-qrcode": "^2.3.8",
     "lucide-react": "^0.539.0",
