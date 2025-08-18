@@ -271,7 +271,7 @@ export default function QRScanner() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          to: alumno.padre_telefono, // Cambiar cuando se tenga acceso a supabase
+          to: alumno.contacto_padres,
           message: mensaje,
         }),
       });
