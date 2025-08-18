@@ -14,6 +14,7 @@ import {
   EstadisticasGenerales,
   DashboardContextType,
 } from "@/types";
+import { obtenerRangoHoy } from "@/utils/helpers";
 
 const DashboardContext = createContext<DashboardContextType | null>(null);
 
@@ -58,7 +59,11 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
 
   const fetchAsistenciasHoy = useCallback(async () => {
     try {
-      const hoy = new Date().toISOString().split("T")[0];
+      // CORREGIDO: Usar la función corregida para obtener el rango de hoy
+      const { inicio, fin } = obtenerRangoHoy();
+      
+      console.log('Cargando asistencias del', inicio, 'al', fin); // Para debug
+      
       const { data, error } = await supabase
         .from("asistencias")
         .select(
@@ -67,8 +72,8 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
           alumno:alumnos(*)
         `
         )
-        .gte("hora", `${hoy}T00:00:00`)
-        .lt("hora", `${hoy}T23:59:59`)
+        .gte("hora", inicio)
+        .lte("hora", fin)
         .order("hora", { ascending: false });
 
       if (error) throw error;

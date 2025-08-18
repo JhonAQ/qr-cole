@@ -1,30 +1,27 @@
 "use client";
 
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import {
   BarChart3,
-  PieChart,
-  Calendar,
-  Download,
   Users,
-  TrendingUp,
-  TrendingDown,
+  Calendar,
   Clock,
   Target,
   BookOpen,
+  Download,
   Filter,
   RefreshCw,
 } from "lucide-react";
-import { supabase } from "@/utils/supabase";
 import { useDashboard } from "@/contexts/DashboardContext";
-import { Alumno, Asistencia } from "@/types";
-import {
-  obtenerFechaHoy,
-  formatearFecha,
+import { supabase } from "@/utils/supabase";
+import { 
+  formatearFecha, 
+  obtenerFechaHoy, 
   obtenerGradosUnicos,
-  obtenerSeccionesUnicas,
+  obtenerRangoFecha // NUEVA función
 } from "@/utils/helpers";
+import { Alumno, Asistencia } from "@/types";
 
 // Componente para gráfico de barras simple
 function SimpleBarChart({
@@ -47,38 +44,27 @@ function SimpleBarChart({
   };
 
   return (
-    <div className="bg-white rounded-lg p-6 shadow-sm border">
+    <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
       <h4 className="text-lg font-semibold text-gray-900 mb-4">{title}</h4>
       <div className="space-y-3">
-        {data.map((item, index) => {
-          const percentage = maxValue > 0 ? (item.value / maxValue) * 100 : 0;
-          const attendanceRate = item.total
-            ? (item.value / item.total) * 100
-            : 0;
-
-          return (
-            <div key={item.label} className="space-y-1">
-              <div className="flex justify-between text-sm">
-                <span className="font-medium text-gray-700">{item.label}</span>
-                <span className="text-gray-500">
-                  {item.total
-                    ? `${item.value}/${item.total} (${attendanceRate.toFixed(
-                        1
-                      )}%)`
-                    : item.value}
-                </span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${percentage}%` }}
-                  transition={{ duration: 1, delay: index * 0.1 }}
-                  className={`h-2 rounded-full ${colorClasses[color]}`}
-                />
-              </div>
+        {data.map((item, index) => (
+          <div key={index} className="space-y-1">
+            <div className="flex justify-between text-sm">
+              <span className="font-medium text-gray-700">{item.label}</span>
+              <span className="text-gray-600">
+                {item.total ? `${item.value}/${item.total}` : item.value}
+              </span>
             </div>
-          );
-        })}
+            <div className="w-full bg-gray-200 rounded-full h-2">
+              <div
+                className={`h-2 rounded-full ${colorClasses[color]} transition-all duration-500`}
+                style={{
+                  width: `${maxValue > 0 ? ((item.total || item.value) / maxValue) * 100 : 0}%`,
+                }}
+              />
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -124,30 +110,19 @@ function MetricCard({
   const colors = colorClasses[color];
 
   return (
-    <div className={`${colors.bg} rounded-lg p-6 border`}>
+    <div className={`${colors.bg} rounded-lg p-6 border border-gray-200`}>
       <div className="flex items-center">
         <div className={`flex-shrink-0 p-3 rounded-lg ${colors.bg}`}>
           <Icon className={`w-6 h-6 ${colors.icon}`} />
         </div>
         <div className="ml-4 flex-1">
-          <p className="text-sm font-medium text-gray-600">{title}</p>
-          <div className="flex items-center">
-            <p className="text-2xl font-bold text-gray-900">{value}</p>
-            {trend && (
-              <div
-                className={`ml-2 flex items-center text-sm ${
-                  trend.isUp ? "text-green-600" : "text-red-600"
-                }`}
-              >
-                {trend.isUp ? (
-                  <TrendingUp className="w-4 h-4 mr-1" />
-                ) : (
-                  <TrendingDown className="w-4 h-4 mr-1" />
-                )}
-                {Math.abs(trend.value)}%
-              </div>
-            )}
-          </div>
+          <p className="text-2xl font-bold text-gray-900">{value}</p>
+          <p className="text-sm text-gray-600">{title}</p>
+          {trend && (
+            <p className={`text-xs mt-1 ${trend.isUp ? 'text-green-600' : 'text-red-600'}`}>
+              {trend.isUp ? '↗' : '↘'} {trend.value}%
+            </p>
+          )}
         </div>
       </div>
     </div>
@@ -160,21 +135,33 @@ export default function EstadisticasTab() {
     asistencias: asistenciasHoy,
     estadisticas: estadisticasGenerales,
   } = useDashboard();
+
+  // CORREGIDO: Inicialización de fechas usando la función corregida
   const [fechaInicio, setFechaInicio] = useState(() => {
     const hoy = new Date();
     const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
-    return inicioMes.toISOString().split("T")[0];
+    const year = inicioMes.getFullYear();
+    const month = String(inicioMes.getMonth() + 1).padStart(2, '0');
+    const day = String(inicioMes.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   });
+  
   const [fechaFin, setFechaFin] = useState(obtenerFechaHoy());
   const [asistenciasRango, setAsistenciasRango] = useState<
     (Asistencia & { alumno: Alumno })[]
   >([]);
   const [loading, setLoading] = useState(false);
 
-  // Cargar asistencias del rango seleccionado
+  // CORREGIDO: Función para cargar asistencias del rango seleccionado
   const cargarAsistenciasRango = async () => {
     setLoading(true);
     try {
+      // Usar obtenerRangoFecha para fechaInicio y fechaFin
+      const rangoInicio = obtenerRangoFecha(fechaInicio);
+      const rangoFin = obtenerRangoFecha(fechaFin);
+
+      console.log('Cargando estadísticas del', rangoInicio.inicio, 'al', rangoFin.fin); // Para debug
+
       const { data, error } = await supabase
         .from("asistencias")
         .select(
@@ -183,8 +170,8 @@ export default function EstadisticasTab() {
           alumno:alumnos(*)
         `
         )
-        .gte("hora", `${fechaInicio}T00:00:00`)
-        .lte("hora", `${fechaFin}T23:59:59`)
+        .gte("hora", rangoInicio.inicio)
+        .lte("hora", rangoFin.fin)
         .order("hora", { ascending: false });
 
       if (error) throw error;
@@ -254,7 +241,7 @@ export default function EstadisticasTab() {
       .sort((a, b) => parseInt(a.label) - parseInt(b.label));
   }, [alumnos, asistenciasRango]);
 
-  // Estadísticas por día (últimos 7 días)
+  // CORREGIDO: Estadísticas por día (últimos 7 días)
   const estadisticasPorDia = useMemo(() => {
     const dias = [];
     const hoy = new Date();
@@ -262,14 +249,24 @@ export default function EstadisticasTab() {
     for (let i = 6; i >= 0; i--) {
       const fecha = new Date(hoy);
       fecha.setDate(fecha.getDate() - i);
-      const fechaStr = fecha.toISOString().split("T")[0];
+      
+      // CORREGIDO: Crear fecha string de forma consistente
+      const year = fecha.getFullYear();
+      const month = String(fecha.getMonth() + 1).padStart(2, '0');
+      const day = String(fecha.getDate()).padStart(2, '0');
+      const fechaStr = `${year}-${month}-${day}`;
 
-      const asistenciasDia = asistenciasRango.filter(
-        (a) => a.hora.split("T")[0] === fechaStr
-      );
+      const asistenciasDia = asistenciasRango.filter((a) => {
+        const asistenciaFecha = new Date(a.hora);
+        const asistenciaYear = asistenciaFecha.getFullYear();
+        const asistenciaMonth = String(asistenciaFecha.getMonth() + 1).padStart(2, '0');
+        const asistenciaDay = String(asistenciaFecha.getDate()).padStart(2, '0');
+        const asistenciaFechaStr = `${asistenciaYear}-${asistenciaMonth}-${asistenciaDay}`;
+        
+        return asistenciaFechaStr === fechaStr;
+      });
 
-      const alumnosUnicos = new Set(asistenciasDia.map((a) => a.id_alumno))
-        .size;
+      const alumnosUnicos = new Set(asistenciasDia.map((a) => a.id_alumno)).size;
 
       dias.push({
         label: fecha.toLocaleDateString("es-ES", {
@@ -312,7 +309,7 @@ export default function EstadisticasTab() {
     asistenciasRango.forEach((asistencia) => {
       if (!asistenciasPorAlumno[asistencia.id_alumno]) {
         asistenciasPorAlumno[asistencia.id_alumno] = {
-          alumno: asistencia.alumno,
+          alumno: asistencia.alumno!,
           entradas: 0,
           salidas: 0,
         };
@@ -360,11 +357,10 @@ export default function EstadisticasTab() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">
-            Estadísticas y Reportes
+            Estadísticas de Asistencia
           </h2>
           <p className="text-gray-600">
-            Análisis detallado de asistencia del {formatearFecha(fechaInicio)}{" "}
-            al {formatearFecha(fechaFin)}
+            Análisis detallado de asistencia del {formatearFecha(fechaInicio)} al {formatearFecha(fechaFin)}
           </p>
         </div>
         <div className="flex items-center space-x-3">
@@ -380,7 +376,7 @@ export default function EstadisticasTab() {
           </button>
           <button
             onClick={exportarReporte}
-            className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+            className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
             <Download className="w-4 h-4 mr-2" />
             Exportar
@@ -389,40 +385,39 @@ export default function EstadisticasTab() {
       </div>
 
       {/* Filtros de fecha */}
-      <div className="bg-white rounded-lg shadow-sm border p-4">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
         <div className="flex items-center space-x-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Fecha inicio
-            </label>
-            <input
-              type="date"
-              value={fechaInicio}
-              onChange={(e) => setFechaInicio(e.target.value)}
-              className="border border-gray-300 text-gray-700 rounded-lg px-3 py-2"
-            />
+          <div className="flex items-center space-x-2">
+            <Filter className="w-5 h-5 text-gray-400" />
+            <span className="text-sm font-medium text-gray-700">Período:</span>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Fecha fin
-            </label>
-            <input
-              type="date"
-              value={fechaFin}
-              onChange={(e) => setFechaFin(e.target.value)}
-              className="border border-gray-300 text-gray-700 rounded-lg px-3 py-2"
-            />
-          </div>
-          <div className="flex items-end">
+          <div className="flex items-center space-x-4">
+            <div>
+              <label className="block text-xs text-gray-500 mb-1">Desde:</label>
+              <input
+                type="date"
+                value={fechaInicio}
+                onChange={(e) => setFechaInicio(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+            <div>
+              <label className="block text-xs text-gray-500 mb-1">Hasta:</label>
+              <input
+                type="date"
+                value={fechaFin}
+                onChange={(e) => setFechaFin(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
             <button
               onClick={() => {
-                const hoy = obtenerFechaHoy();
-                setFechaInicio(hoy);
-                setFechaFin(hoy);
+                setFechaInicio(obtenerFechaHoy());
+                setFechaFin(obtenerFechaHoy());
               }}
-              className="px-3 py-2 text-blue-600 hover:text-blue-700 text-sm"
+              className="px-3 py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
             >
-              Solo hoy
+              Solo Hoy
             </button>
           </div>
         </div>
@@ -489,65 +484,64 @@ export default function EstadisticasTab() {
 
       {/* Resumen detallado */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Distribución por estado */}
-        <div className="bg-white rounded-lg p-6 shadow-sm border">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <h4 className="text-lg font-semibold text-gray-900 mb-4">
-            Distribución de Asistencia
+            Resumen del Período
           </h4>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg">
-              <div className="flex items-center">
-                <div className="w-4 h-4 bg-green-500 rounded-full mr-3" />
-                <span className="font-medium text-green-800">
-                  Con Asistencia
-                </span>
-              </div>
-              <span className="text-green-900 font-bold">
-                {estadisticasRango.alumnosConAsistencia} (
-                {estadisticasRango.porcentajeAsistencia}%)
+          <div className="space-y-3">
+            <div className="flex justify-between">
+              <span className="text-gray-600">Días analizados:</span>
+              <span className="font-medium">
+                {Math.ceil((new Date(fechaFin).getTime() - new Date(fechaInicio).getTime()) / (1000 * 60 * 60 * 24)) + 1}
               </span>
             </div>
-
-            <div className="flex items-center justify-between p-4 bg-red-50 rounded-lg">
-              <div className="flex items-center">
-                <div className="w-4 h-4 bg-red-500 rounded-full mr-3" />
-                <span className="font-medium text-red-800">Sin Asistencia</span>
-              </div>
-              <span className="text-red-900 font-bold">
-                {estadisticasRango.alumnosSinAsistencia} (
-                {100 - estadisticasRango.porcentajeAsistencia}%)
+            <div className="flex justify-between">
+              <span className="text-gray-600">Promedio diario:</span>
+              <span className="font-medium">
+                {Math.round(estadisticasRango.totalRegistros / Math.max(1, Math.ceil((new Date(fechaFin).getTime() - new Date(fechaInicio).getTime()) / (1000 * 60 * 60 * 24)) + 1))} registros
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-600">Estudiantes activos:</span>
+              <span className="font-medium">
+                {estadisticasRango.alumnosConAsistencia} de {alumnos.length}
               </span>
             </div>
           </div>
         </div>
 
-        {/* Información del período */}
-        <div className="bg-white rounded-lg p-6 shadow-sm border">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <h4 className="text-lg font-semibold text-gray-900 mb-4">
-            Información del Período
+            Análisis por Tipo
           </h4>
-          <div className="space-y-3">
-            <div className="flex justify-between">
-              <span className="text-gray-600">Período analizado:</span>
-              <span className="font-medium">
-                {formatearFecha(fechaInicio)} - {formatearFecha(fechaFin)}
-              </span>
+          <div className="space-y-4">
+            <div>
+              <div className="flex justify-between mb-2">
+                <span className="text-gray-600">Entradas</span>
+                <span className="font-medium">{estadisticasRango.entradas}</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div
+                  className="bg-green-500 h-2 rounded-full"
+                  style={{
+                    width: `${(estadisticasRango.entradas / Math.max(1, estadisticasRango.totalRegistros)) * 100}%`,
+                  }}
+                />
+              </div>
             </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Total de alumnos:</span>
-              <span className="font-medium">{alumnos.length}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Grados activos:</span>
-              <span className="font-medium">
-                {obtenerGradosUnicos(alumnos).length}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Secciones activas:</span>
-              <span className="font-medium">
-                {obtenerSeccionesUnicas(alumnos).length}
-              </span>
+            <div>
+              <div className="flex justify-between mb-2">
+                <span className="text-gray-600">Salidas</span>
+                <span className="font-medium">{estadisticasRango.salidas}</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div
+                  className="bg-blue-500 h-2 rounded-full"
+                  style={{
+                    width: `${(estadisticasRango.salidas / Math.max(1, estadisticasRango.totalRegistros)) * 100}%`,
+                  }}
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -562,22 +556,17 @@ export default function EstadisticasTab() {
         >
           <div className="flex items-start">
             <div className="flex-shrink-0">
-              <TrendingDown className="w-6 h-6 text-yellow-600" />
+              <BookOpen className="w-6 h-6 text-yellow-600" />
             </div>
-            <div className="ml-4">
-              <h4 className="text-lg font-semibold text-yellow-800 mb-2">
+            <div className="ml-3">
+              <h4 className="text-lg font-medium text-yellow-800 mb-2">
                 Recomendaciones para Mejorar la Asistencia
               </h4>
-              <ul className="space-y-2 text-yellow-700">
-                <li>• La asistencia está por debajo del 80% recomendado</li>
-                <li>
-                  • Considere implementar un sistema de seguimiento más estricto
-                </li>
-                <li>
-                  • Revise los grados con menor asistencia para intervenciones
-                  específicas
-                </li>
-                <li>• Establezca comunicación directa con padres de familia</li>
+              <ul className="text-yellow-700 space-y-1 text-sm">
+                <li>• Implementar recordatorios automáticos para padres</li>
+                <li>• Revisar horarios y políticas de asistencia</li>
+                <li>• Identificar patrones en los datos de ausencias</li>
+                <li>• Considerar incentivos para mejorar la puntualidad</li>
               </ul>
             </div>
           </div>

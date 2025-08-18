@@ -33,15 +33,45 @@ export function formatearFechaHora(fecha: string | Date): string {
 
 // Obtener fecha actual en formato YYYY-MM-DD
 export function obtenerFechaHoy(): string {
-  return new Date().toISOString().split('T')[0];
+  const hoy = new Date();
+  // Usar getFullYear(), getMonth() y getDate() para evitar problemas de zona horaria
+  const year = hoy.getFullYear();
+  const month = String(hoy.getMonth() + 1).padStart(2, '0');
+  const day = String(hoy.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 }
+
 
 // Obtener inicio y fin del día actual
 export function obtenerRangoHoy(): { inicio: string; fin: string } {
   const hoy = new Date();
-  const inicio = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate()).toISOString();
-  const fin = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate(), 23, 59, 59).toISOString();
-  return { inicio, fin };
+  
+  // Inicio del día (00:00:00.000)
+  const inicioDelDia = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate(), 0, 0, 0, 0);
+  
+  // Fin del día (23:59:59.999)
+  const finDelDia = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate(), 23, 59, 59, 999);
+  
+  return { 
+    inicio: inicioDelDia.toISOString(), 
+    fin: finDelDia.toISOString() 
+  };
+}
+
+// NUEVA FUNCIÓN: Obtener rango de fechas específico para consultas
+export function obtenerRangoFecha(fecha: string): { inicio: string; fin: string } {
+  const fechaObj = new Date(fecha + 'T00:00:00'); // Evitar conversión de zona horaria
+  
+  // Inicio del día
+  const inicio = new Date(fechaObj.getFullYear(), fechaObj.getMonth(), fechaObj.getDate(), 0, 0, 0, 0);
+  
+  // Fin del día
+  const fin = new Date(fechaObj.getFullYear(), fechaObj.getMonth(), fechaObj.getDate(), 23, 59, 59, 999);
+  
+  return {
+    inicio: inicio.toISOString(),
+    fin: fin.toISOString()
+  };
 }
 
 // Validar email
