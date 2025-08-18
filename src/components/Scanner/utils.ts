@@ -1,14 +1,14 @@
 import { ScannerConfig, ScannerSound, StudentScanResult } from './types';
 import { Alumno, Asistencia } from '@/types';
 
-// Configuración por defecto del scanner
+// Configuración por defecto del scanner - ULTRA PERMISIVA
 export const DEFAULT_SCANNER_CONFIG: ScannerConfig = {
-  fps: 20, // MÁS FPS para detección más rápida
-  qrbox: { width: 400, height: 400 }, // Área MÁS GRANDE
+  fps: 60, // MÁXIMO FPS posible para detección instantánea
+  qrbox: undefined, // SIN LÍMITES - detectar en toda la pantalla
   aspectRatio: 1.0,
   disableFlip: false,
-  debounceMs: 300, // MENOS tiempo de debounce
-  autoConfirmMs: 3000, // Menos tiempo de auto-confirm
+  debounceMs: 0, // SIN debounce - detección instantánea
+  autoConfirmMs: 3000,
   preventDuplicateMs: 300000, // 5 minutos
 };
 

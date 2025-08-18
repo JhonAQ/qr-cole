@@ -185,7 +185,8 @@ export default function ScannerConfig({
             <div className="flex items-center gap-2 mb-3">
               <Settings className="w-4 h-4 text-primary" />
               <label className="font-medium text-gray-700">
-                Área de escaneo: {config.qrbox.width}px
+                Área de escaneo:{" "}
+                {config.qrbox ? `${config.qrbox.width}px` : "Toda la pantalla"}
               </label>
             </div>
             <input
@@ -193,7 +194,7 @@ export default function ScannerConfig({
               min="200"
               max="350"
               step="50"
-              value={config.qrbox.width}
+              value={config.qrbox?.width || 300}
               onChange={(e) => {
                 const size = parseInt(e.target.value);
                 handleConfigChange("qrbox", { width: size, height: size });

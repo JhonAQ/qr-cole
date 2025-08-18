@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Html5Qrcode } from 'html5-qrcode';
+import { Html5Qrcode, Html5QrcodeScannerState } from 'html5-qrcode';
 import { supabase } from '@/utils/supabase';
 import toast from 'react-hot-toast';
 import { 
@@ -136,7 +136,8 @@ export const useScannerLogic = () => {
         if (
           decodedText === state.lastScannedCode || 
           state.loading || 
-          mode === 'confirming'
+          mode === 'confirming' ||
+          scanResult // Si ya hay un resultado, NO procesar más
         ) {
           return;
         }
@@ -144,20 +145,33 @@ export const useScannerLogic = () => {
         // Marcar inmediatamente para evitar duplicados
         setState(prev => ({ ...prev, lastScannedCode: decodedText }));
         
+        // PAUSAR el scanner inmediatamente para evitar múltiples detecciones
+        if (scannerRef.current) {
+          try {
+            await scannerRef.current.pause(true);
+          } catch (error) {
+            // Ignorar errores de pausa
+            console.log('Error pausando scanner:', error);
+          }
+        }
+        
         await handleScan(decodedText);
       };
 
       const scannerConfig = {
         fps: config.fps,
-        qrbox: config.qrbox,
+        qrbox: config.qrbox, // Si es undefined, escanea toda la pantalla
         aspectRatio: config.aspectRatio,
         disableFlip: false, // Permitir voltear para mejor detección
-        // Configuración SÚPER PERMISIVA para mejor detección
+        // Configuración ULTRA PERMISIVA para detección rápida
         rememberLastUsedCamera: true,
-        supportedScanTypes: undefined, // Permitir TODOS los tipos
+        supportedScanTypes: undefined, // Permitir TODOS los tipos de QR y códigos
         experimentalFeatures: {
           useBarCodeDetectorIfSupported: true // Usar detector nativo si está disponible
-        }
+        },
+        // Configuraciones adicionales para máxima compatibilidad
+        verbose: false, // Menos logs para mejor rendimiento
+        formatsToSupport: undefined, // Todos los formatos
       };
 
       await html5QrCode.start(
@@ -365,15 +379,29 @@ export const useScannerLogic = () => {
         autoConfirmTimerRef.current = null;
       }
 
+      // REACTIVAR el scanner después de confirmar
+      if (scannerRef.current) {
+        try {
+          await scannerRef.current.resume();
+        } catch (error) {
+          // Si hay error reactivando, reiniciar el scanner
+          console.log('Error reactivando scanner, reiniciando...', error);
+          if (state.scanning) {
+            await stopScanning();
+            setTimeout(() => startScanning(), 500);
+          }
+        }
+      }
+
     } catch (error) {
       console.error('Error registrando asistencia:', error);
       toast.error('Error al registrar asistencia');
       setState(prev => ({ ...prev, loading: false }));
     }
-  }, [scanResult, selectedType, config.preventDuplicateMs]);
+  }, [scanResult, selectedType, config.preventDuplicateMs, state.scanning, stopScanning, startScanning]);
 
   // Cancelar confirmación
-  const cancelConfirmation = useCallback(() => {
+  const cancelConfirmation = useCallback(async () => {
     setScanResult(null);
     setState(prev => ({ ...prev, lastScannedCode: '' }));
     setMode('scanning'); // Mantener en modo scanning en lugar de idle
@@ -383,7 +411,21 @@ export const useScannerLogic = () => {
       clearTimeout(autoConfirmTimerRef.current);
       autoConfirmTimerRef.current = null;
     }
-  }, []);
+
+    // REACTIVAR el scanner después de cancelar
+    if (scannerRef.current) {
+      try {
+        await scannerRef.current.resume();
+      } catch (error) {
+        // Si hay error reactivando, reiniciar el scanner
+        console.log('Error reactivando scanner, reiniciando...', error);
+        if (state.scanning) {
+          await stopScanning();
+          setTimeout(() => startScanning(), 500);
+        }
+      }
+    }
+  }, [state.scanning, stopScanning, startScanning]);
 
   // Actualizar configuración
   const updateConfig = useCallback((newConfig: ScannerConfig) => {

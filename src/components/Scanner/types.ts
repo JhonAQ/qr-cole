@@ -26,7 +26,7 @@ export interface StudentScanResult {
 
 export interface ScannerConfig {
   fps: number;
-  qrbox: { width: number; height: number };
+  qrbox: { width: number; height: number } | undefined; // Permitir undefined para detección en toda la pantalla
   aspectRatio: number;
   disableFlip: boolean;
   debounceMs: number;
