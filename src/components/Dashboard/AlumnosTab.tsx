@@ -43,11 +43,18 @@ interface AlumnosTabProps {
   selectedSection?: string | null;
 }
 
-export default function AlumnosTab({ selectedGrade, selectedSection }: AlumnosTabProps) {
+export default function AlumnosTab({
+  selectedGrade,
+  selectedSection,
+}: AlumnosTabProps) {
   const { alumnos, asistencias, loading, refreshData } = useDashboard();
   const [busqueda, setBusqueda] = useState("");
-  const [gradoFiltro, setGradoFiltro] = useState<number | null>(selectedGrade || null);
-  const [seccionFiltro, setSeccionFiltro] = useState<string | null>(selectedSection || null);
+  const [gradoFiltro, setGradoFiltro] = useState<number | null>(
+    selectedGrade || null
+  );
+  const [seccionFiltro, setSeccionFiltro] = useState<string | null>(
+    selectedSection || null
+  );
   const [mostrarFiltros, setMostrarFiltros] = useState(false);
   const [alumnoSeleccionado, setAlumnoSeleccionado] = useState<Alumno | null>(
     null
@@ -198,9 +205,7 @@ export default function AlumnosTab({ selectedGrade, selectedSection }: AlumnosTa
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">
-            {getTitulo()}
-          </h2>
+          <h2 className="text-2xl font-bold text-gray-900">{getTitulo()}</h2>
           <p className="text-gray-600">
             {alumnosFiltrados.length} de {alumnos.length} alumnos
             {gradoFiltro && ` • ${gradoFiltro}° Grado`}
@@ -212,8 +217,8 @@ export default function AlumnosTab({ selectedGrade, selectedSection }: AlumnosTa
             <button
               onClick={() => setViewMode("list")}
               className={`p-2 rounded-md transition-colors ${
-                viewMode === "list" 
-                  ? "bg-white shadow text-primary" 
+                viewMode === "list"
+                  ? "bg-white shadow text-primary"
                   : "text-gray-500 hover:text-gray-700"
               }`}
               title="Vista de lista"
@@ -223,8 +228,8 @@ export default function AlumnosTab({ selectedGrade, selectedSection }: AlumnosTa
             <button
               onClick={() => setViewMode("grid")}
               className={`p-2 rounded-md transition-colors ${
-                viewMode === "grid" 
-                  ? "bg-white shadow text-primary" 
+                viewMode === "grid"
+                  ? "bg-white shadow text-primary"
                   : "text-gray-500 hover:text-gray-700"
               }`}
               title="Vista de cuadrícula"
@@ -428,7 +433,8 @@ function StudentsListView({
             No se encontraron alumnos
           </h3>
           <p className="text-gray-500 mb-6">
-            Intenta ajustar los filtros de búsqueda o registra nuevos estudiantes
+            Intenta ajustar los filtros de búsqueda o registra nuevos
+            estudiantes
           </p>
           <button
             onClick={() => window.open("/register", "_blank")}
@@ -536,7 +542,8 @@ function StudentsGridView({
             No se encontraron alumnos
           </h3>
           <p className="text-gray-500 mb-6">
-            Intenta ajustar los filtros de búsqueda o registra nuevos estudiantes
+            Intenta ajustar los filtros de búsqueda o registra nuevos
+            estudiantes
           </p>
           <button
             onClick={() => window.open("/register", "_blank")}
@@ -604,7 +611,7 @@ function StudentCard({
                 {normalizarNombre(alumno.nombres, alumno.apellidos)}
               </h3>
               <p className="text-xs text-gray-500 font-mono">
-                {alumno.codigo_qr}
+                DNI: {alumno.dni}
               </p>
             </div>
           </div>
@@ -682,7 +689,7 @@ function AlumnoRow({
               {normalizarNombre(alumno.nombres, alumno.apellidos)}
             </div>
             <div className="text-sm text-gray-500 font-mono">
-              {alumno.codigo_qr}
+              DNI: {alumno.dni}
             </div>
           </div>
         </div>

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/utils/supabase";
 import toast from "react-hot-toast";
 import { Alumno } from "@/types";
-import { generarCodigoQR } from "@/utils/helpers";
+import { generarCodigoQR, validarDNI, validarTelefono } from "@/utils/helpers";
 import QRCode from "qrcode";
 import {
   User,
@@ -29,6 +29,8 @@ export default function QRGenerator({
   const [formData, setFormData] = useState({
     nombres: "",
     apellidos: "",
+    dni: "",
+    nombres_apoderado: "",
     grado: 1,
     seccion: "A",
     contacto_padres: "",
@@ -74,7 +76,8 @@ export default function QRGenerator({
   };
 
   const validateForm = () => {
-    const { nombres, apellidos, contacto_padres } = formData;
+    const { nombres, apellidos, dni, nombres_apoderado, contacto_padres } =
+      formData;
 
     if (!nombres.trim()) {
       toast.error("El nombre es requerido");
@@ -83,6 +86,21 @@ export default function QRGenerator({
 
     if (!apellidos.trim()) {
       toast.error("Los apellidos son requeridos");
+      return false;
+    }
+
+    if (!dni.trim()) {
+      toast.error("El DNI es requerido");
+      return false;
+    }
+
+    if (!validarDNI(dni)) {
+      toast.error("El DNI debe tener 8 dígitos");
+      return false;
+    }
+
+    if (!nombres_apoderado.trim()) {
+      toast.error("El nombre del apoderado es requerido");
       return false;
     }
 
@@ -108,6 +126,22 @@ export default function QRGenerator({
 
   const checkDuplicates = async () => {
     try {
+      // Verificar por DNI (más importante)
+      const { data: dniData, error: dniError } = await supabase
+        .from("alumnos")
+        .select("nombres, apellidos, dni")
+        .eq("dni", formData.dni.trim());
+
+      if (dniError) throw dniError;
+
+      if (dniData && dniData.length > 0) {
+        toast.error(
+          `Ya existe un alumno con DNI ${formData.dni}: ${dniData[0].nombres} ${dniData[0].apellidos}`
+        );
+        return true;
+      }
+
+      // Verificar por nombre completo y grado/sección
       const { data, error } = await supabase
         .from("alumnos")
         .select("nombres, apellidos, grado, seccion")
@@ -159,6 +193,8 @@ export default function QRGenerator({
         .insert({
           nombres: formData.nombres.trim(),
           apellidos: formData.apellidos.trim(),
+          dni: formData.dni.trim(),
+          nombres_apoderado: formData.nombres_apoderado.trim(),
           codigo_qr: codigoQR,
           grado: formData.grado,
           seccion: formData.seccion,
@@ -243,6 +279,8 @@ export default function QRGenerator({
     setFormData({
       nombres: "",
       apellidos: "",
+      dni: "",
+      nombres_apoderado: "",
       grado: 1,
       seccion: "A",
       contacto_padres: "",
@@ -261,7 +299,6 @@ export default function QRGenerator({
   return (
     <div className="min-h-screen bg-gray-50 p-4">
       <div className="max-w-lg mx-auto">
-
         {step === "form" ? (
           <>
             {/* Form */}
@@ -294,6 +331,39 @@ export default function QRGenerator({
                     onChange={handleInputChange}
                     className="fc-input"
                     placeholder="Apellidos del alumno"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <User className="w-4 h-4 inline mr-1" />
+                    DNI *
+                  </label>
+                  <input
+                    type="text"
+                    name="dni"
+                    value={formData.dni}
+                    onChange={handleInputChange}
+                    className="fc-input"
+                    placeholder="12345678"
+                    maxLength={8}
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <Users className="w-4 h-4 inline mr-1" />
+                    Nombre del Apoderado *
+                  </label>
+                  <input
+                    type="text"
+                    name="nombres_apoderado"
+                    value={formData.nombres_apoderado}
+                    onChange={handleInputChange}
+                    className="fc-input"
+                    placeholder="Nombres y apellidos del apoderado"
                     required
                   />
                 </div>

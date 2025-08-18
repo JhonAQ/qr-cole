@@ -117,15 +117,29 @@ export default function StudentConfirmation({
               <h3 className="text-xl font-bold text-gray-900 mb-2">
                 {student.nombres} {student.apellidos}
               </h3>
-              <div className="flex items-center gap-4 text-sm text-gray-600">
-                <div className="flex items-center gap-1">
-                  <GraduationCap className="w-4 h-4" />
-                  <span>{student.grado}° Grado</span>
+              <div className="space-y-2 text-sm text-gray-600">
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-1">
+                    <GraduationCap className="w-4 h-4" />
+                    <span>{student.grado}° Grado</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <User className="w-4 h-4" />
+                    <span>Sección {student.seccion}</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-1">
-                  <User className="w-4 h-4" />
-                  <span>Sección {student.seccion}</span>
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-1">
+                    <span className="font-medium">DNI:</span>
+                    <span className="font-mono">{student.dni}</span>
+                  </div>
                 </div>
+                {student.nombres_apoderado && (
+                  <div className="flex items-center gap-1">
+                    <span className="font-medium">Apoderado:</span>
+                    <span>{student.nombres_apoderado}</span>
+                  </div>
+                )}
               </div>
             </div>
 

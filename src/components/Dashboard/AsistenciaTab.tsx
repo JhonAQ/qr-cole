@@ -81,7 +81,7 @@ export default function AsistenciaTab() {
           (a) =>
             a.alumno?.nombres.toLowerCase().includes(busquedaLower) ||
             a.alumno?.apellidos.toLowerCase().includes(busquedaLower) ||
-            a.alumno?.codigo_qr.toLowerCase().includes(busquedaLower)
+            a.alumno?.dni.toLowerCase().includes(busquedaLower)
         );
       }
 
@@ -416,7 +416,6 @@ export default function AsistenciaTab() {
                   className="w-full flex items-center justify-center px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700"
                 >
                   <Filter className="w-4 h-4 mr-2 text-gray-700" />
-
                   Más filtros
                   {mostrarFiltros ? (
                     <ChevronUp className="w-4 h-4 ml-2" />
@@ -600,7 +599,7 @@ export default function AsistenciaTab() {
                             {asistencia.alumno?.apellidos}
                           </div>
                           <div className="text-sm text-gray-500 font-mono">
-                            {asistencia.alumno?.codigo_qr}
+                            DNI: {asistencia.alumno?.dni}
                           </div>
                         </div>
                       </div>

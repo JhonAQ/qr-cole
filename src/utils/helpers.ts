@@ -86,6 +86,12 @@ export function validarTelefono(telefono: string): boolean {
   return telefonoRegex.test(telefono) && telefono.length >= 9;
 }
 
+// Validar DNI peruano (8 dígitos)
+export function validarDNI(dni: string): boolean {
+  const dniRegex = /^\d{8}$/;
+  return dniRegex.test(dni);
+}
+
 // Generar código QR único
 export function generarCodigoQR(nombres: string, apellidos: string): string {
   const timestamp = Date.now().toString(36);
@@ -147,7 +153,8 @@ export function filtrarAlumnos(
       const nombreCompleto = `${alumno.nombres} ${alumno.apellidos}`.toLowerCase();
       cumple = cumple && (
         nombreCompleto.includes(busqueda) ||
-        alumno.codigo_qr.toLowerCase().includes(busqueda)
+        alumno.dni.toLowerCase().includes(busqueda) ||
+        alumno.nombres_apoderado.toLowerCase().includes(busqueda)
       );
     }
 

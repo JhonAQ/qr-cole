@@ -20,7 +20,11 @@ import {
 } from "lucide-react";
 import { Alumno, Asistencia } from "@/types";
 import { supabase } from "@/utils/supabase";
-import { formatearFechaHora, generarCodigoQR } from "@/utils/helpers";
+import {
+  formatearFechaHora,
+  generarCodigoQR,
+  validarDNI,
+} from "@/utils/helpers";
 import QRCode from "qrcode";
 import toast from "react-hot-toast";
 
@@ -46,6 +50,8 @@ export default function StudentDetailModal({
   const [formData, setFormData] = useState({
     nombres: alumno.nombres,
     apellidos: alumno.apellidos,
+    dni: alumno.dni,
+    nombres_apoderado: alumno.nombres_apoderado,
     contacto_padres: alumno.contacto_padres,
     grado: alumno.grado,
     seccion: alumno.seccion,
@@ -89,13 +95,46 @@ export default function StudentDetailModal({
       return;
     }
 
+    if (!formData.dni.trim()) {
+      toast.error("El DNI es obligatorio");
+      return;
+    }
+
+    if (!validarDNI(formData.dni)) {
+      toast.error("El DNI debe tener 8 dígitos");
+      return;
+    }
+
+    if (!formData.nombres_apoderado.trim()) {
+      toast.error("El nombre del apoderado es obligatorio");
+      return;
+    }
+
     setLoading(true);
     try {
+      // Verificar que el DNI no exista en otro estudiante
+      if (formData.dni !== alumno.dni) {
+        const { data: existingDNI } = await supabase
+          .from("alumnos")
+          .select("id, nombres, apellidos")
+          .eq("dni", formData.dni.trim())
+          .neq("id", alumno.id);
+
+        if (existingDNI && existingDNI.length > 0) {
+          toast.error(
+            `El DNI ${formData.dni} ya está registrado para otro estudiante`
+          );
+          return;
+        }
+      }
+
       const { data, error } = await supabase
         .from("alumnos")
         .update({
           nombres: formData.nombres.trim(),
           apellidos: formData.apellidos.trim(),
+          dni: formData.dni.trim(),
+          nombres_apoderado: formData.nombres_apoderado.trim(),
           contacto_padres: formData.contacto_padres.trim(),
           grado: formData.grado,
           seccion: formData.seccion,
@@ -192,7 +231,9 @@ export default function StudentDetailModal({
             <div class="student-info">
               <h2>${alumno.nombres} ${alumno.apellidos}</h2>
               <p>Grado: ${alumno.grado}° - Sección: ${alumno.seccion}</p>
-              <p>DNI: ${alumno.codigo_qr}</p>
+              <p>DNI: ${alumno.dni}</p>
+              <p>Apoderado: ${alumno.nombres_apoderado}</p>
+              <p>Código QR: ${alumno.codigo_qr}</p>
             </div>
             <div class="qr-code">
               <img src="${qrImage}" alt="QR Code" />
@@ -208,7 +249,7 @@ export default function StudentDetailModal({
 
   const copyDNI = async () => {
     try {
-      await navigator.clipboard.writeText(alumno.codigo_qr);
+      await navigator.clipboard.writeText(alumno.dni);
       toast.success("DNI copiado al portapapeles");
     } catch (error) {
       toast.error("Error al copiar el DNI");
@@ -341,18 +382,52 @@ export default function StudentDetailModal({
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         DNI
                       </label>
-                      <div className="flex items-center gap-2">
-                        <p className="text-gray-900 font-mono">
-                          {alumno.codigo_qr}
+                      {isEditing ? (
+                        <input
+                          type="text"
+                          name="dni"
+                          value={formData.dni}
+                          onChange={handleInputChange}
+                          className="w-full fc-input"
+                          maxLength={8}
+                          placeholder="12345678"
+                          required
+                        />
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          <p className="text-gray-900 font-mono">
+                            {alumno.dni}
+                          </p>
+                          <button
+                            onClick={copyDNI}
+                            className="p-1 text-gray-500 hover:text-primary transition-colors"
+                            title="Copiar DNI"
+                          >
+                            <Copy className="w-4 h-4" />
+                          </button>
+                        </div>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Apoderado
+                      </label>
+                      {isEditing ? (
+                        <input
+                          type="text"
+                          name="nombres_apoderado"
+                          value={formData.nombres_apoderado}
+                          onChange={handleInputChange}
+                          className="w-full fc-input"
+                          placeholder="Nombres y apellidos del apoderado"
+                          required
+                        />
+                      ) : (
+                        <p className="text-gray-900 font-medium">
+                          {alumno.nombres_apoderado}
                         </p>
-                        <button
-                          onClick={copyDNI}
-                          className="p-1 text-gray-500 hover:text-primary transition-colors"
-                          title="Copiar DNI"
-                        >
-                          <Copy className="w-4 h-4" />
-                        </button>
-                      </div>
+                      )}
                     </div>
 
                     <div>
@@ -553,6 +628,8 @@ export default function StudentDetailModal({
                     setFormData({
                       nombres: alumno.nombres,
                       apellidos: alumno.apellidos,
+                      dni: alumno.dni,
+                      nombres_apoderado: alumno.nombres_apoderado,
                       contacto_padres: alumno.contacto_padres,
                       grado: alumno.grado,
                       seccion: alumno.seccion,

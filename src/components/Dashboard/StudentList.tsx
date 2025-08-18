@@ -364,7 +364,7 @@ export default function StudentList() {
                           {alumno.apellidos}, {alumno.nombres}
                         </div>
                         <div className="text-sm text-gray-500">
-                          {alumno.codigo_qr}
+                          DNI: {alumno.dni}
                         </div>
                       </div>
                     </div>

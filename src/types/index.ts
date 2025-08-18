@@ -3,6 +3,8 @@ export interface Alumno {
   id: string;
   nombres: string;
   apellidos: string;
+  dni: string;
+  nombres_apoderado: string;
   codigo_qr: string;
   contacto_padres: string;
   grado: number;
