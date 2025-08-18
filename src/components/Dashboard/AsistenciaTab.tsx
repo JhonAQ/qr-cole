@@ -19,6 +19,8 @@ import {
   BarChart3,
   TrendingUp,
   QrCode,
+  Grid,
+  List,
 } from "lucide-react";
 import { supabase } from "@/utils/supabase";
 import { Alumno, Asistencia } from "@/types";
@@ -48,6 +50,14 @@ export default function AsistenciaTab() {
   const [ordenPor, setOrdenPor] = useState<"hora" | "alumno" | "grado">("hora");
   const [ordenAsc, setOrdenAsc] = useState(false);
   const [mostrarFiltros, setMostrarFiltros] = useState(false);
+
+  // Vista por defecto según dispositivo
+  const [viewMode, setViewMode] = useState<"grid" | "list">(() => {
+    if (typeof window !== "undefined") {
+      return window.innerWidth < 768 ? "grid" : "list";
+    }
+    return "list";
+  });
 
   // Cargar asistencias
   const cargarAsistencias = async () => {
@@ -515,7 +525,7 @@ export default function AsistenciaTab() {
               )}
             </div>
 
-            <div className="flex items-center space-x-2">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-2">
               <span className="text-sm text-gray-500">Ordenar por:</span>
               <select
                 value={`${ordenPor}-${ordenAsc ? "asc" : "desc"}`}
@@ -533,147 +543,302 @@ export default function AsistenciaTab() {
                 <option value="grado-asc">Grado ↑</option>
                 <option value="grado-desc">Grado ↓</option>
               </select>
+
+              {/* Toggle de vista */}
+              <div className="flex items-center bg-gray-100 rounded-lg p-1">
+                <button
+                  onClick={() => setViewMode("list")}
+                  className={`p-2 rounded-md transition-colors ${
+                    viewMode === "list"
+                      ? "bg-white shadow text-blue-600"
+                      : "text-gray-500 hover:text-gray-700"
+                  }`}
+                  title="Vista de lista"
+                >
+                  <List className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setViewMode("grid")}
+                  className={`p-2 rounded-md transition-colors ${
+                    viewMode === "grid"
+                      ? "bg-white shadow text-blue-600"
+                      : "text-gray-500 hover:text-gray-700"
+                  }`}
+                  title="Vista de tarjetas"
+                >
+                  <Grid className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Lista de asistencias */}
-      <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
-        {asistenciasOrdenadas.length > 0 ? (
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    <button
-                      onClick={() => handleOrdenar("hora")}
-                      className="flex items-center space-x-1 hover:text-gray-700"
-                    >
-                      <span>Fecha y Hora</span>
-                      <ArrowUpDown className="w-4 h-4" />
-                    </button>
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    <button
-                      onClick={() => handleOrdenar("alumno")}
-                      className="flex items-center space-x-1 hover:text-gray-700"
-                    >
-                      <span>Alumno</span>
-                      <ArrowUpDown className="w-4 h-4" />
-                    </button>
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    <button
-                      onClick={() => handleOrdenar("grado")}
-                      className="flex items-center space-x-1 hover:text-gray-700"
-                    >
-                      <span>Grado/Sección</span>
-                      <ArrowUpDown className="w-4 h-4" />
-                    </button>
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Tipo
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Estado
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {asistenciasOrdenadas.map((asistencia, index) => (
-                  <motion.tr
-                    key={asistencia.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.05 }}
-                    className="hover:bg-gray-50"
-                  >
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div>
-                        <div className="text-sm font-medium text-gray-900">
-                          {formatearFecha(asistencia.hora)}
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          {formatearHora(asistencia.hora)}
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <div className="flex-shrink-0 h-10 w-10">
-                          <div className="h-10 w-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
-                            <span className="text-sm font-medium text-white">
-                              {asistencia.alumno?.nombres.charAt(0)}
-                              {asistencia.alumno?.apellidos.charAt(0)}
-                            </span>
-                          </div>
-                        </div>
-                        <div className="ml-4">
-                          <div className="text-sm font-medium text-gray-900">
-                            {asistencia.alumno?.nombres}{" "}
-                            {asistencia.alumno?.apellidos}
-                          </div>
-                          <div className="text-sm text-gray-500 font-mono">
-                            DNI: {asistencia.alumno?.dni}
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="text-sm text-gray-900">
-                        {asistencia.alumno?.grado}° -{" "}
-                        {asistencia.alumno?.seccion}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        {asistencia.tipo === "entrada" ? (
-                          <>
-                            <UserCheck className="w-4 h-4 text-green-500 mr-2" />
-                            <span className="text-sm text-green-700 font-medium">
-                              Entrada
-                            </span>
-                          </>
-                        ) : (
-                          <>
-                            <UserX className="w-4 h-4 text-blue-500 mr-2" />
-                            <span className="text-sm text-blue-700 font-medium">
-                              Salida
-                            </span>
-                          </>
-                        )}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          asistencia.tipo === "entrada"
-                            ? "bg-green-100 text-green-800"
-                            : "bg-blue-100 text-blue-800"
-                        }`}
-                      >
-                        <Clock className="w-3 h-3 mr-1" />
-                        Registrado
-                      </span>
-                    </td>
-                  </motion.tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          <div className="text-center py-12">
-            <Calendar className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
-              No se encontraron registros
-            </h3>
-            <p className="text-gray-500">
-              No hay asistencias registradas para los filtros seleccionados
-            </p>
-          </div>
-        )}
+      {viewMode === "list" ? (
+        <AttendanceListView
+          asistenciasOrdenadas={asistenciasOrdenadas}
+          handleOrdenar={handleOrdenar}
+          ordenPor={ordenPor}
+          ordenAsc={ordenAsc}
+        />
+      ) : (
+        <AttendanceGridView asistenciasOrdenadas={asistenciasOrdenadas} />
+      )}
+    </div>
+  );
+}
+
+// Vista de lista de asistencias
+function AttendanceListView({
+  asistenciasOrdenadas,
+  handleOrdenar,
+  ordenPor,
+  ordenAsc,
+}: {
+  asistenciasOrdenadas: any[];
+  handleOrdenar: (campo: "hora" | "alumno" | "grado") => void;
+  ordenPor: "hora" | "alumno" | "grado";
+  ordenAsc: boolean;
+}) {
+  if (asistenciasOrdenadas.length === 0) {
+    return (
+      <div className="bg-white rounded-lg shadow-sm border">
+        <div className="text-center py-12">
+          <Calendar className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            No se encontraron registros
+          </h3>
+          <p className="text-gray-500">
+            No hay asistencias registradas para los filtros seleccionados
+          </p>
+        </div>
       </div>
+    );
+  }
+
+  return (
+    <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
+      <div className="overflow-x-auto">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <button
+                  onClick={() => handleOrdenar("hora")}
+                  className="flex items-center space-x-1 hover:text-gray-700"
+                >
+                  <span>Fecha y Hora</span>
+                  <ArrowUpDown className="w-4 h-4" />
+                </button>
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <button
+                  onClick={() => handleOrdenar("alumno")}
+                  className="flex items-center space-x-1 hover:text-gray-700"
+                >
+                  <span>Alumno</span>
+                  <ArrowUpDown className="w-4 h-4" />
+                </button>
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <button
+                  onClick={() => handleOrdenar("grado")}
+                  className="flex items-center space-x-1 hover:text-gray-700"
+                >
+                  <span>Grado/Sección</span>
+                  <ArrowUpDown className="w-4 h-4" />
+                </button>
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Tipo
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Estado
+              </th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {asistenciasOrdenadas.map((asistencia, index) => (
+              <motion.tr
+                key={asistencia.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
+                className="hover:bg-gray-50"
+              >
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div>
+                    <div className="text-sm font-medium text-gray-900">
+                      {formatearFecha(asistencia.hora)}
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      {formatearHora(asistencia.hora)}
+                    </div>
+                  </div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0 h-10 w-10">
+                      <div className="h-10 w-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
+                        <span className="text-sm font-medium text-white">
+                          {asistencia.alumno?.nombres.charAt(0)}
+                          {asistencia.alumno?.apellidos.charAt(0)}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="ml-4">
+                      <div className="text-sm font-medium text-gray-900">
+                        {asistencia.alumno?.nombres}{" "}
+                        {asistencia.alumno?.apellidos}
+                      </div>
+                      <div className="text-sm text-gray-500 font-mono">
+                        DNI: {asistencia.alumno?.dni}
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <span className="text-sm text-gray-900">
+                    {asistencia.alumno?.grado}° - {asistencia.alumno?.seccion}
+                  </span>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="flex items-center">
+                    {asistencia.tipo === "entrada" ? (
+                      <>
+                        <UserCheck className="w-4 h-4 text-green-500 mr-2" />
+                        <span className="text-sm text-green-700 font-medium">
+                          Entrada
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <UserX className="w-4 h-4 text-blue-500 mr-2" />
+                        <span className="text-sm text-blue-700 font-medium">
+                          Salida
+                        </span>
+                      </>
+                    )}
+                  </div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <span
+                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                      asistencia.tipo === "entrada"
+                        ? "bg-green-100 text-green-800"
+                        : "bg-blue-100 text-blue-800"
+                    }`}
+                  >
+                    <Clock className="w-3 h-3 mr-1" />
+                    Registrado
+                  </span>
+                </td>
+              </motion.tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+// Vista de grid de asistencias
+function AttendanceGridView({
+  asistenciasOrdenadas,
+}: {
+  asistenciasOrdenadas: any[];
+}) {
+  if (asistenciasOrdenadas.length === 0) {
+    return (
+      <div className="bg-white rounded-lg shadow-sm border">
+        <div className="text-center py-12">
+          <Calendar className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            No se encontraron registros
+          </h3>
+          <p className="text-gray-500">
+            No hay asistencias registradas para los filtros seleccionados
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+      {asistenciasOrdenadas.map((asistencia, index) => (
+        <motion.div
+          key={asistencia.id}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: index * 0.05 }}
+          className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md hover:border-blue-200 transition-all duration-200 overflow-hidden"
+        >
+          <div className="p-3 sm:p-4">
+            <div className="flex items-start justify-between mb-3 gap-2">
+              <div className="flex items-center space-x-2 sm:space-x-3 flex-1 min-w-0">
+                <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+                  <span className="text-xs sm:text-sm font-bold text-white">
+                    {asistencia.alumno?.nombres.charAt(0)}
+                    {asistencia.alumno?.apellidos.charAt(0)}
+                  </span>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-xs sm:text-sm font-medium text-gray-900 truncate leading-tight">
+                    {asistencia.alumno?.nombres} {asistencia.alumno?.apellidos}
+                  </h3>
+                  <p className="text-xs text-gray-500 font-mono truncate">
+                    {asistencia.alumno?.grado}° - {asistencia.alumno?.seccion}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex-shrink-0">
+                <span
+                  className={`inline-flex items-center px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs font-medium ${
+                    asistencia.tipo === "entrada"
+                      ? "bg-green-100 text-green-800 border border-green-200"
+                      : "bg-blue-100 text-blue-800 border border-blue-200"
+                  } whitespace-nowrap`}
+                >
+                  {asistencia.tipo === "entrada" ? (
+                    <UserCheck className="w-3 h-3 mr-1 flex-shrink-0" />
+                  ) : (
+                    <UserX className="w-3 h-3 mr-1 flex-shrink-0" />
+                  )}
+                  <span className="text-xs">
+                    {asistencia.tipo === "entrada" ? "Entrada" : "Salida"}
+                  </span>
+                </span>
+              </div>
+            </div>
+
+            <div className="space-y-1.5 sm:space-y-2">
+              <div className="flex items-center text-xs text-gray-600">
+                <Calendar className="w-3 h-3 mr-1 flex-shrink-0" />
+                <span className="truncate">
+                  {formatearFecha(asistencia.hora)}
+                </span>
+              </div>
+
+              <div className="flex items-center text-xs text-gray-600">
+                <Clock className="w-3 h-3 mr-1 flex-shrink-0" />
+                <span className="truncate">
+                  {formatearHora(asistencia.hora)}
+                </span>
+              </div>
+
+              <div className="flex items-center text-xs text-gray-500">
+                <Users className="w-3 h-3 mr-1 flex-shrink-0" />
+                <span className="truncate font-mono">
+                  DNI: {asistencia.alumno?.dni}
+                </span>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      ))}
     </div>
   );
 }

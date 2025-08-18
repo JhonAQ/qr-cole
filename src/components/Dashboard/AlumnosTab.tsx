@@ -64,10 +64,10 @@ export default function AlumnosTab({
     "nombre"
   );
   const [ordenAsc, setOrdenAsc] = useState(true);
-  
+
   // Detectar si es móvil para configurar vista por defecto
   const [viewMode, setViewMode] = useState<"grid" | "list">(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       return window.innerWidth < 768 ? "grid" : "list";
     }
     return "list";
@@ -91,15 +91,19 @@ export default function AlumnosTab({
       const isMobile = window.innerWidth < 768;
       if (isMobile && viewMode === "list") {
         setViewMode("grid");
-      } else if (!isMobile && viewMode === "grid" && window.innerWidth >= 1024) {
+      } else if (
+        !isMobile &&
+        viewMode === "grid" &&
+        window.innerWidth >= 1024
+      ) {
         // Solo cambiar a lista en pantallas grandes
         setViewMode("list");
       }
     };
 
-    if (typeof window !== 'undefined') {
-      window.addEventListener('resize', handleResize);
-      return () => window.removeEventListener('resize', handleResize);
+    if (typeof window !== "undefined") {
+      window.addEventListener("resize", handleResize);
+      return () => window.removeEventListener("resize", handleResize);
     }
   }, [viewMode]);
 
@@ -653,9 +657,10 @@ function StudentCard({
             <span
               className={`inline-flex items-center px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs font-medium ${colores.bg} ${colores.text} border ${colores.border} whitespace-nowrap`}
             >
-              <div className={`w-1 h-1 sm:w-1.5 sm:h-1.5 ${colores.dot} rounded-full mr-1 flex-shrink-0`} />
-              <span className="hidden sm:inline">{obtenerTextoEstado(estado)}</span>
-              <span className="sm:hidden">{estado === 'presente' ? 'P' : estado === 'ausente' ? 'A' : 'Pa'}</span>
+              <div
+                className={`w-1 h-1 sm:w-1.5 sm:h-1.5 ${colores.dot} rounded-full mr-1 flex-shrink-0`}
+              />
+              <span className="text-xs">{obtenerTextoEstado(estado)}</span>
             </span>
           </div>
         </div>
@@ -663,7 +668,9 @@ function StudentCard({
         <div className="space-y-1.5 sm:space-y-2">
           <div className="flex items-center text-xs text-gray-600">
             <BookOpen className="w-3 h-3 mr-1 flex-shrink-0" />
-            <span className="truncate">{alumno.grado}° - Sección {alumno.seccion}</span>
+            <span className="truncate">
+              {alumno.grado}° - Sección {alumno.seccion}
+            </span>
           </div>
 
           {alumno.contacto_padres && (

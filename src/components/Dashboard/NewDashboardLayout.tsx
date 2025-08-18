@@ -185,10 +185,8 @@ export default function NewDashboardLayout({
                     onClick={() => setShowUserMenu(!showUserMenu)}
                     className="flex items-center p-2 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
                   >
-                    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                      <span className="text-sm font-medium text-blue-600">
-                        A
-                      </span>
+                    <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                      <span className="text-sm font-medium text-white">A</span>
                     </div>
                   </button>
 
