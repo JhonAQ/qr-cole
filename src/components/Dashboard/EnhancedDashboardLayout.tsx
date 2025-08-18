@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   BarChart3,
@@ -81,8 +82,15 @@ export default function EnhancedDashboardLayout({
             >
               <div className="flex items-center justify-between p-4 border-b">
                 <div className="flex items-center">
-                  <QrCode className="w-6 h-6 text-primary mr-2" />
-                  <h2 className="text-lg font-semibold text-gray-800">
+            <Image
+              src="/LOGO-FC.png"
+              alt="Colegio Fe y Ciencia"
+              width={75}
+              height={80}
+              className="rounded"
+            />
+
+                  <h2 className="text-lg ml-3 font-semibold text-gray-800">
                     Educheck - Fe y Ciencia
                   </h2>
                 </div>
@@ -110,8 +118,14 @@ export default function EnhancedDashboardLayout({
       {/* Sidebar para desktop */}
       <aside className="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:w-80 lg:bg-white lg:shadow-sm lg:flex lg:flex-col sidebar-container">
         <div className="flex items-center px-6 py-4 border-b">
-          <QrCode className="w-8 h-8 text-primary mr-3" />
-          <h2 className="text-xl font-bold text-gray-800">
+                      <Image
+              src="/LOGO-FC.png"
+              alt="Colegio Fe y Ciencia"
+              width={60}
+              height={60}
+              className="rounded"
+            />
+          <h2 className="text-xl ml-3 font-bold text-gray-800">
             Educheck - Fe y Ciencia
           </h2>
         </div>

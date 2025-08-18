@@ -5,6 +5,7 @@ import { supabase } from "@/utils/supabase";
 import { useRouter } from "next/navigation";
 import { Toaster, toast } from "react-hot-toast";
 import Image from "next/image";
+
 import { motion } from "framer-motion";
 import {
   Eye,
@@ -156,7 +157,7 @@ export default function Home() {
               className="rounded"
             />
             <div>
-              <h1 className="text-xl font-semibold text-gray-900">
+              <h1 className="text-xl ml-3 font-semibold text-gray-900">
                 Educheck  - Fe y Ciencia
               </h1>
               <p className="text-sm text-gray-500">

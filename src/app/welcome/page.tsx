@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/utils/supabase";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import {
   QrCode,
   Users,
@@ -55,8 +56,15 @@ export default function WelcomePage() {
         {/* Header */}
         <div className="text-center mb-8 pt-8">
           <div className="flex items-center justify-center mb-4">
-            <QrCode className="w-12 h-12 text-primary mr-3" />
-            <h1 className="text-4xl font-bold text-primary-dark">
+
+            <Image
+              src="/LOGO-FC.png"
+              alt="Colegio Fe y Ciencia"
+              width={75}
+              height={80}
+              className="rounded"
+            />
+            <h1 className="text-4xl ml-3 font-bold text-primary-dark">
               Educheck - Fe y Ciencia
             </h1>
           </div>
