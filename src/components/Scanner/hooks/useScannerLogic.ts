@@ -39,6 +39,11 @@ export const useScannerLogic = () => {
   const [recentRegistrations, setRecentRegistrations] = useState<RecentRegistration[]>([]);
   const [scanResult, setScanResult] = useState<StudentScanResult | null>(null);
   const [selectedType, setSelectedType] = useState<"entrada" | "salida">('entrada');
+  
+  // Estados para WhatsApp
+  const [showWhatsAppNotification, setShowWhatsAppNotification] = useState(false);
+  const [registeredStudent, setRegisteredStudent] = useState<StudentScanResult | null>(null);
+  const [registeredType, setRegisteredType] = useState<"entrada" | "salida">('entrada');
 
   // Referencias
   const scannerRef = useRef<Html5Qrcode | null>(null);
@@ -347,7 +352,58 @@ export const useScannerLogic = () => {
         `${selectedType.charAt(0).toUpperCase() + selectedType.slice(1)} registrada correctamente`
       );
 
-      // TODO: Implementar envío de WhatsApp cuando esté configurado
+      // Abrir WhatsApp inmediatamente - sin preguntar ni confirmar
+      try {
+        // Generar mensaje de WhatsApp
+        const fechaHora = new Date().toLocaleString('es-ES', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+        });
+        
+        const tipoTexto = selectedType === "entrada" ? "ingresó al colegio" : "salió del colegio";
+        
+        const message = `*Colegio Fe y Ciencia* - Notificación de Asistencia
+
+*Estudiante:* ${scanResult.student.nombres} ${scanResult.student.apellidos}
+*DNI:* ${scanResult.student.dni}
+*Grado:* ${scanResult.student.grado}° - Sección ${scanResult.student.seccion}
+*Apoderado:* ${scanResult.student.nombres_apoderado}
+
+*${scanResult.student.nombres} ${tipoTexto} el ${fechaHora}*
+
+${selectedType === "entrada" ? "Su hijo(a) llegó seguro al colegio." : "Su hijo(a) salió del colegio."}
+
+Sistema Educheck Fe y Ciencia`;
+
+        // Limpiar el número de teléfono y asegurar formato internacional
+        let phoneNumber = scanResult.student.contacto_padres.replace(/[^\d]/g, "");
+        
+        // Si el número no empieza con código de país, asumir Perú (+51)
+        if (phoneNumber.length === 9 && phoneNumber.startsWith("9")) {
+          phoneNumber = "51" + phoneNumber;
+        } else if (phoneNumber.length === 8) {
+          phoneNumber = "519" + phoneNumber;
+        }
+
+        const encodedMessage = encodeURIComponent(message);
+        const deepLink = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+        
+        // Abrir WhatsApp inmediatamente
+        window.open(deepLink, "_blank");
+        
+        toast.success("Abriendo WhatsApp para notificar...", {
+          duration: 2000,
+        });
+      } catch (whatsappError) {
+        console.warn('Error abriendo WhatsApp:', whatsappError);
+        toast.error("Error al abrir WhatsApp");
+      }
+
+      // TODO: Implementar envío automático de WhatsApp cuando esté configurado
+      // Comentado hasta que se apruebe la template
       // try {
       //   const mensaje = selectedType === "entrada"
       //     ? `Su hijo(a) ${scanResult.student.nombres} ${scanResult.student.apellidos} ha ingresado al colegio.`
@@ -437,6 +493,20 @@ export const useScannerLogic = () => {
     await loadRecentRegistrations();
   }, []);
 
+  // Funciones para WhatsApp
+  const dismissWhatsAppNotification = useCallback(() => {
+    setShowWhatsAppNotification(false);
+    setRegisteredStudent(null);
+  }, []);
+
+  const showWhatsAppModal = useCallback(() => {
+    setShowWhatsAppNotification(false);
+    return {
+      student: registeredStudent?.student,
+      type: registeredType,
+    };
+  }, [registeredStudent, registeredType]);
+
   // Cleanup
   const cleanup = useCallback(() => {
     if (debounceTimerRef.current) {
@@ -462,6 +532,11 @@ export const useScannerLogic = () => {
     selectedType,
     scannerId: scannerIdRef.current,
     
+    // Estados de WhatsApp
+    showWhatsAppNotification,
+    registeredStudent,
+    registeredType,
+    
     // Métodos
     startScanning,
     stopScanning,
@@ -472,6 +547,10 @@ export const useScannerLogic = () => {
     updateConfig,
     refreshRegistrations,
     setSelectedType,
+    
+    // Métodos de WhatsApp
+    dismissWhatsAppNotification,
+    showWhatsAppModal,
     
     // Utilidades
     sounds: soundsRef.current,
