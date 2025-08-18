@@ -121,12 +121,12 @@ export default function WhatsAppModal({
                 </p>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-2 text-sm text-gray-600">
               <Phone className="w-4 h-4" />
               <span>Contacto: {messageData.phoneNumber}</span>
             </div>
-            
+
             <div className="flex items-center gap-2 text-sm text-gray-600 mt-1">
               <Clock className="w-4 h-4" />
               <span>Ahora mismo</span>
@@ -165,7 +165,7 @@ export default function WhatsAppModal({
               Enviar por WhatsApp
             </button>
           </div>
-          
+
           <div className="mt-4 text-center">
             <p className="text-xs text-gray-500">
               💡 El mensaje se abrirá en WhatsApp listo para enviar

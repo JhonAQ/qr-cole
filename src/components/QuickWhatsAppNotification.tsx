@@ -83,10 +83,12 @@ export default function QuickWhatsAppNotification({
         <div className="h-1 bg-gray-200 rounded-t-2xl overflow-hidden">
           <div
             className="h-full bg-green-400 rounded-t-2xl whatsapp-progress"
-            style={{ 
-              '--duration': `${autoHideDelay}ms`,
-              animation: `shrink ${autoHideDelay}ms linear forwards`
-            } as React.CSSProperties}
+            style={
+              {
+                "--duration": `${autoHideDelay}ms`,
+                animation: `shrink ${autoHideDelay}ms linear forwards`,
+              } as React.CSSProperties
+            }
           />
         </div>
 
