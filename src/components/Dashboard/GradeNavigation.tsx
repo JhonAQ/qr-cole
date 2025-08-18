@@ -29,8 +29,20 @@ export default function GradeNavigation({
 }: GradeNavigationProps) {
   const { alumnos } = useDashboard();
   const [expandedGrades, setExpandedGrades] = useState<number[]>([]);
+  const [showGradesDropdown, setShowGradesDropdown] = useState(false);
 
   const grados = obtenerGradosUnicos(alumnos);
+
+  // Efecto para abrir automáticamente el dropdown de grados si hay uno seleccionado
+  React.useEffect(() => {
+    if (selectedGrade && selectedGrade > 0) {
+      setShowGradesDropdown(true);
+    }
+  }, [selectedGrade]);
+
+  const toggleGradesDropdown = () => {
+    setShowGradesDropdown((prev) => !prev);
+  };
 
   const toggleGrade = (grado: number) => {
     setExpandedGrades((prev) =>
@@ -79,96 +91,122 @@ export default function GradeNavigation({
 
       {/* Navegación por grados */}
       <div className="space-y-1">
-        <div className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wide">
+        {/* Botón principal "Por Grados" con dropdown */}
+        <button
+          onClick={toggleGradesDropdown}
+          className={`w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wide hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-colors ${
+            showGradesDropdown ? "bg-gray-50 text-gray-600" : ""
+          }`}
+        >
           <GraduationCap className="w-3 h-3" />
-          Por Grados
-        </div>
+          <span>Por Grados</span>
+          <motion.div
+            animate={{ rotate: showGradesDropdown ? 180 : 0 }}
+            transition={{ duration: 0.2 }}
+            className="ml-auto"
+          >
+            <ChevronDown className="w-3 h-3" />
+          </motion.div>
+        </button>
 
-        {grados.map((grado) => {
-          const isExpanded = expandedGrades.includes(grado);
-          const secciones = obtenerSeccionesPorGrado(alumnos, grado);
-          const totalStudents = getStudentCountByGrade(grado);
+        {/* Lista de grados con animación */}
+        <AnimatePresence>
+          {showGradesDropdown && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="overflow-hidden space-y-1 ml-4"
+            >
+              {grados.map((grado) => {
+                const isExpanded = expandedGrades.includes(grado);
+                const secciones = obtenerSeccionesPorGrado(alumnos, grado);
+                const totalStudents = getStudentCountByGrade(grado);
 
-          return (
-            <div key={grado} className="space-y-1">
-              {/* Botón del grado */}
-              <button
-                onClick={() => handleGradeClick(grado)}
-                className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all duration-200 ${
-                  activeTab === "alumnos" &&
-                  selectedGrade === grado &&
-                  !selectedSection
-                    ? "bg-blue-100 text-blue-700 border border-blue-200"
-                    : selectedGrade === grado && selectedSection
-                    ? "bg-blue-50 text-blue-600"
-                    : "text-gray-600 hover:bg-gray-100"
-                }`}
-              >
-                {secciones.length > 1 ? (
-                  isExpanded ? (
-                    <ChevronDown className="w-4 h-4" />
-                  ) : (
-                    <ChevronRight className="w-4 h-4" />
-                  )
-                ) : (
-                  <div className="w-4 h-4" />
-                )}
-                <BookOpen className="w-4 h-4" />
-                <span>{grado}° Grado</span>
-                <span className="ml-auto bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded-full">
-                  {totalStudents}
-                </span>
-              </button>
+                return (
+                  <div key={grado} className="space-y-1">
+                    {/* Botón del grado */}
+                    <button
+                      onClick={() => handleGradeClick(grado)}
+                      className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all duration-200 ${
+                        activeTab === "alumnos" &&
+                        selectedGrade === grado &&
+                        !selectedSection
+                          ? "bg-blue-100 text-blue-700 border border-blue-200"
+                          : selectedGrade === grado && selectedSection
+                          ? "bg-blue-50 text-blue-600"
+                          : "text-gray-600 hover:bg-gray-100"
+                      }`}
+                    >
+                      {secciones.length > 1 ? (
+                        isExpanded ? (
+                          <ChevronDown className="w-4 h-4" />
+                        ) : (
+                          <ChevronRight className="w-4 h-4" />
+                        )
+                      ) : (
+                        <div className="w-4 h-4" />
+                      )}
+                      <BookOpen className="w-4 h-4" />
+                      <span>{grado}° Grado</span>
+                      <span className="ml-auto bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded-full">
+                        {totalStudents}
+                      </span>
+                    </button>
 
-              {/* Secciones */}
-              <AnimatePresence>
-                {isExpanded && secciones.length > 1 && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                    className="overflow-hidden ml-6 space-y-1"
-                  >
-                    {secciones.map((seccion) => {
-                      const sectionCount = getStudentCountByGrade(
-                        grado,
-                        seccion
-                      );
-                      return (
-                        <button
-                          key={seccion}
-                          onClick={() => handleSectionClick(grado, seccion)}
-                          className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
-                            activeTab === "alumnos" &&
-                            selectedGrade === grado &&
-                            selectedSection === seccion
-                              ? "bg-blue-100 text-blue-700 border border-blue-200"
-                              : "text-gray-500 hover:bg-gray-50"
-                          }`}
+                    {/* Secciones */}
+                    <AnimatePresence>
+                      {isExpanded && secciones.length > 1 && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.2 }}
+                          className="overflow-hidden ml-6 space-y-1"
                         >
-                          <div
-                            className={`w-2 h-2 rounded-full ${
-                              activeTab === "alumnos" &&
-                              selectedGrade === grado &&
-                              selectedSection === seccion
-                                ? "bg-blue-500"
-                                : "bg-gray-400"
-                            } opacity-60`}
-                          />
-                          <span>Sección {seccion}</span>
-                          <span className="ml-auto bg-gray-200 text-gray-600 text-xs px-2 py-1 rounded-full">
-                            {sectionCount}
-                          </span>
-                        </button>
-                      );
-                    })}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          );
-        })}
+                          {secciones.map((seccion) => {
+                            const sectionCount = getStudentCountByGrade(
+                              grado,
+                              seccion
+                            );
+                            return (
+                              <button
+                                key={seccion}
+                                onClick={() => handleSectionClick(grado, seccion)}
+                                className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
+                                  activeTab === "alumnos" &&
+                                  selectedGrade === grado &&
+                                  selectedSection === seccion
+                                    ? "bg-blue-100 text-blue-700 border border-blue-200"
+                                    : "text-gray-500 hover:bg-gray-50"
+                                }`}
+                              >
+                                <div
+                                  className={`w-2 h-2 rounded-full ${
+                                    activeTab === "alumnos" &&
+                                    selectedGrade === grado &&
+                                    selectedSection === seccion
+                                      ? "bg-blue-500"
+                                      : "bg-gray-400"
+                                  } opacity-60`}
+                                />
+                                <span>Sección {seccion}</span>
+                                <span className="ml-auto bg-gray-200 text-gray-600 text-xs px-2 py-1 rounded-full">
+                                  {sectionCount}
+                                </span>
+                              </button>
+                            );
+                          })}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                );
+              })}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );
