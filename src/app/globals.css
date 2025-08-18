@@ -319,3 +319,17 @@ div.border-gray-200 {
 [class*="Tab"] .bg-white {
   border-color: var(--card-border, #e2e8f0) !important;
 }
+
+/* Animaciones para WhatsApp */
+@keyframes shrink {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
+}
+
+.whatsapp-progress {
+  animation: shrink var(--duration) linear forwards;
+}
