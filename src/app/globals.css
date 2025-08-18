@@ -2,6 +2,51 @@
 
 /* Utilidades personalizadas para el dashboard */
 @layer utilities {
+  .animate-scan-line {
+    animation: scanLine 2s ease-in-out infinite;
+  }
+
+  .animate-scanner-corners {
+    animation: scannerPulse 1.5s ease-in-out infinite;
+  }
+
+  .animate-success-scale {
+    animation: successScale 0.3s ease-out;
+  }
+
+  @keyframes scanLine {
+    0%, 100% {
+      opacity: 0.3;
+      transform: scaleX(0.8);
+    }
+    50% {
+      opacity: 1;
+      transform: scaleX(1.2);
+    }
+  }
+
+  @keyframes scannerPulse {
+    0%, 100% {
+      opacity: 0.6;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes successScale {
+    0% {
+      transform: scale(0.95);
+    }
+    50% {
+      transform: scale(1.02);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+}
+@layer utilities {
   .w-70 {
     width: 17.5rem; /* 280px */
   }
