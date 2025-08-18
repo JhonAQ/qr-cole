@@ -34,14 +34,6 @@ export default function ScannerCamera({
               {/* Línea de escaneo animada */}
               <div className="absolute inset-x-8 top-1/2 h-0.5 bg-white/60 animate-scan-line"></div>
 
-              {/* Instrucción */}
-              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
-                <div className="bg-black/60 backdrop-blur-sm rounded-full px-4 py-2">
-                  <p className="text-white text-sm font-medium">
-                    📱 Acerca el código QR
-                  </p>
-                </div>
-              </div>
             </div>
           )}
 
