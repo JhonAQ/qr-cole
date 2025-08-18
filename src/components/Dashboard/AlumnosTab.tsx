@@ -64,7 +64,14 @@ export default function AlumnosTab({
     "nombre"
   );
   const [ordenAsc, setOrdenAsc] = useState(true);
-  const [viewMode, setViewMode] = useState<"grid" | "list">("list");
+  
+  // Detectar si es móvil para configurar vista por defecto
+  const [viewMode, setViewMode] = useState<"grid" | "list">(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth < 768 ? "grid" : "list";
+    }
+    return "list";
+  });
 
   // Actualizar filtros cuando se seleccione desde la navegación
   React.useEffect(() => {
@@ -75,6 +82,26 @@ export default function AlumnosTab({
       setSeccionFiltro(selectedSection);
     }
   }, [selectedGrade, selectedSection]);
+
+  // Efecto para cambiar vista automáticamente al redimensionar
+  React.useEffect(() => {
+    const handleResize = () => {
+      // Solo cambiar automáticamente si estamos en mobile (<768px) y vista es "list"
+      // o si estamos en desktop (>=768px) y vista es "grid"
+      const isMobile = window.innerWidth < 768;
+      if (isMobile && viewMode === "list") {
+        setViewMode("grid");
+      } else if (!isMobile && viewMode === "grid" && window.innerWidth >= 1024) {
+        // Solo cambiar a lista en pantallas grandes
+        setViewMode("list");
+      }
+    };
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
+    }
+  }, [viewMode]);
 
   // Filtrar y ordenar alumnos
   const alumnosFiltrados = useMemo(() => {
@@ -565,7 +592,7 @@ function StudentsGridView({
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
       {alumnosFiltrados.map((alumno, index) => (
         <StudentCard
           key={alumno.id}
@@ -601,56 +628,61 @@ function StudentCard({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05 }}
-      className="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow cursor-pointer"
+      className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md hover:border-blue-200 transition-all duration-200 cursor-pointer overflow-hidden"
       onClick={() => onViewStudent(alumno)}
     >
-      <div className="p-4">
-        <div className="flex items-start justify-between mb-3">
-          <div className="flex items-center space-x-3">
-            <div className="h-12 w-12 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
-              <span className="text-sm font-bold text-white">
+      <div className="p-3 sm:p-4">
+        <div className="flex items-start justify-between mb-3 gap-2">
+          <div className="flex items-center space-x-2 sm:space-x-3 flex-1 min-w-0">
+            <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+              <span className="text-xs sm:text-sm font-bold text-white">
                 {alumno.nombres.charAt(0)}
                 {alumno.apellidos.charAt(0)}
               </span>
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="text-sm font-medium text-gray-900 truncate">
+              <h3 className="text-xs sm:text-sm font-medium text-gray-900 truncate leading-tight">
                 {normalizarNombre(alumno.nombres, alumno.apellidos)}
               </h3>
-              <p className="text-xs text-gray-500 font-mono">
+              <p className="text-xs text-gray-500 font-mono truncate">
                 DNI: {alumno.dni}
               </p>
             </div>
           </div>
-          <span
-            className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${colores.bg} ${colores.text} border ${colores.border}`}
-          >
-            <div className={`w-1.5 h-1.5 ${colores.dot} rounded-full mr-1`} />
-            {obtenerTextoEstado(estado)}
-          </span>
+          <div className="flex-shrink-0">
+            <span
+              className={`inline-flex items-center px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs font-medium ${colores.bg} ${colores.text} border ${colores.border} whitespace-nowrap`}
+            >
+              <div className={`w-1 h-1 sm:w-1.5 sm:h-1.5 ${colores.dot} rounded-full mr-1 flex-shrink-0`} />
+              <span className="hidden sm:inline">{obtenerTextoEstado(estado)}</span>
+              <span className="sm:hidden">{estado === 'presente' ? 'P' : estado === 'ausente' ? 'A' : 'Pa'}</span>
+            </span>
+          </div>
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-1.5 sm:space-y-2">
           <div className="flex items-center text-xs text-gray-600">
-            <BookOpen className="w-3 h-3 mr-1" />
-            {alumno.grado}° - Sección {alumno.seccion}
+            <BookOpen className="w-3 h-3 mr-1 flex-shrink-0" />
+            <span className="truncate">{alumno.grado}° - Sección {alumno.seccion}</span>
           </div>
 
           {alumno.contacto_padres && (
             <div className="flex items-center text-xs text-gray-600">
-              <Phone className="w-3 h-3 mr-1" />
-              {alumno.contacto_padres}
+              <Phone className="w-3 h-3 mr-1 flex-shrink-0" />
+              <span className="truncate">{alumno.contacto_padres}</span>
             </div>
           )}
 
-          <div className="flex justify-between text-xs pt-2 border-t">
+          <div className="flex justify-between text-xs pt-1.5 sm:pt-2 border-t border-gray-100">
             <div className="flex items-center text-green-600">
-              <UserCheck className="w-3 h-3 mr-1" />
-              {entradas} entradas
+              <UserCheck className="w-3 h-3 mr-1 flex-shrink-0" />
+              <span className="font-medium">{entradas}</span>
+              <span className="hidden sm:inline ml-1">entradas</span>
             </div>
             <div className="flex items-center text-blue-600">
-              <UserX className="w-3 h-3 mr-1" />
-              {salidas} salidas
+              <UserX className="w-3 h-3 mr-1 flex-shrink-0" />
+              <span className="font-medium">{salidas}</span>
+              <span className="hidden sm:inline ml-1">salidas</span>
             </div>
           </div>
         </div>
