@@ -100,7 +100,6 @@ export default function EnhancedQRScanner() {
 
       {/* Layout responsive: mobile first, desktop con columnas */}
       <div className="lg:grid lg:grid-cols-2 lg:gap-8 lg:items-start space-y-6 lg:space-y-0">
-        
         {/* Columna izquierda: Cámara del scanner */}
         <div className="lg:sticky lg:top-4">
           <ScannerCamera
@@ -120,7 +119,7 @@ export default function EnhancedQRScanner() {
             loading={false}
             onRefresh={refreshRegistrations}
           />
-          
+
           {/* Indicador de conexión online */}
           {isOnline && (
             <div className="flex items-center justify-center">
@@ -131,7 +130,6 @@ export default function EnhancedQRScanner() {
             </div>
           )}
         </div>
-
       </div>
 
       {/* Modal de confirmación del estudiante - fuera del grid para que funcione correctamente */}
