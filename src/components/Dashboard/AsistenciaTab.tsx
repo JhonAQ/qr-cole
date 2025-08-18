@@ -256,7 +256,7 @@ export default function AsistenciaTab() {
               {asistencias.length} registros encontrados
             </p>
           </div>
-          
+
           {/* Botón de exportar - solo en desktop */}
           <div className="hidden sm:block">
             <button

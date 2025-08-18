@@ -213,7 +213,7 @@ export default function AlumnosTab({
               {seccionFiltro && ` • Sección ${seccionFiltro}`}
             </p>
           </div>
-          
+
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
             {/* Toggle de vista */}
             <div className="flex items-center bg-gray-100 rounded-lg p-1">
@@ -240,7 +240,7 @@ export default function AlumnosTab({
                 <Grid className="w-4 h-4" />
               </button>
             </div>
-            
+
             {/* Botón nuevo alumno */}
             <button
               onClick={() => window.open("/register", "_blank")}

@@ -55,16 +55,16 @@ export default function EnhancedDashboardLayout({
   useEffect(() => {
     if (sidebarOpen) {
       const originalStyle = window.getComputedStyle(document.body).overflow;
-      document.body.style.overflow = 'hidden';
-      document.body.style.position = 'fixed';
-      document.body.style.width = '100%';
-      document.body.style.height = '100%';
-      
+      document.body.style.overflow = "hidden";
+      document.body.style.position = "fixed";
+      document.body.style.width = "100%";
+      document.body.style.height = "100%";
+
       return () => {
         document.body.style.overflow = originalStyle;
-        document.body.style.position = '';
-        document.body.style.width = '';
-        document.body.style.height = '';
+        document.body.style.position = "";
+        document.body.style.width = "";
+        document.body.style.height = "";
       };
     }
   }, [sidebarOpen]);
@@ -119,7 +119,7 @@ export default function EnhancedDashboardLayout({
                   <X className="w-5 h-5" />
                 </button>
               </div>
-              
+
               {/* Contenido scrolleable del sidebar */}
               <div className="flex-1 overflow-y-auto mobile-footer-space">
                 <SidebarContent
@@ -140,13 +140,13 @@ export default function EnhancedDashboardLayout({
       {/* Sidebar para desktop */}
       <aside className="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:w-80 lg:bg-white lg:shadow-sm lg:flex lg:flex-col sidebar-container">
         <div className="flex items-center px-6 py-4 border-b">
-                      <Image
-              src="/LOGO-FC.png"
-              alt="Colegio Fe y Ciencia"
-              width={60}
-              height={60}
-              className="rounded"
-            />
+          <Image
+            src="/LOGO-FC.png"
+            alt="Colegio Fe y Ciencia"
+            width={60}
+            height={60}
+            className="rounded"
+          />
           <h2 className="text-xl ml-3 font-bold text-gray-800">
             Educheck - Fe y Ciencia
           </h2>
@@ -292,9 +292,7 @@ export default function EnhancedDashboardLayout({
               </p>
             </div>
           )}
-          <div className="p-4 lg:p-6">
-            {children}
-          </div>
+          <div className="p-4 lg:p-6">{children}</div>
         </main>
       </div>
     </div>

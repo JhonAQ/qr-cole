@@ -45,16 +45,16 @@ export default function NewDashboardLayout({
   useEffect(() => {
     if (sidebarOpen) {
       const originalStyle = window.getComputedStyle(document.body).overflow;
-      document.body.style.overflow = 'hidden';
-      document.body.style.position = 'fixed';
-      document.body.style.width = '100%';
-      document.body.style.height = '100%';
-      
+      document.body.style.overflow = "hidden";
+      document.body.style.position = "fixed";
+      document.body.style.width = "100%";
+      document.body.style.height = "100%";
+
       return () => {
         document.body.style.overflow = originalStyle;
-        document.body.style.position = '';
-        document.body.style.width = '';
-        document.body.style.height = '';
+        document.body.style.position = "";
+        document.body.style.width = "";
+        document.body.style.height = "";
       };
     }
   }, [sidebarOpen]);
@@ -87,7 +87,7 @@ export default function NewDashboardLayout({
               exit={{ x: -280 }}
               transition={{ type: "spring", damping: 30, stiffness: 300 }}
               className="mobile-sidebar lg:hidden"
-              style={{ width: '17.5rem' }}
+              style={{ width: "17.5rem" }}
             >
               <div className="flex items-center justify-between p-4 border-b mobile-header">
                 <h2 className="text-lg font-semibold text-gray-800">QR Cole</h2>
@@ -242,9 +242,7 @@ export default function NewDashboardLayout({
               </div>
             </div>
           )}
-          <div className="pb-6">
-            {children}
-          </div>
+          <div className="pb-6">{children}</div>
         </main>
       </div>
     </div>

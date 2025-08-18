@@ -15,11 +15,11 @@ import {
 } from "lucide-react";
 import { useDashboard } from "@/contexts/DashboardContext";
 import { supabase } from "@/utils/supabase";
-import { 
-  formatearFecha, 
-  obtenerFechaHoy, 
+import {
+  formatearFecha,
+  obtenerFechaHoy,
   obtenerGradosUnicos,
-  obtenerRangoFecha // NUEVA función
+  obtenerRangoFecha, // NUEVA función
 } from "@/utils/helpers";
 import { Alumno, Asistencia } from "@/types";
 
@@ -59,7 +59,11 @@ function SimpleBarChart({
               <div
                 className={`h-2 rounded-full ${colorClasses[color]} transition-all duration-500`}
                 style={{
-                  width: `${maxValue > 0 ? ((item.total || item.value) / maxValue) * 100 : 0}%`,
+                  width: `${
+                    maxValue > 0
+                      ? ((item.total || item.value) / maxValue) * 100
+                      : 0
+                  }%`,
                 }}
               />
             </div>
@@ -119,8 +123,12 @@ function MetricCard({
           <p className="text-2xl font-bold text-gray-900">{value}</p>
           <p className="text-sm text-gray-600">{title}</p>
           {trend && (
-            <p className={`text-xs mt-1 ${trend.isUp ? 'text-green-600' : 'text-red-600'}`}>
-              {trend.isUp ? '↗' : '↘'} {trend.value}%
+            <p
+              className={`text-xs mt-1 ${
+                trend.isUp ? "text-green-600" : "text-red-600"
+              }`}
+            >
+              {trend.isUp ? "↗" : "↘"} {trend.value}%
             </p>
           )}
         </div>
@@ -141,11 +149,11 @@ export default function EstadisticasTab() {
     const hoy = new Date();
     const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
     const year = inicioMes.getFullYear();
-    const month = String(inicioMes.getMonth() + 1).padStart(2, '0');
-    const day = String(inicioMes.getDate()).padStart(2, '0');
+    const month = String(inicioMes.getMonth() + 1).padStart(2, "0");
+    const day = String(inicioMes.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   });
-  
+
   const [fechaFin, setFechaFin] = useState(obtenerFechaHoy());
   const [asistenciasRango, setAsistenciasRango] = useState<
     (Asistencia & { alumno: Alumno })[]
@@ -160,7 +168,12 @@ export default function EstadisticasTab() {
       const rangoInicio = obtenerRangoFecha(fechaInicio);
       const rangoFin = obtenerRangoFecha(fechaFin);
 
-      console.log('Cargando estadísticas del', rangoInicio.inicio, 'al', rangoFin.fin); // Para debug
+      console.log(
+        "Cargando estadísticas del",
+        rangoInicio.inicio,
+        "al",
+        rangoFin.fin
+      ); // Para debug
 
       const { data, error } = await supabase
         .from("asistencias")
@@ -249,24 +262,31 @@ export default function EstadisticasTab() {
     for (let i = 6; i >= 0; i--) {
       const fecha = new Date(hoy);
       fecha.setDate(fecha.getDate() - i);
-      
+
       // CORREGIDO: Crear fecha string de forma consistente
       const year = fecha.getFullYear();
-      const month = String(fecha.getMonth() + 1).padStart(2, '0');
-      const day = String(fecha.getDate()).padStart(2, '0');
+      const month = String(fecha.getMonth() + 1).padStart(2, "0");
+      const day = String(fecha.getDate()).padStart(2, "0");
       const fechaStr = `${year}-${month}-${day}`;
 
       const asistenciasDia = asistenciasRango.filter((a) => {
         const asistenciaFecha = new Date(a.hora);
         const asistenciaYear = asistenciaFecha.getFullYear();
-        const asistenciaMonth = String(asistenciaFecha.getMonth() + 1).padStart(2, '0');
-        const asistenciaDay = String(asistenciaFecha.getDate()).padStart(2, '0');
+        const asistenciaMonth = String(asistenciaFecha.getMonth() + 1).padStart(
+          2,
+          "0"
+        );
+        const asistenciaDay = String(asistenciaFecha.getDate()).padStart(
+          2,
+          "0"
+        );
         const asistenciaFechaStr = `${asistenciaYear}-${asistenciaMonth}-${asistenciaDay}`;
-        
+
         return asistenciaFechaStr === fechaStr;
       });
 
-      const alumnosUnicos = new Set(asistenciasDia.map((a) => a.id_alumno)).size;
+      const alumnosUnicos = new Set(asistenciasDia.map((a) => a.id_alumno))
+        .size;
 
       dias.push({
         label: fecha.toLocaleDateString("es-ES", {
@@ -361,10 +381,11 @@ export default function EstadisticasTab() {
               Estadísticas de Asistencia
             </h2>
             <p className="text-gray-600 text-sm sm:text-base">
-              Análisis detallado de asistencia del {formatearFecha(fechaInicio)} al {formatearFecha(fechaFin)}
+              Análisis detallado de asistencia del {formatearFecha(fechaInicio)}{" "}
+              al {formatearFecha(fechaFin)}
             </p>
           </div>
-          
+
           {/* Botones - solo en desktop inicialmente */}
           <div className="hidden sm:flex items-center space-x-3">
             <button
@@ -414,9 +435,11 @@ export default function EstadisticasTab() {
         <div className="space-y-4">
           <div className="flex items-center space-x-2">
             <Filter className="w-5 h-5 text-gray-400" />
-            <span className="text-sm font-medium text-gray-700">Período de análisis:</span>
+            <span className="text-sm font-medium text-gray-700">
+              Período de análisis:
+            </span>
           </div>
-          
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -429,7 +452,7 @@ export default function EstadisticasTab() {
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Fecha final
@@ -441,7 +464,7 @@ export default function EstadisticasTab() {
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
-            
+
             <div className="flex items-end">
               <button
                 onClick={() => {
@@ -526,13 +549,28 @@ export default function EstadisticasTab() {
             <div className="flex justify-between">
               <span className="text-gray-600">Días analizados:</span>
               <span className="font-medium">
-                {Math.ceil((new Date(fechaFin).getTime() - new Date(fechaInicio).getTime()) / (1000 * 60 * 60 * 24)) + 1}
+                {Math.ceil(
+                  (new Date(fechaFin).getTime() -
+                    new Date(fechaInicio).getTime()) /
+                    (1000 * 60 * 60 * 24)
+                ) + 1}
               </span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">Promedio diario:</span>
               <span className="font-medium">
-                {Math.round(estadisticasRango.totalRegistros / Math.max(1, Math.ceil((new Date(fechaFin).getTime() - new Date(fechaInicio).getTime()) / (1000 * 60 * 60 * 24)) + 1))} registros
+                {Math.round(
+                  estadisticasRango.totalRegistros /
+                    Math.max(
+                      1,
+                      Math.ceil(
+                        (new Date(fechaFin).getTime() -
+                          new Date(fechaInicio).getTime()) /
+                          (1000 * 60 * 60 * 24)
+                      ) + 1
+                    )
+                )}{" "}
+                registros
               </span>
             </div>
             <div className="flex justify-between">
@@ -552,13 +590,19 @@ export default function EstadisticasTab() {
             <div>
               <div className="flex justify-between mb-2">
                 <span className="text-gray-600">Entradas</span>
-                <span className="font-medium">{estadisticasRango.entradas}</span>
+                <span className="font-medium">
+                  {estadisticasRango.entradas}
+                </span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
                 <div
                   className="bg-green-500 h-2 rounded-full"
                   style={{
-                    width: `${(estadisticasRango.entradas / Math.max(1, estadisticasRango.totalRegistros)) * 100}%`,
+                    width: `${
+                      (estadisticasRango.entradas /
+                        Math.max(1, estadisticasRango.totalRegistros)) *
+                      100
+                    }%`,
                   }}
                 />
               </div>
@@ -572,7 +616,11 @@ export default function EstadisticasTab() {
                 <div
                   className="bg-blue-500 h-2 rounded-full"
                   style={{
-                    width: `${(estadisticasRango.salidas / Math.max(1, estadisticasRango.totalRegistros)) * 100}%`,
+                    width: `${
+                      (estadisticasRango.salidas /
+                        Math.max(1, estadisticasRango.totalRegistros)) *
+                      100
+                    }%`,
                   }}
                 />
               </div>

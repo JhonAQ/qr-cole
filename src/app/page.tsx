@@ -158,7 +158,7 @@ export default function Home() {
             />
             <div>
               <h1 className="text-xl ml-3 font-semibold text-gray-900">
-                Educheck  - Fe y Ciencia
+                Educheck - Fe y Ciencia
               </h1>
               <p className="text-sm text-gray-500">
                 Sistema de Control de Asistencia
@@ -394,9 +394,9 @@ export default function Home() {
             </div>
             <div className="space-y-3 text-gray-600">
               <p>
-                <strong>Educheck - Fe y Ciencia</strong> es un prototipo de sistema
-                de control de acceso desarrollado para la feria de ciencias Eureka del
-                Colegio Fe y Ciencia.
+                <strong>Educheck - Fe y Ciencia</strong> es un prototipo de
+                sistema de control de acceso desarrollado para la feria de
+                ciencias Eureka del Colegio Fe y Ciencia.
               </p>
               <div className="bg-gray-50 rounded-lg p-3">
                 <p className="text-sm">
