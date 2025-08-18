@@ -13,9 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Fe y Ciencia Check | Sistema de Control de Acceso",
+  title: "Educheck Fe y Ciencia | Sistema de Control de Asistencia Escolar",
   description:
-    "Plataforma segura para gestionar el acceso mediante códigos QR personalizados del Colegio Fe y Ciencia",
+    "Plataforma segura para gestionar el control de asistencia mediante códigos QR personalizados del Colegio Fe y Ciencia",
   icons: {
     icon: "/favicon.ico",
   },

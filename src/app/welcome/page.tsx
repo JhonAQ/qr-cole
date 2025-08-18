@@ -57,11 +57,11 @@ export default function WelcomePage() {
           <div className="flex items-center justify-center mb-4">
             <QrCode className="w-12 h-12 text-primary mr-3" />
             <h1 className="text-4xl font-bold text-primary-dark">
-              Fe y Ciencia Check
+              Educheck - Fe y Ciencia
             </h1>
           </div>
           <p className="text-lg text-gray-600">
-            Sistema de Control de Acceso con Códigos QR
+            Sistema de Control de Asistencia con Códigos QR
           </p>
         </div>
 

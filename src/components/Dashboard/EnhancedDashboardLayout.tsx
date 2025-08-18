@@ -83,7 +83,7 @@ export default function EnhancedDashboardLayout({
                 <div className="flex items-center">
                   <QrCode className="w-6 h-6 text-primary mr-2" />
                   <h2 className="text-lg font-semibold text-gray-800">
-                    Fe y Ciencia Check
+                    Educheck - Fe y Ciencia
                   </h2>
                 </div>
                 <button
@@ -112,7 +112,7 @@ export default function EnhancedDashboardLayout({
         <div className="flex items-center px-6 py-4 border-b">
           <QrCode className="w-8 h-8 text-primary mr-3" />
           <h2 className="text-xl font-bold text-gray-800">
-            Fe y Ciencia Check
+            Educheck - Fe y Ciencia
           </h2>
         </div>
         <SidebarContent

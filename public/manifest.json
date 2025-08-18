@@ -1,7 +1,7 @@
 {
-  "name": "Fe y Ciencia Check",
-  "short_name": "QR Cole",
-  "description": "Sistema de Control de Acceso con códigos QR para el Colegio Fe y Ciencia",
+  "name": "Sistema de Control de Asistencia Educheck",
+  "short_name": "Educheck",
+  "description": "Sistema de Control de Asistencia con códigos QR para el Colegio Fe y Ciencia",
   "start_url": "/dashboard",
   "display": "standalone",
   "background_color": "#ffffff",
