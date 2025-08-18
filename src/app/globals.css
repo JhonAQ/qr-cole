@@ -151,6 +151,68 @@ body {
   background-color: #f9fafb;
 }
 
+/* Clases de borde consistentes para toda la aplicación */
+.fc-border {
+  border: 1px solid var(--border-color);
+}
+
+.fc-border-light {
+  border: 1px solid var(--card-border);
+}
+
+.fc-input-border {
+  border: 1px solid var(--input-border);
+}
+
+/* Sobrescribir las clases de Tailwind problemáticas con mayor especificidad */
+.border-gray-300 {
+  border-color: var(--border-color) !important;
+}
+
+.border-gray-200 {
+  border-color: var(--card-border) !important;
+}
+
+/* Reglas específicas para elementos de formulario y botones */
+input[type="text"].border-gray-300,
+input[type="email"].border-gray-300,
+input[type="date"].border-gray-300,
+select.border-gray-300,
+button.border-gray-300,
+div.border-gray-300 {
+  border-color: var(--border-color) !important;
+}
+
+input[type="text"].border-gray-200,
+input[type="email"].border-gray-200,
+input[type="date"].border-gray-200,
+select.border-gray-200,
+button.border-gray-200,
+div.border-gray-200 {
+  border-color: var(--card-border) !important;
+}
+
+/* Asegurar que las tarjetas del dashboard tengan el borde correcto */
+.bg-white.border,
+.bg-white.rounded-lg.border {
+  border-color: var(--card-border) !important;
+}
+
+/* Reglas específicas para el sidebar */
+.sidebar-container,
+.sidebar-container * {
+  border-color: var(--card-border) !important;
+}
+
+/* Asegurar que todos los elementos con border usen el color correcto */
+* {
+  --tw-border-opacity: 1;
+}
+
+*[class*="border-gray"] {
+  border-color: var(--border-color) !important;
+}
+
 /* Mejores animaciones para dropdowns */
 @keyframes slideDown {
   from {
@@ -176,4 +238,37 @@ body {
 
 .dropdown-animation {
   animation: slideDown 0.2s ease;
+}
+
+/* Reglas globales para asegurar bordes consistentes */
+.dashboard-container *,
+.dashboard-layout *,
+[class*="Tab"] *,
+[class*="Dashboard"] * {
+  border-color: var(--border-color, #e2e8f0) !important;
+}
+
+/* Específicamente para elementos comunes del dashboard */
+.dashboard-container .border,
+.dashboard-layout .border,
+[class*="Tab"] .border,
+[class*="Dashboard"] .border {
+  border-color: var(--border-color, #e2e8f0) !important;
+}
+
+/* Reglas para inputs y selects */
+.dashboard-container input,
+.dashboard-container select,
+.dashboard-layout input,
+.dashboard-layout select,
+[class*="Tab"] input,
+[class*="Tab"] select {
+  border-color: var(--input-border, #d1d5db) !important;
+}
+
+/* Reglas para cards y contenedores */
+.dashboard-container .bg-white,
+.dashboard-layout .bg-white,
+[class*="Tab"] .bg-white {
+  border-color: var(--card-border, #e2e8f0) !important;
 }

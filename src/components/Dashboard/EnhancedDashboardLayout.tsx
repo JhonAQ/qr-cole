@@ -60,7 +60,7 @@ export default function EnhancedDashboardLayout({
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dashboard-layout">
       {/* Sidebar para móvil */}
       <AnimatePresence>
         {sidebarOpen && (
@@ -108,7 +108,7 @@ export default function EnhancedDashboardLayout({
       </AnimatePresence>
 
       {/* Sidebar para desktop */}
-      <aside className="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:w-80 lg:bg-white lg:shadow-sm lg:flex lg:flex-col">
+      <aside className="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:w-80 lg:bg-white lg:shadow-sm lg:flex lg:flex-col sidebar-container">
         <div className="flex items-center px-6 py-4 border-b">
           <QrCode className="w-8 h-8 text-primary mr-3" />
           <h2 className="text-xl font-bold text-gray-800">
@@ -248,7 +248,7 @@ export default function EnhancedDashboardLayout({
         </header>
 
         {/* Contenido de la página */}
-        <main className="flex-1">
+        <main className="flex-1 dashboard-container">
           {error && (
             <div className="m-4 p-4 bg-red-50 border border-red-200 rounded-lg">
               <p className="text-red-600 text-sm">

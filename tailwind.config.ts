@@ -10,12 +10,16 @@ const config: Config = {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#07aee1',
-          dark: '#04457d',
-          medium: '#00a3dc',
+          DEFAULT: 'var(--primary)',
+          dark: 'var(--primary-dark)',
+          medium: 'var(--primary-medium)',
+          light: 'var(--primary-light)',
         },
-        light: '#e6e8e9',
-        gray: '#587d95',
+        light: 'var(--light)',
+        gray: 'var(--gray)',
+        border: 'var(--border-color)',
+        'card-border': 'var(--card-border)',
+        'input-border': 'var(--input-border)',
       },
       spacing: {
         '70': '17.5rem',
@@ -23,6 +27,11 @@ const config: Config = {
       fontFamily: {
         sans: ['var(--font-geist-sans)', 'Arial', 'Helvetica', 'sans-serif'],
         mono: ['var(--font-geist-mono)', 'monospace'],
+      },
+      borderColor: {
+        DEFAULT: 'var(--border-color)',
+        'card': 'var(--card-border)',
+        'input': 'var(--input-border)',
       },
     },
   },
