@@ -33,6 +33,7 @@ import {
   obtenerSeccionesUnicas,
   debounce,
 } from "@/utils/helpers";
+import AdvancedExportModal from "./AdvancedExportModal";
 
 export default function AsistenciaTab() {
   const [asistencias, setAsistencias] = useState<
@@ -50,6 +51,7 @@ export default function AsistenciaTab() {
   const [ordenPor, setOrdenPor] = useState<"hora" | "alumno" | "grado">("hora");
   const [ordenAsc, setOrdenAsc] = useState(false);
   const [mostrarFiltros, setMostrarFiltros] = useState(false);
+  const [showAdvancedExport, setShowAdvancedExport] = useState(false);
 
   // Vista por defecto según dispositivo
   const [viewMode, setViewMode] = useState<"grid" | "list">(() => {
@@ -214,27 +216,7 @@ export default function AsistenciaTab() {
   };
 
   const exportarDatos = () => {
-    // Implementar exportación a CSV/Excel
-    const csvContent = asistenciasOrdenadas
-      .map(
-        (a) =>
-          `${formatearFechaHora(a.hora)},${a.alumno?.nombres} ${
-            a.alumno?.apellidos
-          },${a.alumno?.grado}°-${a.alumno?.seccion},${a.tipo}`
-      )
-      .join("\n");
-
-    const blob = new Blob(
-      [`Fecha y Hora,Alumno,Grado-Sección,Tipo\n${csvContent}`],
-      { type: "text/csv" }
-    );
-
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `asistencias_${fechaInicio}_${fechaFin}.csv`;
-    a.click();
-    window.URL.revokeObjectURL(url);
+    setShowAdvancedExport(true);
   };
 
   if (loading) {
@@ -271,10 +253,10 @@ export default function AsistenciaTab() {
           <div className="hidden sm:block">
             <button
               onClick={exportarDatos}
-              className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+              className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
             >
               <Download className="w-4 h-4 mr-2" />
-              Exportar
+              Exportar Reportes
             </button>
           </div>
         </div>
@@ -300,10 +282,10 @@ export default function AsistenciaTab() {
           {/* Botón de exportar - visible en mobile */}
           <button
             onClick={exportarDatos}
-            className="flex sm:hidden items-center justify-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+            className="flex sm:hidden items-center justify-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
           >
             <Download className="w-4 h-4 mr-2" />
-            Exportar
+            Exportar Reportes
           </button>
         </div>
       </div>
@@ -585,6 +567,20 @@ export default function AsistenciaTab() {
       ) : (
         <AttendanceGridView asistenciasOrdenadas={asistenciasOrdenadas} />
       )}
+
+      {/* Modal de exportación avanzada */}
+      <AdvancedExportModal
+        isOpen={showAdvancedExport}
+        onClose={() => setShowAdvancedExport(false)}
+        asistencias={asistencias}
+        fechaInicio={fechaInicio}
+        fechaFin={fechaFin}
+        filtrosActuales={{
+          grado: gradoFiltro,
+          seccion: seccionFiltro,
+          tipo: tipoFiltro,
+        }}
+      />
     </div>
   );
 }
