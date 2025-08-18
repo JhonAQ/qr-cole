@@ -98,17 +98,43 @@ export default function EnhancedQRScanner() {
         </div>
       )}
 
-      {/* Cámara del scanner */}
-      <ScannerCamera
-        scanning={state.scanning}
-        currentCameraId={currentCameraId}
-        cameras={cameras}
-        onCameraSwitch={switchCamera}
-        onStartScanning={startScanning}
-        onStopScanning={stopScanning}
-      />
+      {/* Layout responsive: mobile first, desktop con columnas */}
+      <div className="lg:grid lg:grid-cols-2 lg:gap-8 lg:items-start space-y-6 lg:space-y-0">
+        
+        {/* Columna izquierda: Cámara del scanner */}
+        <div className="lg:sticky lg:top-4">
+          <ScannerCamera
+            scanning={state.scanning}
+            currentCameraId={currentCameraId}
+            cameras={cameras}
+            onCameraSwitch={switchCamera}
+            onStartScanning={startScanning}
+            onStopScanning={stopScanning}
+          />
+        </div>
 
-      {/* Modal de confirmación del estudiante */}
+        {/* Columna derecha: Registros recientes */}
+        <div className="space-y-6">
+          <RecentRegistrations
+            registrations={recentRegistrations}
+            loading={false}
+            onRefresh={refreshRegistrations}
+          />
+          
+          {/* Indicador de conexión online */}
+          {isOnline && (
+            <div className="flex items-center justify-center">
+              <div className="flex items-center gap-2 text-green-600 bg-green-50 rounded-full px-3 py-1">
+                <Wifi className="w-4 h-4" />
+                <span className="text-sm font-medium">En línea</span>
+              </div>
+            </div>
+          )}
+        </div>
+
+      </div>
+
+      {/* Modal de confirmación del estudiante - fuera del grid para que funcione correctamente */}
       <StudentConfirmation
         scanResult={scanResult}
         selectedType={selectedType}
@@ -119,23 +145,6 @@ export default function EnhancedQRScanner() {
         autoConfirm={true}
         timeRemaining={config.autoConfirmMs / 1000}
       />
-
-      {/* Registros recientes */}
-      <RecentRegistrations
-        registrations={recentRegistrations}
-        loading={false}
-        onRefresh={refreshRegistrations}
-      />
-
-      {/* Indicador de conexión online */}
-      {isOnline && (
-        <div className="flex items-center justify-center">
-          <div className="flex items-center gap-2 text-green-600 bg-green-50 rounded-full px-3 py-1">
-            <Wifi className="w-4 h-4" />
-            <span className="text-sm font-medium">En línea</span>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

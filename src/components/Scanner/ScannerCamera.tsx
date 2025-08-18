@@ -15,12 +15,12 @@ export default function ScannerCamera({
 }: Omit<ScannerCameraProps, "onScanSuccess" | "onScanError" | "config">) {
   return (
     <div className="space-y-4">
-      {/* Contenedor de la cámara */}
-      <div className="relative">
+      {/* Contenedor de la cámara con diseño responsive */}
+      <div className="relative mx-auto max-w-md lg:max-w-lg">
         <div
           id="scanner-camera"
           className="w-full aspect-square rounded-2xl overflow-hidden bg-black relative"
-          style={{ maxWidth: "100%", minHeight: "280px" }}
+          style={{ maxWidth: "100%", minHeight: "280px", maxHeight: "500px" }}
         >
           {/* Overlay con esquinas de escaneo */}
           {scanning && (
