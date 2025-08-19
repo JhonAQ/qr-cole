@@ -377,9 +377,11 @@ export const obtenerPlantillasFecha = () => {
   const ayer = new Date(hoy);
   ayer.setDate(ayer.getDate() - 1);
   
-  // Inicio de la semana (domingo)
+  // Inicio de la semana (lunes)
   const inicioSemana = new Date(hoy);
-  inicioSemana.setDate(hoy.getDate() - hoy.getDay());
+  const diaActual = hoy.getDay(); // 0 = domingo, 1 = lunes, etc.
+  const diasHastaLunes = diaActual === 0 ? 6 : diaActual - 1; // Si es domingo, retroceder 6 días
+  inicioSemana.setDate(hoy.getDate() - diasHastaLunes);
   
   // Este mes
   const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
