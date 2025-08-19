@@ -1,455 +1,614 @@
-# 🎓 EduCheck Fe y Ciencia
+# 📚 EduCheck Fe y Ciencia - Documentación Técnica Integral
 
-### Sistema Integral de Control de Asistencia Estudiantil con Tecnología QR
+## 🎯 Resumen Ejecutivo
 
-<div align="center">
+**EduCheck Fe y Ciencia** es un sistema integral de gestión de asistencia escolar desarrollado con tecnologías web modernas, diseñado específicamente para instituciones educativas que requieren un control eficiente y automatizado de la asistencia estudiantil mediante códigos QR únicos.
 
-[![Next.js](https://img.shields.io/badge/Next.js-15.4-black?style=for-the-badge&logo=next.js)](https://nextjs.org)
-[![React](https://img.shields.io/badge/React-19.1-blue?style=for-the-badge&logo=react)](https://reactjs.org)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org)
-[![Supabase](https://img.shields.io/badge/Supabase-Backend-green?style=for-the-badge&logo=supabase)](https://supabase.com)
+### Datos del Proyecto
 
-**Una solución moderna y eficiente para el control de asistencia escolar**
-
-[🚀 Ver Demo](#demo) • [📱 Características](#características) • [⚡ Instalación](#instalación) • [📖 Documentación](#documentación)
-
-</div>
-
----
-
-## 🌟 Descripción
-
-EduCheck es un sistema integral de gestión de asistencia estudiantil diseñado específicamente para instituciones educativas modernas. Utilizando tecnología QR de vanguardia, transformamos el proceso tradicional de control de asistencia en una experiencia digital fluida, rápida y confiable.
-
-![dashboard-overview.png]
-
-### 🎯 ¿Por qué EduCheck?
-
-- ✅ **Eliminación del pase de lista manual** - Ahorra hasta 15 minutos por clase
-- ✅ **Precisión del 99.9%** - Elimina errores humanos en el registro
-- ✅ **Reportes instantáneos** - Datos en tiempo real para toma de decisiones
-- ✅ **Notificaciones automáticas** - Mantén a los padres informados al instante
-- ✅ **Acceso multiplataforma** - Funciona en cualquier dispositivo
+- **Nombre**: EduCheck Fe y Ciencia
+- **Tipo**: Sistema de Control de Asistencia Escolar
+- **Tecnología Principal**: Next.js 15.4.6 + React 19.1
+- **Base de Datos**: Supabase (PostgreSQL)
+- **Interfaz**: Responsive Web Application (PWA Ready)
+- **Estado**: En desarrollo activo
+- **Licencia**: Privada - Colegio Fe y Ciencia
 
 ---
 
-## 🚀 Demo en Vivo
+## 🏗️ Arquitectura del Sistema
 
-![demo-gif.gif]
+### Stack Tecnológico
 
-> **Prueba EduCheck ahora:** [demo.educheck.com](https://demo.educheck.com)
->
-> 📧 **Usuario demo:** profesor@demo.com  
-> 🔑 **Contraseña:** demo123
+#### Frontend
 
----
+- **Framework**: Next.js 15.4.6 con App Router
+- **Runtime**: React 19.1 con TypeScript 5.x
+- **Styling**: Tailwind CSS 4.x
+- **Animaciones**: Framer Motion 12.23.12
+- **Componentes UI**: Lucide React (iconos)
+- **Notificaciones**: React Hot Toast
+- **Gráficos**: Recharts 3.1.2
 
-## ✨ Características Principales
+#### Backend & Base de Datos
 
-### 📱 **Scanner QR Inteligente**
+- **BaaS**: Supabase (Backend as a Service)
+- **Base de Datos**: PostgreSQL (via Supabase)
+- **Autenticación**: Supabase Auth
+- **Almacenamiento**: Supabase Storage
+- **Real-time**: Supabase Realtime
 
-![scanner-mockup.png]
+#### Librerías Especializadas
 
-- 🎯 **Detección automática** de códigos QR estudiantiles
-- 📲 **Optimizado para móviles** con interfaz touch-friendly
-- ⚡ **Escaneo ultra-rápido** (menos de 1 segundo)
-- 🔄 **Modo dual**: Entrada y salida automática
-- 🎵 **Feedback sonoro** para confirmación de registro
+- **QR Scanning**: html5-qrcode 2.3.8
+- **QR Generation**: qrcode 1.5.4
+- **PDF Export**: jsPDF 3.0.1 + jsPDF-AutoTable 5.0.2
+- **Excel Export**: xlsx 0.18.5
 
-### 👨‍🎓 **Gestión de Estudiantes**
+### Arquitectura de Capas
 
-![student-management.png]
+```mermaid
+graph TB
+    A[Presentación - Next.js/React] --> B[Lógica de Negocio - Context/Hooks]
+    B --> C[Servicios - API Routes]
+    C --> D[Datos - Supabase]
 
-- 📋 **Registro completo** de datos estudiantiles
-- 🆔 **Generación automática** de códigos QR únicos
-- 👥 **Organización por grados** y secciones
-- 📊 **Vista de lista y tarjetas** adaptativa
-- 🔍 **Búsqueda avanzada** y filtros múltiples
+    A --> E[Componentes UI]
+    A --> F[Scanner QR]
+    A --> G[Generador QR]
 
-### 📊 **Dashboard Ejecutivo**
+    B --> H[WhatsApp Integration]
+    B --> I[PDF/Excel Export]
 
-![dashboard-stats.png]
-
-- 📈 **Métricas en tiempo real** de asistencia
-- 📅 **Historial completo** de registros
-- 🎯 **Estadísticas por grado** y período
-- 📉 **Gráficos interactivos** con tendencias
-- ⚡ **Acciones rápidas** desde el panel principal
-
-### 📑 **Reportes Profesionales**
-
-![reports-export.png]
-
-- 📄 **Exportación múltiple**: Excel, PDF, CSV
-- 📋 **Plantillas personalizadas** para diferentes períodos
-- 📊 **Análisis estadístico** automático
-- 📅 **Filtrado por fechas** y criterios específicos
-- 🎨 **Formato institucional** con logo y branding
-
-### 💬 **Notificaciones WhatsApp**
-
-![whatsapp-integration.png]
-
-- 📲 **Integración nativa** con WhatsApp Business
-- 🚀 **Envío automático** de notificaciones a padres
-- ✉️ **Mensajes personalizados** por tipo de registro
-- 📋 **Templates profesionales** preconfigurados
-- 🔗 **Enlaces directos** para contacto inmediato
-
----
-
-## 🛠️ Stack Tecnológico
-
-<div align="center">
-
-![tech-stack.png]
-
-</div>
-
-### **Frontend**
-
-- ⚛️ **Next.js 15.4** - Framework React con App Router
-- 🎨 **Tailwind CSS 4.0** - Diseño moderno y responsive
-- 🎭 **Framer Motion** - Animaciones fluidas
-- 📱 **PWA Ready** - Instalable como app nativa
-
-### **Backend**
-
-- 🗄️ **Supabase** - Base de datos PostgreSQL en la nube
-- 🔐 **Auth integrada** - Sistema de autenticación seguro
-- ⚡ **Real-time** - Actualizaciones en tiempo real
-- 🔄 **API REST** - Endpoints optimizados
-
-### **Características Técnicas**
-
-- 📱 **Mobile-First** - Diseñado para dispositivos móviles
-- 🎯 **TypeScript** - Código tipado y mantenible
-- 📊 **html5-qrcode** - Scanner QR optimizado
-- 📈 **Recharts** - Gráficos interactivos
-- 📄 **jsPDF + XLSX** - Generación de reportes
-
----
-
-## 📱 Capturas de Pantalla
-
-### 🔐 Autenticación Segura
-
-![login-screen.png]
-
-### 📱 Vista Móvil
-
-<div align="center">
-<img src="mobile-dashboard.png" width="300" alt="Dashboard Móvil"/>
-<img src="mobile-scanner.png" width="300" alt="Scanner Móvil"/>
-<img src="mobile-reports.png" width="300" alt="Reportes Móvil"/>
-</div>
-
-### 💻 Dashboard Desktop
-
-![desktop-dashboard.png]
-
-### 📊 Estadísticas Avanzadas
-
-![advanced-stats.png]
-
----
-
-## ⚡ Instalación Rápida
-
-### 📋 Prerrequisitos
-
-- Node.js 18.0 o superior
-- npm o yarn
-- Cuenta en Supabase (gratuita)
-
-### 🚀 Configuración en 3 Pasos
-
-```bash
-# 1️⃣ Clona el repositorio
-git clone https://github.com/TuUsuario/educheck-fe-ciencia.git
-cd educheck-fe-ciencia
-
-# 2️⃣ Instala dependencias
-npm install
-
-# 3️⃣ Configura variables de entorno
-cp .env.example .env.local
+    D --> J[PostgreSQL]
+    D --> K[Auth Service]
+    D --> L[Real-time Subscriptions]
 ```
 
-### ⚙️ Configuración de Supabase
+---
 
-```env
-NEXT_PUBLIC_SUPABASE_URL=tu_proyecto_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=tu_anon_key
-```
+## 🎭 Módulos y Funcionalidades
 
-### 🎯 Esquema de Base de Datos
+### 1. **Módulo de Autenticación**
+
+- **Ubicación**: `src/app/page.tsx`
+- **Funcionalidades**:
+  - Login con email/password
+  - Recuperación de contraseña
+  - Sesión persistente con localStorage
+  - Validación de formularios en tiempo real
+  - Redirección automática post-autenticación
+
+### 2. **Dashboard Principal**
+
+- **Ubicación**: `src/app/dashboard/page.tsx`
+- **Características**:
+  - Interfaz responsive multi-dispositivo
+  - 7 módulos especializados integrados
+  - Navegación por tabs dinámica
+  - Context API para estado global
+  - Lazy loading de componentes
+
+#### 2.1 **Módulo Resumen (Overview)**
+
+- **Archivo**: `src/components/Dashboard/OverviewTab.tsx`
+- **Funciones**:
+  - Dashboard ejecutivo con KPIs
+  - Estadísticas en tiempo real
+  - Gráficos de asistencia
+  - Navegación rápida a otros módulos
+
+#### 2.2 **Módulo de Estudiantes (Alumnos)**
+
+- **Archivo**: `src/components/Dashboard/AlumnosTab.tsx`
+- **Funciones**:
+  - Listado completo de estudiantes
+  - Vista de cuadrícula y lista
+  - Filtrado por grado, sección, estado
+  - Búsqueda en tiempo real
+  - Modal de detalles de estudiante
+
+#### 2.3 **Módulo de Registro de Estudiantes**
+
+- **Archivo**: `src/components/QRGenerator.tsx`
+- **Funciones**:
+  - Registro de nuevos estudiantes
+  - Generación automática de códigos QR únicos
+  - Validación de datos duplicados
+  - Vista previa del QR generado
+  - Descarga de códigos QR
+
+#### 2.4 **Módulo Scanner QR**
+
+- **Ubicación**: `src/components/Scanner/`
+- **Componentes**:
+  - `EnhancedQRScanner.tsx`: Scanner principal
+  - `ScannerCamera.tsx`: Control de cámara
+  - `StudentConfirmation.tsx`: Confirmación de asistencia
+  - `RecentRegistrations.tsx`: Registros recientes
+- **Funciones**:
+  - Escaneo QR en tiempo real
+  - Detección automática de tipo (entrada/salida)
+  - Prevención de registros duplicados
+  - Soporte multi-cámara
+  - Confirmación visual del estudiante
+
+#### 2.5 **Módulo de Registros de Asistencia**
+
+- **Archivo**: `src/components/Dashboard/AsistenciaTab.tsx`
+- **Funciones**:
+  - Historial completo de asistencias
+  - Filtrado por fechas, tipos, grados
+  - Vista de lista y cuadrícula
+  - Exportación de reportes (PDF, Excel, CSV)
+  - Estadísticas de asistencia
+
+#### 2.6 **Módulo de Control de Asistencia** ⭐
+
+- **Archivo**: `src/components/Dashboard/ControlAsistenciaTab.tsx`
+- **Funciones Principales**:
+  - **Vista Profesor**: Control por grado y sección específica
+  - **Vista Directivo**: Acceso a todos los grados
+  - Navegación dinámica por grado/sección
+  - Identificación de ausentes en tiempo real
+  - Sistema de alertas configurables
+  - Envío manual de notificaciones WhatsApp
+  - Configuración de horarios (entrada: 8:00, salida: 15:15)
+  - Tiempo de gracia: 20 minutos
+  - Alertas automáticas después de 20 minutos
+
+#### 2.7 **Módulo de Estadísticas**
+
+- **Archivo**: `src/components/Dashboard/EstadisticasTab.tsx`
+- **Funciones**:
+  - Gráficos de asistencia por período
+  - Métricas de rendimiento
+  - Comparativas por grado/sección
+  - Tendencias históricas
+
+### 3. **Sistema de Notificaciones WhatsApp**
+
+- **Hook**: `src/hooks/useWhatsAppNotification.ts`
+- **Componentes**:
+  - `WhatsAppModal.tsx`: Modal de confirmación
+  - `QuickWhatsAppNotification.tsx`: Notificación rápida
+- **API Route**: `src/app/api/whatsapp/route.ts`
+- **Funciones**:
+  - Generación de enlaces WhatsApp Web
+  - Mensajes personalizables por contexto
+  - Integración con API de WhatsApp Business (preparado)
+  - Envío manual a padres de familia
+
+---
+
+## 🗄️ Esquema de Base de Datos
+
+### Tabla: `alumnos`
 
 ```sql
--- Crear tabla de alumnos
 CREATE TABLE alumnos (
-  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-  nombres text NOT NULL,
-  apellidos text NOT NULL,
-  dni text UNIQUE NOT NULL,
-  nombres_apoderado text,
-  codigo_qr text UNIQUE NOT NULL,
-  contacto_padres text,
-  grado integer NOT NULL,
-  seccion text NOT NULL,
-  created_at timestamp DEFAULT now()
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  nombres VARCHAR NOT NULL,
+  apellidos VARCHAR NOT NULL,
+  dni VARCHAR UNIQUE NOT NULL,
+  nombres_apoderado VARCHAR NOT NULL,
+  codigo_qr VARCHAR UNIQUE NOT NULL,
+  contacto_padres VARCHAR,
+  grado INTEGER NOT NULL,
+  seccion VARCHAR NOT NULL,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
 );
+```
 
--- Crear tabla de asistencias
+### Tabla: `asistencias`
+
+```sql
 CREATE TABLE asistencias (
-  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-  id_alumno uuid REFERENCES alumnos(id) ON DELETE CASCADE,
-  hora timestamp DEFAULT now(),
-  tipo text CHECK (tipo IN ('entrada', 'salida')),
-  created_at timestamp DEFAULT now()
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  id_alumno UUID REFERENCES alumnos(id) ON DELETE CASCADE,
+  hora TIMESTAMP DEFAULT NOW(),
+  tipo VARCHAR CHECK (tipo IN ('entrada', 'salida')),
+  created_at TIMESTAMP DEFAULT NOW()
 );
 ```
 
-### ▶️ Ejecutar el Proyecto
+### Índices y Optimizaciones
 
-```bash
-# Modo desarrollo
-npm run dev
-
-# Modo producción
-npm run build
-npm start
+```sql
+-- Índices para mejores consultas
+CREATE INDEX idx_asistencias_alumno_fecha ON asistencias(id_alumno, DATE(hora));
+CREATE INDEX idx_asistencias_fecha_tipo ON asistencias(DATE(hora), tipo);
+CREATE INDEX idx_alumnos_grado_seccion ON alumnos(grado, seccion);
+CREATE INDEX idx_alumnos_codigo_qr ON alumnos(codigo_qr);
 ```
 
 ---
 
-## 🎯 Casos de Uso
+## 🔄 Flujo de Datos y Procesos
 
-### 🏫 **Para Colegios**
+### Workflow de Registro de Estudiantes
 
-![school-use-case.png]
+```mermaid
+sequenceDiagram
+    participant U as Usuario
+    participant F as Frontend
+    participant S as Supabase
 
-- Control de asistencia en tiempo real
-- Reportes para dirección académica
-- Comunicación automática con padres
-- Estadísticas de punctualidad
+    U->>F: Ingresa datos del estudiante
+    F->>F: Valida formulario
+    F->>F: Genera código QR único
+    F->>S: INSERT estudiante
+    S->>F: Confirma registro
+    F->>F: Genera QR visual
+    F->>U: Muestra QR descargable
+```
 
-### 👨‍🏫 **Para Profesores**
+### Workflow de Registro de Asistencia
 
-![teacher-use-case.png]
+```mermaid
+sequenceDiagram
+    participant S as Scanner
+    participant F as Frontend
+    participant DB as Supabase
+    participant W as WhatsApp
 
-- Pase de lista digital instantáneo
-- Registro de entrada y salida
-- Exportación de reportes por período
-- Vista de estudiantes por grado/sección
+    S->>F: Escanea código QR
+    F->>DB: Consulta estudiante
+    DB->>F: Datos del estudiante
+    F->>F: Determina tipo (entrada/salida)
+    F->>DB: Verifica duplicados
+    F->>DB: INSERT asistencia
+    DB->>F: Confirma registro
+    F->>S: Muestra confirmación
+    F->>W: Notificación opcional WhatsApp
+```
 
-### 👨‍👩‍👧‍👦 **Para Padres**
+### Workflow de Control de Asistencia
 
-![parent-notification.png]
+```mermaid
+sequenceDiagram
+    participant P as Profesor/Directivo
+    participant C as Control Panel
+    participant DB as Supabase
+    participant W as WhatsApp
 
-- Notificaciones WhatsApp automáticas
-- Confirmación de llegada/salida del estudiante
-- Historial de asistencia accesible
-- Contacto directo con la institución
+    P->>C: Selecciona grado/sección
+    C->>DB: Consulta estudiantes + asistencias
+    DB->>C: Lista con estados
+    C->>C: Calcula ausentes/tardíos
+    C->>P: Muestra lista de ausentes
+    P->>C: Envía alerta a padre
+    C->>W: Genera enlace WhatsApp
+    W->>P: Abre chat con padre
+```
 
 ---
 
-## 📊 Métricas y Rendimiento
+## 🔒 Seguridad y Autenticación
 
-![performance-metrics.png]
+### Modelo de Seguridad
 
-- ⚡ **Tiempo de carga**: < 2 segundos
-- 📱 **Compatibility**: 99% dispositivos móviles
-- 🎯 **Precisión QR**: 99.9% de lecturas exitosas
-- 📊 **Capacidad**: Hasta 10,000 estudiantes
-- 🔄 **Uptime**: 99.95% disponibilidad
+#### Autenticación
+
+- **Provider**: Supabase Auth
+- **Método**: Email/Password con JWT
+- **Persistencia**: Sesión en localStorage
+- **Expiración**: Configurable en Supabase
+
+#### Autorización
+
+- **Nivel de aplicación**: Context-based access control
+- **Row Level Security (RLS)**: Configurado en Supabase
+- **Roles**:
+  - Profesor (acceso limitado a su grado/sección)
+  - Directivo (acceso completo)
+  - Administrador (gestión completa)
+
+#### Políticas de Seguridad RLS
+
+```sql
+-- Política para tabla alumnos
+CREATE POLICY "Users can view students" ON alumnos
+FOR SELECT USING (auth.role() = 'authenticated');
+
+-- Política para tabla asistencias
+CREATE POLICY "Users can insert attendance" ON asistencias
+FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+
+CREATE POLICY "Users can view attendance" ON asistencias
+FOR SELECT USING (auth.role() = 'authenticated');
+```
+
+#### Validaciones de Entrada
+
+- **Frontend**: React Hook Form + Zod schemas
+- **Backend**: Supabase constraints + triggers
+- **QR Codes**: Validación de formato único
+- **Duplicados**: Constraints de base de datos
 
 ---
 
-## 🔧 Configuración Avanzada
+## 📊 Manejo de Estado y Context
 
-### 🎨 Personalización Visual
+### Context API Structure
 
 ```typescript
-// tailwind.config.ts - Personaliza colores institucionales
-theme: {
-  colors: {
-    primary: '#07aee1', // Color principal del colegio
-    secondary: '#1e40af', // Color secundario
-    accent: '#f59e0b' // Color de acento
-  }
+// src/contexts/DashboardContext.tsx
+interface DashboardContextType {
+  // Estado global
+  alumnos: Alumno[];
+  asistencias: Asistencia[];
+  estadisticas: EstadisticasGenerales;
+  loading: boolean;
+  error: string | null;
+
+  // Funciones
+  fetchAlumnos: () => Promise<void>;
+  fetchAsistenciasHoy: () => Promise<void>;
+  calcularEstadisticas: () => void;
 }
 ```
 
-### 📱 Configuración PWA
+### Hooks Personalizados
+
+- **useWhatsAppNotification**: Gestión de notificaciones
+- **useScannerLogic**: Lógica del scanner QR
+- **useDashboard**: Acceso al contexto global
+
+### Estado Local vs Global
+
+- **Global**: Datos de estudiantes, asistencias, estadísticas
+- **Local**: Estados de UI, formularios, modales
+- **Persist**: Preferencias de usuario, configuraciones
+
+---
+
+## 📱 Integración WhatsApp
+
+### Implementación Actual
+
+- **Tipo**: WhatsApp Web Links
+- **Formato**: `https://wa.me/PHONE?text=MESSAGE`
+- **Codificación**: URL encoding para caracteres especiales
+- **Personalización**: Mensajes por tipo de notificación
+
+### Preparado para WhatsApp Business API
+
+```typescript
+// src/app/api/whatsapp/route.ts
+export async function POST(req: NextRequest) {
+  const { to, message } = await req.json();
+
+  // Configurado para WhatsApp Business API
+  const response = await fetch(
+    `https://graph.facebook.com/v17.0/${PHONE_NUMBER_ID}/messages`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${ACCESS_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        messaging_product: "whatsapp",
+        to,
+        type: "text",
+        text: { body: message },
+      }),
+    }
+  );
+}
+```
+
+---
+
+## 📄 Sistema de Reportes
+
+### Formatos Disponibles
+
+1. **PDF**: jsPDF con tablas automáticas
+2. **Excel**: XLSX con formato profesional
+3. **CSV**: Para análisis de datos
+
+### Tipos de Reportes
+
+- **Asistencia Diaria**: Por fecha específica
+- **Asistencia Semanal**: Rango de 7 días
+- **Asistencia Mensual**: Por mes completo
+- **Por Grado/Sección**: Filtrado específico
+- **Estudiantes Ausentes**: Lista de no asistentes
+
+### Pipeline de Exportación
+
+```typescript
+// src/utils/reportExports.ts
+export const exportarAExcel = (
+  data: ReportData,
+  stats: EstadisticasReporte
+) => {
+  const workbook = XLSX.utils.book_new();
+  const worksheet = XLSX.utils.json_to_sheet(data.asistencias);
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Asistencias");
+  XLSX.writeFile(
+    workbook,
+    `reporte_${new Date().toISOString().split("T")[0]}.xlsx`
+  );
+};
+```
+
+---
+
+## 🎨 Interfaz de Usuario y UX
+
+### Design System
+
+- **Paleta de Colores**: Azul corporativo (#07aee1)
+- **Tipografía**: Geist Sans + Geist Mono
+- **Componentes**: Sistema modular con Tailwind CSS
+- **Iconografía**: Lucide React (set completo)
+
+### Responsive Design
+
+- **Mobile First**: Diseño prioritario para móviles
+- **Breakpoints**:
+  - Mobile: < 768px
+  - Tablet: 768px - 1024px
+  - Desktop: > 1024px
+- **PWA Ready**: Configurado para instalación
+
+### Accesibilidad
+
+- **ARIA Labels**: En componentes interactivos
+- **Keyboard Navigation**: Soporte completo
+- **Color Contrast**: WCAG 2.1 AA compliant
+- **Screen Readers**: Compatibilidad básica
+
+---
+
+## 🔧 Configuración y Deployment
+
+### Variables de Entorno
+
+```bash
+# .env.local
+NEXT_PUBLIC_SUPABASE_URL=https://xxx.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=xxx
+WHATSAPP_ACCESS_TOKEN=xxx (futuro)
+WHATSAPP_PHONE_NUMBER_ID=xxx (futuro)
+```
+
+### Scripts de Desarrollo
 
 ```json
-// manifest.json - Personaliza la app
 {
-  "name": "EduCheck Tu Colegio",
-  "short_name": "EduCheck",
+  "dev": "next dev --turbopack",
+  "build": "next build",
+  "start": "next start",
+  "lint": "next lint"
+}
+```
+
+### Configuración PWA
+
+```json
+// public/manifest.json
+{
+  "name": "Sistema de Control de Asistencia Educheck",
+  "short_name": "Educheck",
+  "display": "standalone",
   "theme_color": "#07aee1",
-  "background_color": "#ffffff",
   "start_url": "/dashboard"
 }
 ```
 
 ---
 
-## 🎓 Documentación
+## 📈 Métricas y Analytics
 
-### 📚 **Guías de Usuario**
+### KPIs del Sistema
 
-- [👨‍🏫 Manual del Profesor](docs/teacher-guide.md)
-- [👨‍💼 Manual del Administrador](docs/admin-guide.md)
-- [📱 Guía de App Móvil](docs/mobile-guide.md)
-- [🔧 Configuración Inicial](docs/setup-guide.md)
+- **Asistencia Diaria**: Porcentaje de presentes
+- **Puntualidad**: Llegadas dentro del horario
+- **Tendencias**: Comparativa semanal/mensual
+- **Por Grado**: Estadísticas segmentadas
 
-### 🔧 **Documentación Técnica**
+### Datos en Tiempo Real
 
-- [⚙️ API Reference](docs/api-reference.md)
-- [🗄️ Esquema de BD](docs/database-schema.md)
-- [🚀 Deployment](docs/deployment.md)
-- [🔍 Troubleshooting](docs/troubleshooting.md)
-
----
-
-## 🤝 Contribuir
-
-![contribute-banner.png]
-
-¡Nos encanta recibir contribuciones! Aquí te explicamos cómo puedes ayudar:
-
-### 🐛 **Reportar Bugs**
-
-1. Busca issues existentes
-2. Crea un nuevo issue con detalles
-3. Incluye pasos para reproducir
-4. Adjunta capturas de pantalla
-
-### 💡 **Sugerir Características**
-
-1. Revisa el roadmap actual
-2. Crea un issue de tipo "feature request"
-3. Explica el caso de uso
-4. Describe la solución propuesta
-
-### 🔧 **Desarrollo**
-
-```bash
-# Fork del repo
-git fork https://github.com/TuUsuario/educheck-fe-ciencia
-
-# Crea una rama feature
-git checkout -b feature/nueva-funcionalidad
-
-# Commits con conventional commits
-git commit -m "feat: agregar exportación a PDF"
-
-# Push y PR
-git push origin feature/nueva-funcionalidad
-```
+- **Registros**: Via Supabase Realtime
+- **Notificaciones**: Toast system
+- **Estados**: Context updates automáticos
 
 ---
 
-## 📄 Licencia
+## 🚀 Roadmap y Funcionalidades Futuras
 
-![license-banner.png]
+### En Desarrollo
 
-Este proyecto está licenciado bajo la **Licencia MIT**. Consulta el archivo [LICENSE](LICENSE) para más detalles.
+- [ ] **API WhatsApp Business** integración completa
+- [ ] **Notificaciones Push** para ausencias automáticas
+- [ ] **Dashboard Administrativo** avanzado
+- [ ] **Reportes Automáticos** programados
+
+### Planificado
+
+- [ ] **App Móvil Nativa** (React Native)
+- [ ] **Integración con Sistema Académico**
+- [ ] **ML para Predicción de Ausencias**
+- [ ] **Geolocalización** para validar asistencia
+
+---
+
+## 🔍 Testing y Calidad
+
+### Estrategia de Testing
+
+- **Unit Tests**: Jest + React Testing Library
+- **Integration Tests**: Cypress (planificado)
+- **E2E Tests**: Playwright (planificado)
+- **Manual Testing**: Protocolo definido
+
+### Code Quality
+
+- **TypeScript**: Strict mode habilitado
+- **ESLint**: Configuración Next.js + Custom rules
+- **Prettier**: Formateo automático
+- **Husky**: Pre-commit hooks (planificado)
+
+---
+
+## 📚 Documentación Técnica
+
+### Estructura de Archivos
 
 ```
-MIT License - Uso libre para proyectos comerciales y educativos
-Copyright (c) 2025 EduCheck Fe y Ciencia
+src/
+├── app/                    # Next.js App Router
+│   ├── dashboard/          # Dashboard principal
+│   ├── api/               # API Routes
+│   └── globals.css        # Estilos globales
+├── components/            # Componentes reutilizables
+│   ├── Dashboard/         # Componentes del dashboard
+│   └── Scanner/           # Sistema de scanner QR
+├── contexts/              # React Context
+├── hooks/                 # Custom hooks
+├── types/                 # TypeScript definitions
+└── utils/                 # Utilidades y helpers
 ```
 
----
+### Convenciones de Código
 
-## 🌟 Showcase
-
-### 🏆 **Casos de Éxito**
-
-![success-stories.png]
-
-> _"EduCheck redujo nuestro tiempo de pase de lista en un 90% y mejoró significativamente la comunicación con los padres de familia."_  
-> **— Dir. María González, Colegio San Martín**
-
-> _"La generación automática de reportes nos ahorra 5 horas semanales de trabajo administrativo."_  
-> **— Prof. Carlos Ruiz, I.E. Libertadores**
-
-### 📈 **Estadísticas de Impacto**
-
-- 🎯 **+50 colegios** utilizando EduCheck
-- ⏱️ **-85% tiempo** en control de asistencia
-- 📊 **+95% precisión** en registros
-- 💬 **+90% satisfacción** de padres de familia
+- **Nomenclatura**: PascalCase para componentes, camelCase para funciones
+- **Imports**: Absolute paths con @ alias
+- **Props**: Interfaces tipadas obligatorias
+- **Async**: Async/await preferido sobre Promises
 
 ---
 
-## 🚀 Roadmap 2025
+## 🌟 Conclusión
 
-![roadmap-2025.png]
+EduCheck Fe y Ciencia representa una solución integral moderna para la gestión de asistencia escolar, combinando tecnologías web de vanguardia con procesos educativos tradicionales. El sistema está diseñado para escalabilidad, mantenibilidad y una experiencia de usuario excepcional.
 
-### 🎯 **Q1 2025**
+### Fortalezas del Sistema
 
-- [ ] 📱 App móvil nativa (iOS/Android)
-- [ ] 🔔 Notificaciones push
-- [ ] 📊 Dashboard para padres
+1. **Arquitectura Modular**: Facilita el mantenimiento y extensión
+2. **Tecnología Moderna**: Stack actualizado y performante
+3. **UX Centrada en el Usuario**: Interfaz intuitiva y responsive
+4. **Seguridad Robusta**: Implementación de mejores prácticas
+5. **Integración Flexible**: APIs preparadas para extensiones
+6. **Documentación Completa**: Base sólida para desarrollo futuro
 
-### 🎯 **Q2 2025**
+### Impacto Educativo
 
-- [ ] 🤖 Inteligencia artificial para predicción de ausencias
-- [ ] 📱 Integración con sistemas LMS
-- [ ] 🌐 Modo offline completo
+- **Automatización**: Reduce carga administrativa
+- **Precisión**: Elimina errores manuales
+- **Comunicación**: Mejora contacto escuela-familia
+- **Análisis**: Datos para toma de decisiones
+- **Escalabilidad**: Preparado para crecimiento institucional
 
-### 🎯 **Q3 2025**
-
-- [ ] 📧 Integración con correo electrónico
-- [ ] 📋 Generador de horarios automático
-- [ ] 🎨 Constructor de reportes personalizado
-
----
-
-## 💬 Soporte y Comunidad
-
-<div align="center">
-
-![support-banner.png]
-
-[![Discord](https://img.shields.io/badge/Discord-Únete%20a%20la%20comunidad-7289DA?style=for-the-badge&logo=discord)](https://discord.gg/educheck)
-[![Telegram](https://img.shields.io/badge/Telegram-Canal%20oficial-0088CC?style=for-the-badge&logo=telegram)](https://t.me/educheck_oficial)  
-[![WhatsApp](https://img.shields.io/badge/WhatsApp-Soporte%20técnico-25D366?style=for-the-badge&logo=whatsapp)](https://wa.me/1234567890)
-
-**📧 Email:** soporte@educheck.com  
-**🌐 Website:** [www.educheck.com](https://www.educheck.com)  
-**📚 Docs:** [docs.educheck.com](https://docs.educheck.com)
-
-</div>
-
-### 🆘 **¿Necesitas ayuda?**
-
-1. 📖 **Consulta la documentación** - La mayoría de dudas están resueltas aquí
-2. 🔍 **Busca en Issues** - Tal vez alguien ya tuvo la misma pregunta
-3. 💬 **Únete a Discord** - Comunidad activa de desarrolladores
-4. 📧 **Contacta soporte** - Respuesta en menos de 24 horas
+El proyecto establece las bases para un ecosistema digital educativo completo, con potencial para expandirse hacia otros aspectos de la gestión escolar.
 
 ---
 
-## ⭐ ¡Dale una estrella!
-
-Si EduCheck te ha sido útil, ¡no olvides darle una ⭐ en GitHub!
-
-<div align="center">
-
-![star-banner.png]
-
-[![GitHub stars](https://img.shields.io/github/stars/TuUsuario/educheck-fe-ciencia?style=social)](https://github.com/TuUsuario/educheck-fe-ciencia/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/TuUsuario/educheck-fe-ciencia?style=social)](https://github.com/TuUsuario/educheck-fe-ciencia/network)
-
-**Desarrollado con ❤️ para la educación moderna**
-
----
-
-_© 2025 EduCheck Fe y Ciencia. Transformando la gestión educativa, un código QR a la vez._
-
-</div>
+_Documento generado el 18 de agosto de 2025_  
+_Versión del Sistema: 0.1.0_  
+_Estado: En Desarrollo Activo_
