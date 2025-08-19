@@ -31,7 +31,7 @@ export function formatearFechaHora(fecha: string | Date): string {
   });
 }
 
-// Obtener fecha actual en formato YYYY-MM-DD
+// Obtener fecha actual en formato YYYY-MM-DD (hora local)
 export function obtenerFechaHoy(): string {
   const hoy = new Date();
   // Usar getFullYear(), getMonth() y getDate() para evitar problemas de zona horaria
@@ -41,21 +41,28 @@ export function obtenerFechaHoy(): string {
   return `${year}-${month}-${day}`;
 }
 
-
-// Obtener inicio y fin del día actual
-export function obtenerRangoHoy(): { inicio: string; fin: string } {
-  const hoy = new Date();
+// Convertir fecha YYYY-MM-DD a rango de timestamps para consultas
+export function obtenerRangoFechaParaConsulta(fecha: string): { inicio: string; fin: string } {
+  // Crear fecha en hora local sin conversión de zona horaria
+  const [year, month, day] = fecha.split('-').map(Number);
   
-  // Inicio del día (00:00:00.000)
-  const inicioDelDia = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate(), 0, 0, 0, 0);
+  // Inicio del día (00:00:00.000) en hora local
+  const inicioDelDia = new Date(year, month - 1, day, 0, 0, 0, 0);
   
-  // Fin del día (23:59:59.999)
-  const finDelDia = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate(), 23, 59, 59, 999);
+  // Fin del día (23:59:59.999) en hora local  
+  const finDelDia = new Date(year, month - 1, day, 23, 59, 59, 999);
   
-  return { 
-    inicio: inicioDelDia.toISOString(), 
-    fin: finDelDia.toISOString() 
+  return {
+    inicio: inicioDelDia.toISOString(),
+    fin: finDelDia.toISOString()
   };
+}
+
+
+// Obtener inicio y fin del día actual (mantener para compatibilidad)
+export function obtenerRangoHoy(): { inicio: string; fin: string } {
+  const hoy = obtenerFechaHoy();
+  return obtenerRangoFechaParaConsulta(hoy);
 }
 
 // NUEVA FUNCIÓN: Obtener rango de fechas específico para consultas

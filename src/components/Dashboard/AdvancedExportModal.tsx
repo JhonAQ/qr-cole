@@ -74,8 +74,12 @@ export default function AdvancedExportModal({
 
   // Filtrar asistencias según criterios seleccionados
   const asistenciasFiltradas = asistencias.filter((a) => {
-    const fecha = new Date(a.hora).toISOString().split("T")[0];
-    const dentroRango = fecha >= rangoFecha.inicio && fecha <= rangoFecha.fin;
+    // Crear fecha en hora local para evitar problemas de zona horaria
+    const fechaAsistencia = new Date(a.hora);
+    const fechaLocal = new Date(fechaAsistencia.getFullYear(), fechaAsistencia.getMonth(), fechaAsistencia.getDate());
+    const fechaStr = fechaLocal.toISOString().split("T")[0];
+    
+    const dentroRango = fechaStr >= rangoFecha.inicio && fechaStr <= rangoFecha.fin;
     const matchGrado = !filtros.grado || a.alumno?.grado === filtros.grado;
     const matchSeccion =
       !filtros.seccion || a.alumno?.seccion === filtros.seccion;

@@ -29,6 +29,7 @@ import {
   formatearHora,
   formatearFechaHora,
   obtenerFechaHoy,
+  obtenerRangoFechaParaConsulta,
   obtenerGradosUnicos,
   obtenerSeccionesUnicas,
   debounce,
@@ -65,6 +66,10 @@ export default function AsistenciaTab() {
   const cargarAsistencias = async () => {
     setLoading(true);
     try {
+      // Usar los rangos de fecha correctos para evitar problemas de zona horaria
+      const rangoInicio = obtenerRangoFechaParaConsulta(fechaInicio);
+      const rangoFin = obtenerRangoFechaParaConsulta(fechaFin);
+      
       let query = supabase
         .from("asistencias")
         .select(
@@ -73,8 +78,8 @@ export default function AsistenciaTab() {
           alumno:alumnos(*)
         `
         )
-        .gte("hora", `${fechaInicio}T00:00:00`)
-        .lte("hora", `${fechaFin}T23:59:59`);
+        .gte("hora", rangoInicio.inicio)
+        .lte("hora", rangoFin.fin);
 
       if (tipoFiltro !== "todos") {
         query = query.eq("tipo", tipoFiltro);

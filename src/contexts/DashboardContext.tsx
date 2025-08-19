@@ -14,7 +14,7 @@ import {
   EstadisticasGenerales,
   DashboardContextType,
 } from "@/types";
-import { obtenerRangoHoy } from "@/utils/helpers";
+import { obtenerFechaHoy, obtenerRangoFechaParaConsulta, obtenerRangoHoy } from "@/utils/helpers";
 
 const DashboardContext = createContext<DashboardContextType | null>(null);
 
