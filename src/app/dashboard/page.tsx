@@ -9,7 +9,7 @@ import {
   Users,
   ClipboardList,
   Home,
-  QrCode,
+  UserCheck,
   Loader2,
   UserPlus,
   Scan,
@@ -27,6 +27,7 @@ import AsistenciaTab from "@/components/Dashboard/AsistenciaTab";
 import EstadisticasTab from "@/components/Dashboard/EstadisticasTab";
 import RegistrarTab from "@/components/Dashboard/RegistrarTab";
 import EscanearTab from "@/components/Dashboard/EscanearTab";
+import ControlAsistenciaTab from "@/components/Dashboard/ControlAsistenciaTab";
 
 const tabs = [
   {
@@ -50,9 +51,14 @@ const tabs = [
     icon: <Scan className="w-5 h-5" />,
   },
   {
-    id: "asistencia",
-    label: "Asistencia",
+    id: "registros",
+    label: "Registros",
     icon: <ClipboardList className="w-5 h-5" />,
+  },
+  {
+    id: "control-asistencia",
+    label: "Control Asistencia",
+    icon: <UserCheck className="w-5 h-5" />,
   },
   {
     id: "estadisticas",
@@ -125,10 +131,17 @@ export default function DashboardPage() {
         );
       case "escanear":
         return (
-          <EscanearTab onBackToDashboard={() => setActiveTab("asistencia")} />
+          <EscanearTab onBackToDashboard={() => setActiveTab("registros")} />
         );
-      case "asistencia":
+      case "registros":
         return <AsistenciaTab />;
+      case "control-asistencia":
+        return (
+          <ControlAsistenciaTab
+            selectedGrade={selectedGrade}
+            selectedSection={selectedSection}
+          />
+        );
       case "estadisticas":
         return <EstadisticasTab />;
       default:

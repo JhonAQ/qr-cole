@@ -17,8 +17,30 @@ export const useWhatsAppNotification = () => {
   const generateWhatsAppMessage = (
     student: Alumno,
     type: TipoAsistencia,
-    timestamp?: string
+    timestamp?: string,
+    customMessage?: string
   ): WhatsAppMessage => {
+    if (customMessage) {
+      // Si hay un mensaje personalizado, usarlo directamente
+      let phoneNumber = student.contacto_padres.replace(/[^\d]/g, "");
+      
+      // Si el número no empieza con código de país, asumir Perú (+51)
+      if (phoneNumber.length === 9 && phoneNumber.startsWith("9")) {
+        phoneNumber = "51" + phoneNumber;
+      } else if (phoneNumber.length === 8) {
+        phoneNumber = "519" + phoneNumber;
+      }
+
+      const encodedMessage = encodeURIComponent(customMessage);
+      const deepLink = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodedMessage}`;
+
+      return {
+        phoneNumber: student.contacto_padres,
+        message: customMessage,
+        deepLink,
+      };
+    }
+
     const now = new Date(timestamp || new Date().toISOString());
     const hora = now.toLocaleTimeString('es-PE', { 
       hour: '2-digit', 
@@ -71,9 +93,10 @@ _Sistema Educheck Fe y Ciencia_ 📱`;
   const showWhatsAppModal = (
     student: Alumno,
     type: TipoAsistencia,
-    timestamp?: string
+    timestamp?: string,
+    customMessage?: string
   ) => {
-    const messageData = generateWhatsAppMessage(student, type, timestamp);
+    const messageData = generateWhatsAppMessage(student, type, timestamp, customMessage);
     setMessageData(messageData);
     setIsModalOpen(true);
   };
@@ -96,9 +119,10 @@ _Sistema Educheck Fe y Ciencia_ 📱`;
   const sendDirectWhatsApp = (
     student: Alumno,
     type: TipoAsistencia,
-    timestamp?: string
+    timestamp?: string,
+    customMessage?: string
   ) => {
-    const messageData = generateWhatsAppMessage(student, type, timestamp);
+    const messageData = generateWhatsAppMessage(student, type, timestamp, customMessage);
     // Abrir WhatsApp inmediatamente
     window.open(messageData.deepLink, "_blank");
   };
