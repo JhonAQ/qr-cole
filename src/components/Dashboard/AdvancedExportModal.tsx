@@ -77,7 +77,12 @@ export default function AdvancedExportModal({
     // Crear fecha en hora local para evitar problemas de zona horaria
     const fechaAsistencia = new Date(a.hora);
     const fechaLocal = new Date(fechaAsistencia.getFullYear(), fechaAsistencia.getMonth(), fechaAsistencia.getDate());
-    const fechaStr = fechaLocal.toISOString().split("T")[0];
+    
+    // Formatear fecha local correctamente
+    const year = fechaLocal.getFullYear();
+    const month = String(fechaLocal.getMonth() + 1).padStart(2, '0');
+    const day = String(fechaLocal.getDate()).padStart(2, '0');
+    const fechaStr = `${year}-${month}-${day}`;
     
     const dentroRango = fechaStr >= rangoFecha.inicio && fechaStr <= rangoFecha.fin;
     const matchGrado = !filtros.grado || a.alumno?.grado === filtros.grado;

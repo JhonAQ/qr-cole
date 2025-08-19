@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/utils/supabase";
+import { obtenerFechaHoy } from "@/utils/helpers";
 
 export default function AttendanceHistory() {
   const [registros, setRegistros] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [fecha, setFecha] = useState(new Date().toISOString().split("T")[0]);
+  const [fecha, setFecha] = useState(obtenerFechaHoy());
 
   useEffect(() => {
     fetchRegistros();

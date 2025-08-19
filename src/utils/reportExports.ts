@@ -364,45 +364,56 @@ const generarNombreArchivo = (formato: 'excel' | 'pdf' | 'csv', data: ReportData
 // Plantillas predefinidas para rangos de fechas
 export const obtenerPlantillasFecha = () => {
   const hoy = new Date();
+  
+  // Función para formatear fecha correctamente sin problemas de zona horaria
+  const formatDateLocal = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+  
+  // Ayer
   const ayer = new Date(hoy);
   ayer.setDate(ayer.getDate() - 1);
   
+  // Inicio de la semana (domingo)
   const inicioSemana = new Date(hoy);
   inicioSemana.setDate(hoy.getDate() - hoy.getDay());
   
+  // Este mes
   const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
   const finMes = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0);
   
+  // Mes anterior
   const inicioMesAnterior = new Date(hoy.getFullYear(), hoy.getMonth() - 1, 1);
   const finMesAnterior = new Date(hoy.getFullYear(), hoy.getMonth(), 0);
-  
-  const formatDate = (date: Date) => date.toISOString().split('T')[0];
   
   return {
     hoy: {
       label: 'Hoy',
-      fechaInicio: formatDate(hoy),
-      fechaFin: formatDate(hoy),
+      fechaInicio: formatDateLocal(hoy),
+      fechaFin: formatDateLocal(hoy),
     },
     ayer: {
       label: 'Ayer',
-      fechaInicio: formatDate(ayer),
-      fechaFin: formatDate(ayer),
+      fechaInicio: formatDateLocal(ayer),
+      fechaFin: formatDateLocal(ayer),
     },
     estaSemana: {
       label: 'Esta semana',
-      fechaInicio: formatDate(inicioSemana),
-      fechaFin: formatDate(hoy),
+      fechaInicio: formatDateLocal(inicioSemana),
+      fechaFin: formatDateLocal(hoy),
     },
     esteMes: {
       label: 'Este mes',
-      fechaInicio: formatDate(inicioMes),
-      fechaFin: formatDate(finMes),
+      fechaInicio: formatDateLocal(inicioMes),
+      fechaFin: formatDateLocal(finMes),
     },
     mesAnterior: {
       label: 'Mes anterior',
-      fechaInicio: formatDate(inicioMesAnterior),
-      fechaFin: formatDate(finMesAnterior),
+      fechaInicio: formatDateLocal(inicioMesAnterior),
+      fechaFin: formatDateLocal(finMesAnterior),
     },
   };
 };
