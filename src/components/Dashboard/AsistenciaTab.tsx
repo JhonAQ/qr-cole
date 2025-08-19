@@ -69,7 +69,7 @@ export default function AsistenciaTab() {
       // Usar los rangos de fecha correctos para evitar problemas de zona horaria
       const rangoInicio = obtenerRangoFechaParaConsulta(fechaInicio);
       const rangoFin = obtenerRangoFechaParaConsulta(fechaFin);
-      
+
       let query = supabase
         .from("asistencias")
         .select(

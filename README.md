@@ -1,4 +1,5 @@
 # 🎓 EduCheck Fe y Ciencia
+
 ### Sistema Integral de Control de Asistencia Estudiantil con Tecnología QR
 
 <div align="center">
@@ -37,7 +38,7 @@ EduCheck es un sistema integral de gestión de asistencia estudiantil diseñado 
 ![demo-gif.gif]
 
 > **Prueba EduCheck ahora:** [demo.educheck.com](https://demo.educheck.com)
-> 
+>
 > 📧 **Usuario demo:** profesor@demo.com  
 > 🔑 **Contraseña:** demo123
 
@@ -46,6 +47,7 @@ EduCheck es un sistema integral de gestión de asistencia estudiantil diseñado 
 ## ✨ Características Principales
 
 ### 📱 **Scanner QR Inteligente**
+
 ![scanner-mockup.png]
 
 - 🎯 **Detección automática** de códigos QR estudiantiles
@@ -55,6 +57,7 @@ EduCheck es un sistema integral de gestión de asistencia estudiantil diseñado 
 - 🎵 **Feedback sonoro** para confirmación de registro
 
 ### 👨‍🎓 **Gestión de Estudiantes**
+
 ![student-management.png]
 
 - 📋 **Registro completo** de datos estudiantiles
@@ -64,6 +67,7 @@ EduCheck es un sistema integral de gestión de asistencia estudiantil diseñado 
 - 🔍 **Búsqueda avanzada** y filtros múltiples
 
 ### 📊 **Dashboard Ejecutivo**
+
 ![dashboard-stats.png]
 
 - 📈 **Métricas en tiempo real** de asistencia
@@ -73,6 +77,7 @@ EduCheck es un sistema integral de gestión de asistencia estudiantil diseñado 
 - ⚡ **Acciones rápidas** desde el panel principal
 
 ### 📑 **Reportes Profesionales**
+
 ![reports-export.png]
 
 - 📄 **Exportación múltiple**: Excel, PDF, CSV
@@ -82,6 +87,7 @@ EduCheck es un sistema integral de gestión de asistencia estudiantil diseñado 
 - 🎨 **Formato institucional** con logo y branding
 
 ### 💬 **Notificaciones WhatsApp**
+
 ![whatsapp-integration.png]
 
 - 📲 **Integración nativa** con WhatsApp Business
@@ -101,18 +107,21 @@ EduCheck es un sistema integral de gestión de asistencia estudiantil diseñado 
 </div>
 
 ### **Frontend**
+
 - ⚛️ **Next.js 15.4** - Framework React con App Router
-- 🎨 **Tailwind CSS 4.0** - Diseño moderno y responsive  
+- 🎨 **Tailwind CSS 4.0** - Diseño moderno y responsive
 - 🎭 **Framer Motion** - Animaciones fluidas
 - 📱 **PWA Ready** - Instalable como app nativa
 
 ### **Backend**
+
 - 🗄️ **Supabase** - Base de datos PostgreSQL en la nube
 - 🔐 **Auth integrada** - Sistema de autenticación seguro
 - ⚡ **Real-time** - Actualizaciones en tiempo real
 - 🔄 **API REST** - Endpoints optimizados
 
 ### **Características Técnicas**
+
 - 📱 **Mobile-First** - Diseñado para dispositivos móviles
 - 🎯 **TypeScript** - Código tipado y mantenible
 - 📊 **html5-qrcode** - Scanner QR optimizado
@@ -124,9 +133,11 @@ EduCheck es un sistema integral de gestión de asistencia estudiantil diseñado 
 ## 📱 Capturas de Pantalla
 
 ### 🔐 Autenticación Segura
+
 ![login-screen.png]
 
 ### 📱 Vista Móvil
+
 <div align="center">
 <img src="mobile-dashboard.png" width="300" alt="Dashboard Móvil"/>
 <img src="mobile-scanner.png" width="300" alt="Scanner Móvil"/>
@@ -134,9 +145,11 @@ EduCheck es un sistema integral de gestión de asistencia estudiantil diseñado 
 </div>
 
 ### 💻 Dashboard Desktop
+
 ![desktop-dashboard.png]
 
 ### 📊 Estadísticas Avanzadas
+
 ![advanced-stats.png]
 
 ---
@@ -144,6 +157,7 @@ EduCheck es un sistema integral de gestión de asistencia estudiantil diseñado 
 ## ⚡ Instalación Rápida
 
 ### 📋 Prerrequisitos
+
 - Node.js 18.0 o superior
 - npm o yarn
 - Cuenta en Supabase (gratuita)
@@ -212,21 +226,27 @@ npm start
 ## 🎯 Casos de Uso
 
 ### 🏫 **Para Colegios**
+
 ![school-use-case.png]
+
 - Control de asistencia en tiempo real
 - Reportes para dirección académica
 - Comunicación automática con padres
 - Estadísticas de punctualidad
 
 ### 👨‍🏫 **Para Profesores**
+
 ![teacher-use-case.png]
+
 - Pase de lista digital instantáneo
 - Registro de entrada y salida
 - Exportación de reportes por período
 - Vista de estudiantes por grado/sección
 
 ### 👨‍👩‍👧‍👦 **Para Padres**
+
 ![parent-notification.png]
+
 - Notificaciones WhatsApp automáticas
 - Confirmación de llegada/salida del estudiante
 - Historial de asistencia accesible
@@ -240,7 +260,7 @@ npm start
 
 - ⚡ **Tiempo de carga**: < 2 segundos
 - 📱 **Compatibility**: 99% dispositivos móviles
-- 🎯 **Precisión QR**: 99.9% de lecturas exitosas  
+- 🎯 **Precisión QR**: 99.9% de lecturas exitosas
 - 📊 **Capacidad**: Hasta 10,000 estudiantes
 - 🔄 **Uptime**: 99.95% disponibilidad
 
@@ -279,12 +299,14 @@ theme: {
 ## 🎓 Documentación
 
 ### 📚 **Guías de Usuario**
+
 - [👨‍🏫 Manual del Profesor](docs/teacher-guide.md)
-- [👨‍💼 Manual del Administrador](docs/admin-guide.md) 
+- [👨‍💼 Manual del Administrador](docs/admin-guide.md)
 - [📱 Guía de App Móvil](docs/mobile-guide.md)
 - [🔧 Configuración Inicial](docs/setup-guide.md)
 
 ### 🔧 **Documentación Técnica**
+
 - [⚙️ API Reference](docs/api-reference.md)
 - [🗄️ Esquema de BD](docs/database-schema.md)
 - [🚀 Deployment](docs/deployment.md)
@@ -299,18 +321,21 @@ theme: {
 ¡Nos encanta recibir contribuciones! Aquí te explicamos cómo puedes ayudar:
 
 ### 🐛 **Reportar Bugs**
+
 1. Busca issues existentes
 2. Crea un nuevo issue con detalles
 3. Incluye pasos para reproducir
 4. Adjunta capturas de pantalla
 
 ### 💡 **Sugerir Características**
+
 1. Revisa el roadmap actual
 2. Crea un issue de tipo "feature request"
 3. Explica el caso de uso
 4. Describe la solución propuesta
 
 ### 🔧 **Desarrollo**
+
 ```bash
 # Fork del repo
 git fork https://github.com/TuUsuario/educheck-fe-ciencia
@@ -343,15 +368,17 @@ Copyright (c) 2025 EduCheck Fe y Ciencia
 ## 🌟 Showcase
 
 ### 🏆 **Casos de Éxito**
+
 ![success-stories.png]
 
-> *"EduCheck redujo nuestro tiempo de pase de lista en un 90% y mejoró significativamente la comunicación con los padres de familia."*  
+> _"EduCheck redujo nuestro tiempo de pase de lista en un 90% y mejoró significativamente la comunicación con los padres de familia."_  
 > **— Dir. María González, Colegio San Martín**
 
-> *"La generación automática de reportes nos ahorra 5 horas semanales de trabajo administrativo."*  
+> _"La generación automática de reportes nos ahorra 5 horas semanales de trabajo administrativo."_  
 > **— Prof. Carlos Ruiz, I.E. Libertadores**
 
 ### 📈 **Estadísticas de Impacto**
+
 - 🎯 **+50 colegios** utilizando EduCheck
 - ⏱️ **-85% tiempo** en control de asistencia
 - 📊 **+95% precisión** en registros
@@ -364,16 +391,19 @@ Copyright (c) 2025 EduCheck Fe y Ciencia
 ![roadmap-2025.png]
 
 ### 🎯 **Q1 2025**
+
 - [ ] 📱 App móvil nativa (iOS/Android)
 - [ ] 🔔 Notificaciones push
 - [ ] 📊 Dashboard para padres
 
 ### 🎯 **Q2 2025**
+
 - [ ] 🤖 Inteligencia artificial para predicción de ausencias
 - [ ] 📱 Integración con sistemas LMS
 - [ ] 🌐 Modo offline completo
 
-### 🎯 **Q3 2025**  
+### 🎯 **Q3 2025**
+
 - [ ] 📧 Integración con correo electrónico
 - [ ] 📋 Generador de horarios automático
 - [ ] 🎨 Constructor de reportes personalizado
@@ -399,7 +429,7 @@ Copyright (c) 2025 EduCheck Fe y Ciencia
 ### 🆘 **¿Necesitas ayuda?**
 
 1. 📖 **Consulta la documentación** - La mayoría de dudas están resueltas aquí
-2. 🔍 **Busca en Issues** - Tal vez alguien ya tuvo la misma pregunta  
+2. 🔍 **Busca en Issues** - Tal vez alguien ya tuvo la misma pregunta
 3. 💬 **Únete a Discord** - Comunidad activa de desarrolladores
 4. 📧 **Contacta soporte** - Respuesta en menos de 24 horas
 
@@ -420,6 +450,6 @@ Si EduCheck te ha sido útil, ¡no olvides darle una ⭐ en GitHub!
 
 ---
 
-*© 2025 EduCheck Fe y Ciencia. Transformando la gestión educativa, un código QR a la vez.*
+_© 2025 EduCheck Fe y Ciencia. Transformando la gestión educativa, un código QR a la vez._
 
 </div>

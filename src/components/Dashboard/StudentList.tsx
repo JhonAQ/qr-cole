@@ -214,15 +214,12 @@ export default function StudentList() {
     // Formatear fecha local correctamente
     const hoy = new Date();
     const year = hoy.getFullYear();
-    const month = String(hoy.getMonth() + 1).padStart(2, '0');
-    const day = String(hoy.getDate()).padStart(2, '0');
+    const month = String(hoy.getMonth() + 1).padStart(2, "0");
+    const day = String(hoy.getDate()).padStart(2, "0");
     const fechaHoy = `${year}-${month}-${day}`;
 
     link.setAttribute("href", url);
-    link.setAttribute(
-      "download",
-      `alumnos_${fechaHoy}.csv`
-    );
+    link.setAttribute("download", `alumnos_${fechaHoy}.csv`);
     link.style.visibility = "hidden";
 
     document.body.appendChild(link);
